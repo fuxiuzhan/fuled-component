@@ -20,7 +20,7 @@ public class BannerApplicationContextInitializer implements ApplicationContextIn
     }
 
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        LogoBanner logoBanner = new LogoBanner(BannerApplicationContextInitializer.class, "/banner.txt", "Welcome to FuledFrameWrok", 5, 5, new Color[]{Color.red, Color.green, Color.cyan, Color.blue, Color.yellow}, true);
+        LogoBanner logoBanner = new LogoBanner(BannerApplicationContextInitializer.class, "/logo.txt", "Welcome to FuledFrameWrok", 5, 5, new Color[]{Color.red, Color.green, Color.cyan, Color.blue, Color.yellow}, true);
         this.show(logoBanner);
         System.setProperty("nepxion.banner.shown", "false");
     }
