@@ -46,7 +46,7 @@ public class PropertiesInjector implements EnvironmentPostProcessor {
         } catch (Exception e) {
             logger.error(e);
         }
-        PropertiesPropertySource propertiesPropertySource = new PropertiesPropertySource("application.properties", properties);
+        PropertiesPropertySource propertiesPropertySource = new PropertiesPropertySource("nacos-application.properties", properties);
         environment.getPropertySources().addFirst(propertiesPropertySource);
     }
 
