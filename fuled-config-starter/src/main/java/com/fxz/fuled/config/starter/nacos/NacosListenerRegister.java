@@ -3,10 +3,10 @@ package com.fxz.fuled.config.starter.nacos;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
-
 import com.fxz.fuled.config.starter.enums.Env;
 import com.fxz.fuled.config.starter.spring.util.ConfigUtil;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +22,7 @@ import java.util.Properties;
 public class NacosListenerRegister {
     @Bean
     public ConfigService configService(NacosConfigProperties properties, PropertyConverter propertyConverter) throws NacosException {
+        ConfigUtil.initialize();
         Env env = ConfigUtil.getEnv();
         properties.setServerAddr(env.getConfigServer() + ":" + env.getPort());
         Properties config = properties.assembleConfigServiceProperties();
@@ -31,6 +32,7 @@ public class NacosListenerRegister {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public NacosConfigProperties nacosConfigProperties(ApplicationContext context) {
         if (context.getParent() != null
                 && BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
