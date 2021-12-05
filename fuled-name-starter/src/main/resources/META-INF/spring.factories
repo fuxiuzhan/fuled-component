@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.fxz.fuled.name.starter.NameAutoConfig
+  com.fxz.fuled.name.starter.NameAutoConfig,\
+  com.fxz.fuled.name.starter.NacosServiceRegistryAutoConfigurationWrapper
 

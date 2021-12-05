@@ -73,8 +73,6 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
         metadata.put("nacos.cluster", instance.getClusterName() + "");
         if (instance.getMetadata() != null) {
             metadata.putAll(instance.getMetadata());
-            metadata.putAll(System.getenv());
-            //add other metainfo
         }
         metadata.put("nacos.ephemeral", String.valueOf(instance.isEphemeral()));
         nacosServiceInstance.setMetadata(metadata);
