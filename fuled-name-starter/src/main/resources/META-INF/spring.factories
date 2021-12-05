@@ -1,2 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.fxz.fuled.name.starter.NameAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.fxz.fuled.name.starter.NameAutoConfig
 
