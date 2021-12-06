@@ -44,6 +44,7 @@ public class NacosListenerRegister {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public PropertyConverter defaultConverter() {
         return new DefaultPropertyConverter();
     }
