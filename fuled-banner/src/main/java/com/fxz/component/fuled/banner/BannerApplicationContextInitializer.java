@@ -40,7 +40,7 @@ public class BannerApplicationContextInitializer implements ApplicationContextIn
             List<Description> descriptions = new ArrayList();
             descriptions.add(new Description("Server:", "FuledFrameWork " + (serverType == null ? "" : "Application"), 0, 1));
             descriptions.add(new Description("Version:", "1.0.0.WaterDrop", 0, 1));
-            descriptions.add(new Description("GitHub:", "http://192.168.10.201:8082/fuled/fuled-framework.git", 0, 1));
+            descriptions.add(new Description("GitHub:", "https://github.com/fuxiuzhan/fuled-framework.git", 0, 1));
             DescriptionBanner descriptionBanner = new DescriptionBanner();
             System.out.println(descriptionBanner.getBanner(descriptions));
         }
