@@ -1,4 +1,4 @@
-package com.fxz.fuled.config.starter.nacos;
+package com.fxz.fuled.config.starter.nacos.constant;
 
 public class PropertyKeyConst {
 

@@ -1,5 +1,6 @@
 package com.fxz.fuled.config.starter.nacos;
 
+import com.fxz.fuled.config.starter.nacos.utils.NacosConfigUtils;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.boot.env.PropertiesPropertySourceLoader;
 import org.springframework.boot.env.PropertySourceLoader;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.fxz.fuled.config.starter.nacos.AbstractPropertySourceLoader.DOT;
+import static com.fxz.fuled.config.starter.nacos.property.AbstractPropertySourceLoader.DOT;
 
 public class NacosDataParserHandler {
 

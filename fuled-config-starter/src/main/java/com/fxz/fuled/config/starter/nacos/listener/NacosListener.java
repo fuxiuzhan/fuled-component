@@ -1,4 +1,4 @@
-package com.fxz.fuled.config.starter.nacos;
+package com.fxz.fuled.config.starter.nacos.listener;
 
 import com.alibaba.nacos.api.config.ConfigChangeEvent;
 import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;

@@ -1,2 +1,2 @@
 #org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-# com.fxz.fuled.config.starter.nacos.NacosConfigBootstrapConfiguration
+# com.fxz.fuled.config.starter.nacos.config.NacosConfigBootstrapConfiguration

@@ -1,4 +1,6 @@
-package com.fxz.fuled.config.starter.nacos;
+package com.fxz.fuled.config.starter.nacos.property;
+
+import com.fxz.fuled.config.starter.nacos.NacosConfigProperties;
 
 import java.util.ArrayList;
 import java.util.List;

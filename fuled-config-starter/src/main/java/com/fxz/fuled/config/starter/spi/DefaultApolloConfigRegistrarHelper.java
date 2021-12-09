@@ -20,7 +20,7 @@ package com.fxz.fuled.config.starter.spi;
 import com.fxz.fuled.config.starter.annotation.DimaondAnnotationProcessor;
 import com.fxz.fuled.config.starter.annotation.EnableDimaondConfig;
 import com.fxz.fuled.config.starter.annotation.SpringValueProcessor;
-import com.fxz.fuled.config.starter.nacos.NacosConfigBootstrapConfiguration;
+import com.fxz.fuled.config.starter.nacos.config.NacosConfigBootstrapConfiguration;
 import com.fxz.fuled.config.starter.spring.property.AutoUpdateConfigChangeListener;
 import com.fxz.fuled.config.starter.spring.property.SpringValueDefinitionProcessor;
 import com.fxz.fuled.config.starter.spring.util.ApplicationContextUtil;

@@ -1,6 +1,10 @@
-package com.fxz.fuled.config.starter.nacos;
+package com.fxz.fuled.config.starter.nacos.config;
 
 import com.alibaba.nacos.api.config.ConfigService;
+import com.fxz.fuled.config.starter.nacos.NacosConfigManager;
+import com.fxz.fuled.config.starter.nacos.NacosConfigProperties;
+import com.fxz.fuled.config.starter.nacos.property.NacosPropertySourceLocator;
+import com.fxz.fuled.config.starter.nacos.property.ServerAddrPropertySourceLocator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
