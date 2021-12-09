@@ -14,6 +14,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * @author fxz
+ */
 @Order(0)
 public class NacosPropertySourceLocator implements PropertySourceLocator {
 
@@ -178,10 +181,6 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
             return;
         }
         composite.addFirstPropertySource(nacosPropertySource);
-    }
-
-    public void setNacosConfigManager(NacosConfigManager nacosConfigManager) {
-        this.nacosConfigManager = nacosConfigManager;
     }
 
 }
