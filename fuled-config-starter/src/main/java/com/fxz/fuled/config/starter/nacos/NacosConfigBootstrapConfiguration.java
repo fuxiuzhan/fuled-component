@@ -1,5 +1,6 @@
-package com.fxz.fuled.config.starter.nacosconfig;
+package com.fxz.fuled.config.starter.nacos;
 
+import com.alibaba.nacos.api.config.ConfigService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -29,4 +30,14 @@ public class NacosConfigBootstrapConfiguration {
         return new NacosPropertySourceLocator(nacosConfigManager);
     }
 
+    @Bean
+    public ServerAddrPropertySourceLocator serverAddrPropertySourceLocator() {
+        return new ServerAddrPropertySourceLocator();
+    }
+    @Bean
+    public ConfigService configService(NacosConfigManager configManager){
+        ConfigService configService = configManager.getConfigService();
+//        configService.addListener(ConfigUtil.getAppId(), properties.getGroup(), new NacosListener(ConfigUtil.getAppId(), propertyConverter));
+        return configService;
+    }
 }

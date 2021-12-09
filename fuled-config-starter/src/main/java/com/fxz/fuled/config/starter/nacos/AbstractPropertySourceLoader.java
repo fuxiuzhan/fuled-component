@@ -1,4 +1,4 @@
-package com.fxz.fuled.config.starter.nacosconfig;
+package com.fxz.fuled.config.starter.nacos;
 
 import org.springframework.boot.env.PropertySourceLoader;
 import org.springframework.core.env.PropertySource;

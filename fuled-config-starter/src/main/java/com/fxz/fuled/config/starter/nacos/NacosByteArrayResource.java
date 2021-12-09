@@ -1,4 +1,4 @@
-package com.fxz.fuled.config.starter.nacosconfig;
+package com.fxz.fuled.config.starter.nacos;
 
 import org.springframework.core.io.ByteArrayResource;
 

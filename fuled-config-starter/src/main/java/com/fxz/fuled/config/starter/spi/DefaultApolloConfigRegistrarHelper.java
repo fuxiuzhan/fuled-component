@@ -20,7 +20,7 @@ package com.fxz.fuled.config.starter.spi;
 import com.fxz.fuled.config.starter.annotation.DimaondAnnotationProcessor;
 import com.fxz.fuled.config.starter.annotation.EnableDimaondConfig;
 import com.fxz.fuled.config.starter.annotation.SpringValueProcessor;
-import com.fxz.fuled.config.starter.nacos.NacosListenerRegister;
+import com.fxz.fuled.config.starter.nacos.NacosConfigBootstrapConfiguration;
 import com.fxz.fuled.config.starter.spring.property.AutoUpdateConfigChangeListener;
 import com.fxz.fuled.config.starter.spring.property.SpringValueDefinitionProcessor;
 import com.fxz.fuled.config.starter.spring.util.ApplicationContextUtil;
@@ -56,7 +56,7 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
                 SpringValueProcessor.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueDefinitionProcessor.class.getName(),
                 SpringValueDefinitionProcessor.class);
-        BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, NacosListenerRegister.class.getName(), NacosListenerRegister.class);
+        BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, NacosConfigBootstrapConfiguration.class.getName(), NacosConfigBootstrapConfiguration.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, AutoUpdateConfigChangeListener.class.getName(), AutoUpdateConfigChangeListener.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApplicationContextUtil.class.getName(), ApplicationContextUtil.class);
     }

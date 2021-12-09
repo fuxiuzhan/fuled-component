@@ -1,4 +1,4 @@
-package com.fxz.fuled.config.starter.nacosconfig;
+package com.fxz.fuled.config.starter.nacos;
 
 
 import com.alibaba.nacos.api.config.ConfigService;
@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 public class NacosPropertySourceBuilder {
 
     private static final Logger log = LoggerFactory
@@ -43,7 +44,7 @@ public class NacosPropertySourceBuilder {
 
     /**
      * @param dataId Nacos dataId
-     * @param group Nacos group
+     * @param group  Nacos group
      */
     NacosPropertySource build(String dataId, String group, String fileExtension,
                               boolean isRefreshable) {
@@ -60,6 +61,7 @@ public class NacosPropertySourceBuilder {
         String data = null;
         try {
             data = configService.getConfig(dataId, group, timeout);
+            configService.addListener(dataId, group, new NacosListener(group));
             if (StringUtils.isEmpty(data)) {
                 log.warn(
                         "Ignore the empty nacos configuration and get it based on dataId[{}] & group[{}]",
@@ -73,11 +75,9 @@ public class NacosPropertySourceBuilder {
             }
             return NacosDataParserHandler.getInstance().parseNacosData(dataId, data,
                     fileExtension);
-        }
-        catch (NacosException e) {
+        } catch (NacosException e) {
             log.error("get data from Nacos error,dataId:{} ", dataId, e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("parse data from Nacos error,dataId:{},data:{}", dataId, data, e);
         }
         return Collections.emptyList();
