@@ -24,6 +24,7 @@
         <module>fuled-tools-dependencies</module>
         <module>fuled-logger-starter</module>
         <module>fuled-name-starter</module>
+        <module>fuled-common</module>
     </modules>
     <dependencies>
     </dependencies>
