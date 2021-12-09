@@ -1,6 +1,7 @@
 package com.fxz.fuled.config.starter.nacosconfig;
 
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
+import org.springframework.boot.env.PropertiesPropertySourceLoader;
 import org.springframework.boot.env.PropertySourceLoader;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
@@ -49,8 +50,24 @@ public class NacosDataParserHandler {
             if (!canLoadFileExtension(propertySourceLoader, extension)) {
                 continue;
             }
-
-            List<PropertySource<?>> propertySourceList = null;
+            NacosByteArrayResource nacosByteArrayResource;
+            if (propertySourceLoader instanceof PropertiesPropertySourceLoader) {
+                // PropertiesPropertySourceLoader internal is to use the ISO_8859_1,
+                // the Chinese will be garbled, needs to transform into unicode.
+                nacosByteArrayResource = new NacosByteArrayResource(
+                        NacosConfigUtils.selectiveConvertUnicode(configValue).getBytes(),
+                        configName);
+            }
+            else {
+                nacosByteArrayResource = new NacosByteArrayResource(
+                        configValue.getBytes(), configName);
+            }
+            nacosByteArrayResource.setFilename(getFileName(configName, extension));
+            List<PropertySource<?>> propertySourceList = propertySourceLoader
+                    .load(configName, nacosByteArrayResource);
+            if (CollectionUtils.isEmpty(propertySourceList)) {
+                return Collections.emptyList();
+            }
             if (CollectionUtils.isEmpty(propertySourceList)) {
                 return Collections.emptyList();
             }
