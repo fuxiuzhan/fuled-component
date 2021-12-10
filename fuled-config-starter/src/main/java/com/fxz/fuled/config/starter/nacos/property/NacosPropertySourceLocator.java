@@ -5,17 +5,20 @@ import com.alibaba.nacos.api.config.ConfigService;
 import com.fxz.fuled.config.starter.nacos.NacosConfigManager;
 import com.fxz.fuled.config.starter.nacos.NacosConfigProperties;
 import com.fxz.fuled.config.starter.nacos.NacosDataParserHandler;
+import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author fxz
@@ -52,8 +55,8 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(Environment env) {
         nacosConfigProperties.setEnvironment(env);
+//        initEnv(env);
         ConfigService configService = nacosConfigManager.getConfigService();
-
         if (null == configService) {
             log.warn("no instance of config service found, can't load config from nacos");
             return null;
@@ -67,18 +70,19 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
         if (StringUtils.isEmpty(dataIdPrefix)) {
             dataIdPrefix = name;
         }
-
         if (StringUtils.isEmpty(dataIdPrefix)) {
             dataIdPrefix = env.getProperty("spring.application.name");
         }
-
         CompositePropertySource composite = new CompositePropertySource(
                 NACOS_PROPERTY_SOURCE_NAME);
-
         loadSharedConfiguration(composite);
         loadExtConfiguration(composite);
         loadApplicationConfiguration(composite, dataIdPrefix, nacosConfigProperties, env);
-        loadApplicationConfiguration(composite, NacosConfigProperties.DEFAULT_PROPERTIES, nacosConfigProperties, env);
+        loadApplicationConfiguration(composite, NacosConfigProperties.DEFAULT_PROPERTIES.split("\\.")[0], nacosConfigProperties, env);
+        Properties properties = new Properties();
+        PropertiesPropertySource propertiesPropertySource = new PropertiesPropertySource("nacos-rewritable-properties", properties);
+        SpringInjector.properties = properties;
+        composite.addFirstPropertySource(propertiesPropertySource);
         return composite;
     }
 

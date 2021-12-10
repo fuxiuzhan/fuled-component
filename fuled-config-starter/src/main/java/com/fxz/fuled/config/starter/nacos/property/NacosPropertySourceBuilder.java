@@ -63,6 +63,7 @@ public class NacosPropertySourceBuilder {
         String data = null;
         try {
             data = configService.getConfig(dataId, group, timeout);
+            log.info("get config from nacos server : dataId->{},groupId->{},result->{}", dataId, group, data);
             configService.addListener(dataId, group, new NacosListener(group));
             if (StringUtils.isEmpty(data)) {
                 log.warn(

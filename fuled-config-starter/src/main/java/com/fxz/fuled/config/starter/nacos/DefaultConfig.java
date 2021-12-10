@@ -38,6 +38,7 @@ public class DefaultConfig implements Config {
     static {
         m_executorService = Executors.newCachedThreadPool();
     }
+
     @Override
     public void fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
         final Set<String> changedKeys = changes.keySet();
@@ -45,8 +46,19 @@ public class DefaultConfig implements Config {
         // notify those listeners
         for (ConfigChangeListener listener : listeners) {
             Set<String> interestedChangedKeys = resolveInterestedChangedKeys(listener, changedKeys);
+            Map<String, ConfigChange> interestedKeysMap = new HashMap<>();
+            if (interestedChangedKeys.size() > 0) {
+                interestedChangedKeys.forEach(k -> {
+                    if (changes.get(k) != null) {
+                        interestedKeysMap.put(k, changes.get(k));
+                    }
+                });
+            } else {
+                logger.warn("no interestedChangedKeys skipped changes->{}", changes);
+                return;
+            }
             InterestedConfigChangeEvent interestedConfigChangeEvent = new InterestedConfigChangeEvent(
-                    namespace, changes, interestedChangedKeys);
+                    namespace, interestedKeysMap, interestedChangedKeys);
             this.notifyAsync(listener, interestedConfigChangeEvent);
         }
     }

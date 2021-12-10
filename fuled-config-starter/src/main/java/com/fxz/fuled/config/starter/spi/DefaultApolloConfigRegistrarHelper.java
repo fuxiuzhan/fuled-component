@@ -56,6 +56,7 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
                 SpringValueProcessor.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueDefinitionProcessor.class.getName(),
                 SpringValueDefinitionProcessor.class);
+//        BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ServerAddrPropertySourceLocator.class.getName(),ServerAddrPropertySourceLocator.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, NacosConfigBootstrapConfiguration.class.getName(), NacosConfigBootstrapConfiguration.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, AutoUpdateConfigChangeListener.class.getName(), AutoUpdateConfigChangeListener.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, ApplicationContextUtil.class.getName(), ApplicationContextUtil.class);
