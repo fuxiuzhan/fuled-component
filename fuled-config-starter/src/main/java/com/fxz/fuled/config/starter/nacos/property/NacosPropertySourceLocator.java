@@ -78,6 +78,7 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
         loadSharedConfiguration(composite);
         loadExtConfiguration(composite);
         loadApplicationConfiguration(composite, dataIdPrefix, nacosConfigProperties, env);
+        loadApplicationConfiguration(composite, NacosConfigProperties.DEFAULT_PROPERTIES, nacosConfigProperties, env);
         return composite;
     }
 
