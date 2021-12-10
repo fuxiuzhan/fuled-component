@@ -35,6 +35,9 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
     private void initEnv(NacosDiscoveryProperties discoveryProperties) {
         ConfigUtil.initialize();
         discoveryProperties.setServerAddr(ConfigUtil.getEnv().getConfigServer() + ":" + ConfigUtil.getEnv().getPort());
+        discoveryProperties.setGroup(ConfigUtil.getAppId().toUpperCase());
+        discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
+        discoveryProperties.setService(ConfigUtil.getAppId());
     }
 
     @Override

@@ -79,9 +79,14 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
         Map<String, String> meta = new HashMap<String, String>();
         meta.putAll(registration.getMetadata());
         meta.putAll(System.getenv());
+        appendVersionInfo(meta);
         instance.setEphemeral(nacosDiscoveryProperties.isEphemeral());
         instance.setMetadata(meta);
         return instance;
+    }
+
+    private void appendVersionInfo(Map meta) {
+        meta.put("Fuled-Framework-Version", "1.1.0.WaterDrop");
     }
 
 
