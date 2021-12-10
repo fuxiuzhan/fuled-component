@@ -25,6 +25,7 @@
         <module>fuled-logger-starter</module>
         <module>fuled-name-starter</module>
         <module>fuled-common</module>
+        <module>fuled-env-encryptor-starter</module>
     </modules>
     <dependencies>
     </dependencies>

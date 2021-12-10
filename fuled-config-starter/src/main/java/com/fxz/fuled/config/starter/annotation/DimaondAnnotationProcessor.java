@@ -17,13 +17,13 @@
 package com.fxz.fuled.config.starter.annotation;
 
 
+import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChangeEvent;
 import com.fxz.fuled.config.starter.spring.ConfigChangeListener;
 import com.fxz.fuled.config.starter.spring.property.PlaceholderHelper;
 import com.fxz.fuled.config.starter.spring.property.SpringValueRegistry;
-import com.fxz.fuled.config.starter.spring.util.ConfigUtil;
 import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;

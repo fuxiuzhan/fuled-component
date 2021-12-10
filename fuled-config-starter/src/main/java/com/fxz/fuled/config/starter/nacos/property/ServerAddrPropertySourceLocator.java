@@ -1,7 +1,7 @@
 package com.fxz.fuled.config.starter.nacos.property;
 
-import com.fxz.fuled.config.starter.enums.Env;
-import com.fxz.fuled.config.starter.spring.util.ConfigUtil;
+import com.fxz.fuled.common.ConfigUtil;
+import com.fxz.fuled.common.Env;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

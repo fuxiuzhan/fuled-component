@@ -2,11 +2,11 @@ package com.fxz.fuled.config.starter.nacos.listener;
 
 import com.alibaba.nacos.api.config.ConfigChangeEvent;
 import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;
+import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChange;
 import com.fxz.fuled.config.starter.spring.util.ApplicationContextUtil;
-import com.fxz.fuled.config.starter.spring.util.ConfigUtil;
 import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 
 import java.util.HashMap;

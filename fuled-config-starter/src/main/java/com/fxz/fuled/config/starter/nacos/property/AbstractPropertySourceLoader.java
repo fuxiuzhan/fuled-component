@@ -13,7 +13,7 @@ public abstract class AbstractPropertySourceLoader  implements PropertySourceLoa
     /**
      * symbol: dot.
      */
-    static final String DOT = ".";
+    public static final String DOT = ".";
 
 
     /**
