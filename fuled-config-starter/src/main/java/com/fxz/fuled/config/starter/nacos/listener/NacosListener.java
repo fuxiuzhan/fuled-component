@@ -10,6 +10,7 @@ import com.fxz.fuled.config.starter.spring.util.ApplicationContextUtil;
 import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.endpoint.event.RefreshEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,5 +45,6 @@ public class NacosListener extends AbstractConfigChangeListener {
         config.fireConfigChange(group, changeMap);
         com.fxz.fuled.config.starter.model.ConfigChangeEvent event = new com.fxz.fuled.config.starter.model.ConfigChangeEvent(group, changeMap);
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(event);
+        ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new RefreshEvent(this, null, "refresh proprerties"));
     }
 }
