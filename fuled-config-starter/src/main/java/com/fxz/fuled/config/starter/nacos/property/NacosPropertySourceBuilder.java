@@ -61,6 +61,10 @@ public class NacosPropertySourceBuilder {
     private List<PropertySource<?>> loadNacosData(String dataId, String group,
                                                   String fileExtension) {
         String data = null;
+        if (StringUtils.isEmpty(dataId) || StringUtils.isEmpty(group)) {
+            log.warn("dataId or group is null skipped");
+            return Collections.emptyList();
+        }
         try {
             data = configService.getConfig(dataId, group, timeout);
             log.info("get config from nacos server : dataId->{},groupId->{},result->{}", dataId, group, data);
