@@ -21,10 +21,13 @@ import org.apache.commons.io.input.BOMInputStream;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Jason Song(song_s@ctrip.com)
@@ -40,17 +43,24 @@ public class ConfigUtil {
     private static String m_appId;
     private String m_appLabel;
     private String accessKeySecret;
-    public static void initialize() {
-        try {
-            InputStream in = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
-            if (in == null) {
-                in = ConfigUtil.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
-            }
+    private static AtomicBoolean init = new AtomicBoolean(false);
 
-            initialize(in);
-        } catch (Throwable ex) {
-            logger.error("Initialize DefaultApplicationProvider failed.", ex);
+    public static void initialize() {
+        if (init.compareAndSet(false, true)) {
+            try {
+                InputStream in = Thread.currentThread().getContextClassLoader()
+                        .getResourceAsStream(APP_PROPERTIES_CLASSPATH.substring(1));
+                if (in == null) {
+                    in = ConfigUtil.class.getResourceAsStream(APP_PROPERTIES_CLASSPATH);
+                }
+
+                initialize(in);
+            } catch (Throwable ex) {
+                logger.error("Initialize DefaultApplicationProvider failed.", ex);
+            }
+            if (StringUtils.isEmpty(System.getProperty("spring.application.name"))) {
+                System.getProperties().setProperty("spring.application.name", m_appId);
+            }
         }
     }
 
