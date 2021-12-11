@@ -3,6 +3,7 @@ package com.fxz.fuled.config.starter.nacos.listener;
 import com.alibaba.nacos.api.config.ConfigChangeEvent;
 import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;
 import com.fxz.fuled.common.ConfigUtil;
+import com.fxz.fuled.common.converter.ValueConverter;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChange;
@@ -32,9 +33,14 @@ public class NacosListener extends AbstractConfigChangeListener {
         //process listener
         //process event
         log.info("config changes ->{}", configChangeEvent.getChangeItems().toArray());
+        ValueConverter converter = ApplicationContextUtil.getConfigurableApplicationContext().getBean(ValueConverter.class);
         Map<String, ConfigChange> changeMap = new HashMap<>();
         configChangeEvent.getChangeItems().forEach(c -> {
             String newValue = c.getNewValue();
+            if (converter != null) {
+                newValue = converter.convert(c.getNewValue());
+                log.info("ValueConverter not null processed Result:key->{},oldValue->{},newValue->{}", c.getKey(), c.getNewValue(), newValue);
+            }
             String oldValue = c.getOldValue();
             ConfigChange configChange = new ConfigChange(group, ConfigUtil.getAppId(), oldValue, newValue, c.getType());
             changeMap.put(c.getKey(), configChange);

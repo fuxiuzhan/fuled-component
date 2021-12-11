@@ -1,6 +1,8 @@
 package com.fxz.fuled.env.encryptor.starter;
 
+import com.fxz.fuled.common.converter.ValueConverter;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
@@ -17,8 +19,14 @@ public class EnvPropertiesAutoConfig implements EnvironmentAware {
 
     @Bean
     @Order()
-    BeanFactoryPostProcessor envPropertiesProcessor() {
-        return new EnvPropertiesProcessor(environment);
+    BeanFactoryPostProcessor envPropertiesProcessor(ValueConverter valueConverter) {
+        return new EnvPropertiesProcessor(environment, valueConverter);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    ValueConverter defaultValueConverter() {
+        return new DefaultValueConverter();
     }
 
     @Override

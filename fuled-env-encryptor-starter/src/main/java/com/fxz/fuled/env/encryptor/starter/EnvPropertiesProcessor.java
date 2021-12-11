@@ -1,5 +1,6 @@
 package com.fxz.fuled.env.encryptor.starter;
 
+import com.fxz.fuled.common.converter.ValueConverter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -10,8 +11,10 @@ import java.util.Objects;
 public class EnvPropertiesProcessor implements BeanFactoryPostProcessor {
     private ConfigurableEnvironment environment;
 
-    public EnvPropertiesProcessor(Environment environment) {
+    private ValueConverter valueConverter;
+    public EnvPropertiesProcessor(Environment environment,ValueConverter valueConverter) {
         this.environment = (ConfigurableEnvironment) environment;
+        this.valueConverter=valueConverter;
     }
 
     @Override
