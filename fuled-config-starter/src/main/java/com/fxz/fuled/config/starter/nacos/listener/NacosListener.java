@@ -45,6 +45,6 @@ public class NacosListener extends AbstractConfigChangeListener {
         config.fireConfigChange(group, changeMap);
         com.fxz.fuled.config.starter.model.ConfigChangeEvent event = new com.fxz.fuled.config.starter.model.ConfigChangeEvent(group, changeMap);
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(event);
-        ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new RefreshEvent(this, null, "refresh proprerties"));
+        ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new RefreshEvent(this, null, "refresh properties"));
     }
 }
