@@ -27,7 +27,7 @@ public class NacosConfigBootstrapConfiguration  {
         Env envLocal = ConfigUtil.getEnv();
         nacosConfigProperties.setServerAddr(envLocal.getConfigServer() + ":" + envLocal.getPort());
         nacosConfigProperties.setNamespace(envLocal.name());
-//        nacosConfigProperties.setGroup(ConfigUtil.getAppId().toUpperCase());
+        nacosConfigProperties.setGroup(ConfigUtil.getAppId().toUpperCase());
         return new NacosConfigManager(nacosConfigProperties);
     }
 
