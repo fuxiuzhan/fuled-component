@@ -17,8 +17,8 @@
 package com.fxz.fuled.config.starter.spi;
 
 
-import com.fxz.fuled.config.starter.annotation.DimaondAnnotationProcessor;
-import com.fxz.fuled.config.starter.annotation.EnableDimaondConfig;
+import com.fxz.fuled.config.starter.annotation.DiamondAnnotationProcessor;
+import com.fxz.fuled.config.starter.annotation.EnableDiamondConfig;
 import com.fxz.fuled.config.starter.annotation.SpringValueProcessor;
 import com.fxz.fuled.config.starter.nacos.config.NacosConfigBootstrapConfiguration;
 import com.fxz.fuled.config.starter.spring.property.AutoUpdateConfigChangeListener;
@@ -42,7 +42,7 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         AnnotationAttributes attributes = AnnotationAttributes
-                .fromMap(importingClassMetadata.getAnnotationAttributes(EnableDimaondConfig.class.getName()));
+                .fromMap(importingClassMetadata.getAnnotationAttributes(EnableDiamondConfig.class.getName()));
         final String[] namespaces = attributes.getStringArray("value");
         Map<String, Object> propertySourcesPlaceholderPropertyValues = new HashMap<String, Object>();
         // to make sure the default PropertySourcesPlaceholderConfigurer's priority is higher than PropertyPlaceholderConfigurer
@@ -50,8 +50,8 @@ public class DefaultApolloConfigRegistrarHelper implements ApolloConfigRegistrar
 
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, PropertySourcesPlaceholderConfigurer.class.getName(),
                 PropertySourcesPlaceholderConfigurer.class, propertySourcesPlaceholderPropertyValues);
-        BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, DimaondAnnotationProcessor.class.getName(),
-                DimaondAnnotationProcessor.class);
+        BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, DiamondAnnotationProcessor.class.getName(),
+                DiamondAnnotationProcessor.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueProcessor.class.getName(),
                 SpringValueProcessor.class);
         BeanRegistrationUtil.registerBeanDefinitionIfNotExists(registry, SpringValueDefinitionProcessor.class.getName(),

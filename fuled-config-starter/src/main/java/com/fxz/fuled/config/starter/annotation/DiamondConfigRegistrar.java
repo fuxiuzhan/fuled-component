@@ -28,7 +28,7 @@ import org.springframework.core.type.AnnotationMetadata;
 /**
  * @author Jason Song(song_s@ctrip.com)
  */
-public class DimaondConfigRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+public class DiamondConfigRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
   private final ApolloConfigRegistrarHelper helper = new DefaultApolloConfigRegistrarHelper();
 
