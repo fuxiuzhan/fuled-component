@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Create by zhangzheng on 2018/2/6
  */
-public abstract class DimaondProcessor implements BeanPostProcessor, PriorityOrdered {
+public abstract class DiamondProcessor implements BeanPostProcessor, PriorityOrdered {
 
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName)

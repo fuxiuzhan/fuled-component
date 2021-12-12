@@ -51,8 +51,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(DimaondConfigRegistrar.class)
-public @interface EnableDimaondConfig {
+@Import(DiamondConfigRegistrar.class)
+public @interface EnableDiamondConfig {
   /**
    * Apollo namespaces to inject configuration into Spring Property Sources.
    */

@@ -1,1 +1,2 @@
-org.springframework.boot.env.EnvironmentPostProcessor=com.fxz.fuled.config.starter.spring.property.PropertiesInjector
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+ com.fxz.fuled.config.starter.nacos.config.NacosConfigBootstrapConfiguration

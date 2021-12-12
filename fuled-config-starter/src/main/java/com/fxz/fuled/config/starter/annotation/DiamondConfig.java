@@ -44,7 +44,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface DimaondConfig {
+public @interface DiamondConfig {
   /**
    * Apollo namespace for the config, if not specified then default to application
    */

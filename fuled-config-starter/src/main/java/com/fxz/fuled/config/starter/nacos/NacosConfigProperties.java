@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.DeprecatedConfigurationProper
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
+
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -19,14 +20,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.alibaba.nacos.api.PropertyKeyConst.*;
-
 @ConfigurationProperties(NacosConfigProperties.PREFIX)
 public class NacosConfigProperties {
 
     public static final String DEFAULT_PROPERTIES = "application.properties";
     public static final String DEFAULT_GROUP = "DEFAULT_GROUP";
     /**
-     * Prefix of {@link NacosConfigProperties}.
+     * Prefix of {@link com.fxz.fuled.config.starter.nacos.NacosConfigProperties}.
      */
     public static final String PREFIX = "spring.cloud.nacos.config";
 
@@ -43,7 +43,7 @@ public class NacosConfigProperties {
     private static final Pattern PATTERN = Pattern.compile("-(\\w)");
 
     private static final Logger log = LoggerFactory
-            .getLogger(NacosConfigProperties.class);
+            .getLogger(com.fxz.fuled.config.starter.nacos.NacosConfigProperties.class);
 
     @Autowired
     @JsonIgnore
@@ -178,13 +178,13 @@ public class NacosConfigProperties {
      * a set of shared configurations .e.g:
      * spring.cloud.nacos.config.shared-configs[0]=xxx .
      */
-    private List<Config> sharedConfigs;
+    private List<NacosConfigProperties.Config> sharedConfigs;
 
     /**
      * a set of extensional configurations .e.g:
      * spring.cloud.nacos.config.extension-configs[0]=xxx .
      */
-    private List<Config> extensionConfigs;
+    private List<NacosConfigProperties.Config> extensionConfigs;
 
     /**
      * the master switch for refresh configuration, it default opened(true).
@@ -353,19 +353,19 @@ public class NacosConfigProperties {
         this.environment = environment;
     }
 
-    public List<Config> getSharedConfigs() {
+    public List<NacosConfigProperties.Config> getSharedConfigs() {
         return sharedConfigs;
     }
 
-    public void setSharedConfigs(List<Config> sharedConfigs) {
+    public void setSharedConfigs(List<NacosConfigProperties.Config> sharedConfigs) {
         this.sharedConfigs = sharedConfigs;
     }
 
-    public List<Config> getExtensionConfigs() {
+    public List<NacosConfigProperties.Config> getExtensionConfigs() {
         return extensionConfigs;
     }
 
-    public void setExtensionConfigs(List<Config> extensionConfigs) {
+    public void setExtensionConfigs(List<NacosConfigProperties.Config> extensionConfigs) {
         this.extensionConfigs = extensionConfigs;
     }
 
@@ -377,33 +377,13 @@ public class NacosConfigProperties {
         this.refreshEnabled = refreshEnabled;
     }
 
-    /**
-     * recommend to use {@link NacosConfigProperties#sharedConfigs} .
-     *
-     * @return string
-     */
-    @Deprecated
-    @DeprecatedConfigurationProperty(
-            reason = "replaced to NacosConfigProperties#sharedConfigs and not use it at the same time.",
-            replacement = PREFIX + ".shared-configs[x]")
-    public String getSharedDataids() {
-        return null == getSharedConfigs() ? null : getSharedConfigs().stream()
-                .map(Config::getDataId).collect(Collectors.joining(COMMAS));
-    }
 
-    /**
-     * recommend to use {@link NacosConfigProperties#sharedConfigs} and not use it at the
-     * same time .
-     *
-     * @param sharedDataids the dataids for configurable multiple shared configurations ,
-     *                      multiple separated by commas .
-     */
     @Deprecated
     public void setSharedDataids(String sharedDataids) {
         if (null != sharedDataids && sharedDataids.trim().length() > 0) {
-            List<Config> list = new ArrayList<>();
+            List<NacosConfigProperties.Config> list = new ArrayList<>();
             Stream.of(sharedDataids.split(SEPARATOR))
-                    .forEach(dataId -> list.add(new Config(dataId.trim())));
+                    .forEach(dataId -> list.add(new NacosConfigProperties.Config(dataId.trim())));
             this.compatibleSharedConfigs(list);
         }
     }
@@ -420,37 +400,22 @@ public class NacosConfigProperties {
             replacement = PREFIX + ".shared-configs[x].refresh")
     public String getRefreshableDataids() {
         return null == getSharedConfigs() ? null
-                : getSharedConfigs().stream().filter(Config::isRefresh)
-                .map(Config::getDataId).collect(Collectors.joining(COMMAS));
+                : getSharedConfigs().stream().filter(NacosConfigProperties.Config::isRefresh)
+                .map(NacosConfigProperties.Config::getDataId).collect(Collectors.joining(COMMAS));
     }
 
-    /**
-     * Not providing support,the need to refresh is specified by the respective refresh
-     * configuration and not use it at the same time .
-     *
-     * @param refreshableDataids refreshable dataids ,multiple separated by commas .
-     */
-    @Deprecated
-    public void setRefreshableDataids(String refreshableDataids) {
-        if (null != refreshableDataids && refreshableDataids.trim().length() > 0) {
-            List<Config> list = new ArrayList<>();
-            Stream.of(refreshableDataids.split(SEPARATOR)).forEach(
-                    dataId -> list.add(new Config(dataId.trim()).setRefresh(true)));
-            this.compatibleSharedConfigs(list);
-        }
-    }
 
-    private void compatibleSharedConfigs(List<Config> configList) {
+    private void compatibleSharedConfigs(List<NacosConfigProperties.Config> configList) {
         if (null != this.getSharedConfigs()) {
             configList.addAll(this.getSharedConfigs());
         }
-        List<Config> result = new ArrayList<>();
+        List<NacosConfigProperties.Config> result = new ArrayList<>();
         configList.stream()
                 .collect(Collectors.groupingBy(cfg -> (cfg.getGroup() + cfg.getDataId()),
                         LinkedHashMap::new, Collectors.toList()))
                 .forEach((key, list) -> {
                     list.stream()
-                            .reduce((a, b) -> new Config(a.getDataId(), a.getGroup(),
+                            .reduce((a, b) -> new NacosConfigProperties.Config(a.getDataId(), a.getGroup(),
                                     a.isRefresh() || (b != null && b.isRefresh())))
                             .ifPresent(result::add);
                 });
@@ -467,17 +432,17 @@ public class NacosConfigProperties {
     @DeprecatedConfigurationProperty(
             reason = "replaced to NacosConfigProperties#extensionConfigs and not use it at the same time .",
             replacement = PREFIX + ".extension-configs[x]")
-    public List<Config> getExtConfig() {
+    public List<NacosConfigProperties.Config> getExtConfig() {
         return this.getExtensionConfigs();
     }
 
     @Deprecated
-    public void setExtConfig(List<Config> extConfig) {
+    public void setExtConfig(List<NacosConfigProperties.Config> extConfig) {
         this.setExtensionConfigs(extConfig);
     }
 
     /**
-     * recommend to use {@link NacosConfigProperties#assembleConfigServiceProperties()}.
+     * recommend to use {@link com.fxz.fuled.config.starter.nacos.NacosConfigProperties#assembleConfigServiceProperties()}.
      *
      * @return ConfigServiceProperties
      */
@@ -598,7 +563,7 @@ public class NacosConfigProperties {
             return dataId;
         }
 
-        public Config setDataId(String dataId) {
+        public NacosConfigProperties.Config setDataId(String dataId) {
             this.dataId = dataId;
             return this;
         }
@@ -607,7 +572,7 @@ public class NacosConfigProperties {
             return group;
         }
 
-        public Config setGroup(String group) {
+        public NacosConfigProperties.Config setGroup(String group) {
             this.group = group;
             return this;
         }
@@ -616,7 +581,7 @@ public class NacosConfigProperties {
             return refresh;
         }
 
-        public Config setRefresh(boolean refresh) {
+        public NacosConfigProperties.Config setRefresh(boolean refresh) {
             this.refresh = refresh;
             return this;
         }
@@ -635,7 +600,7 @@ public class NacosConfigProperties {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Config config = (Config) o;
+            NacosConfigProperties.Config config = (NacosConfigProperties.Config) o;
             return refresh == config.refresh && Objects.equals(dataId, config.dataId)
                     && Objects.equals(group, config.group);
         }

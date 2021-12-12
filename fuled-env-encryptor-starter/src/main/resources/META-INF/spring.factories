@@ -1,0 +1,4 @@
+#org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+#  com.fxz.fuled.env.encryptor.starter.EnvPropertiesAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.fxz.fuled.env.encryptor.starter.EnvPropertiesAutoConfig

@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.fxz</groupId>
-        <artifactId>fuled-component</artifactId>
+        <artifactId>fuled-framework</artifactId>
         <version>1.0.0.WaterDrop</version>
     </parent>
     <groupId>com.fxz.component</groupId>
-    <artifactId>fuled-config-starter</artifactId>
-    <version>1.1.0.WaterDrop</version>
-    <name>fuled-config-starter</name>
-    <description>fuled-config-starter</description>
+    <artifactId>fuled-common</artifactId>
+    <version>1.0.0.WaterDrop</version>
+    <name>fuled-common</name>
+    <description>fuled-common</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -21,41 +21,19 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>29.0-android</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>5.0.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.8</version>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
-            <version>1.4.2</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-context</artifactId>
-            <scope>compile</scope>
-        </dependency>
-<!--                <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>com.fxz.component</groupId>
-            <artifactId>fuled-common</artifactId>
-            <version>1.0.0.WaterDrop</version>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>

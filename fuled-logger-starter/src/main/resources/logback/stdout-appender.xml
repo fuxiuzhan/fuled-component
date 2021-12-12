@@ -1,0 +1,11 @@
+<included>
+
+    <!--stdout file -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>${STDOUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+</included>

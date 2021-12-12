@@ -1,0 +1,58 @@
+<included>
+    <!--root file -->
+    <appender name="BASE-FILE-CLIENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/client.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/client.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>${MAX_INDEX}</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+        </triggeringPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "type": "%X{type:-}",
+                        "class_method": "%X{class_method:-}",
+                        "service": "${springAppName:-}",
+                        "appId": "%X{n-d-service-app-id}",
+                        "serviceId" : "%X{n-d-service-id}",
+                        "serviceVersion" : "%X{n-d-service-version}",
+                        "serviceRegion" : "%X{n-d-service-region}",
+                        "serviceEnv" : "%X{n-d-service-env}",
+                        "swTraceId": "%X{trace-id}",
+                        "host_address": "%hostAddress",
+                        "request_url":"%X{request_url:-}",
+                        "header_param":"%X{header_param:-}",
+                        "input_param":"%X{input_param:-}",
+                        "output_param":"%X{output_param:-}",
+                        "code_val":"%X{code_val:-}",
+                        "success":"%X{success:-}",
+                        "elapsed_time":"%X{elapsed_time:-}",
+                        "trace_id": "%X{trace_id:-}",
+                        "time": "%d{yyyy-MM-dd HH:mm:ss.SSSZ}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- 异步输出 -->
+    <appender name="ASYNC-CLIENT" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>256</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="BASE-FILE-CLIENT"/>
+    </appender>
+
+    <logger name="CLIENT-LOG" additivity="false" level="INFO">
+        <appender-ref ref="ASYNC-CLIENT"/>
+    </logger>
+
+</included>

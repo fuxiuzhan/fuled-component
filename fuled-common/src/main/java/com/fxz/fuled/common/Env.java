@@ -1,4 +1,4 @@
-package com.fxz.fuled.config.starter.enums;
+package com.fxz.fuled.common;
 
 public enum Env {
     DEV("192.168.10.201", 8848),

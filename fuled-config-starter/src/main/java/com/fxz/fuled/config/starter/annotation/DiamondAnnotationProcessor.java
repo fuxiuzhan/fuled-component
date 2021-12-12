@@ -17,13 +17,13 @@
 package com.fxz.fuled.config.starter.annotation;
 
 
+import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChangeEvent;
 import com.fxz.fuled.config.starter.spring.ConfigChangeListener;
 import com.fxz.fuled.config.starter.spring.property.PlaceholderHelper;
 import com.fxz.fuled.config.starter.spring.property.SpringValueRegistry;
-import com.fxz.fuled.config.starter.spring.util.ConfigUtil;
 import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -49,10 +49,10 @@ import java.util.Set;
  *
  * @author Jason Song(song_s@ctrip.com)
  */
-public class DimaondAnnotationProcessor extends DimaondProcessor implements BeanFactoryAware,
+public class DiamondAnnotationProcessor extends DiamondProcessor implements BeanFactoryAware,
         EnvironmentAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(DimaondAnnotationProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiamondAnnotationProcessor.class);
     private static final Gson GSON = new Gson();
 
     private final PlaceholderHelper placeholderHelper;
@@ -65,23 +65,23 @@ public class DimaondAnnotationProcessor extends DimaondProcessor implements Bean
 
     private Environment environment;
 
-    public DimaondAnnotationProcessor() {
+    public DiamondAnnotationProcessor() {
         placeholderHelper = SpringInjector.getInstance(PlaceholderHelper.class);
         springValueRegistry = SpringInjector.getInstance(SpringValueRegistry.class);
     }
 
     @Override
     protected void processField(Object bean, String beanName, Field field) {
-        this.processApolloConfig(bean, field);
+        this.processDiamondConfig(bean, field);
     }
 
     @Override
     protected void processMethod(final Object bean, String beanName, final Method method) {
-        this.processApolloConfigChangeListener(bean, method);
+        this.processDiamondConfigChangeListener(bean, method);
     }
 
-    private void processApolloConfig(Object bean, Field field) {
-        DimaondConfig annotation = AnnotationUtils.getAnnotation(field, DimaondConfig.class);
+    private void processDiamondConfig(Object bean, Field field) {
+        DiamondConfig annotation = AnnotationUtils.getAnnotation(field, DiamondConfig.class);
         if (annotation == null) {
             return;
         }
@@ -97,7 +97,7 @@ public class DimaondAnnotationProcessor extends DimaondProcessor implements Bean
         ReflectionUtils.setField(field, bean, config);
     }
 
-    private void processApolloConfigChangeListener(final Object bean, final Method method) {
+    private void processDiamondConfigChangeListener(final Object bean, final Method method) {
         DimaondConfigChangeListener annotation = AnnotationUtils
                 .findAnnotation(method, DimaondConfigChangeListener.class);
         if (annotation == null) {

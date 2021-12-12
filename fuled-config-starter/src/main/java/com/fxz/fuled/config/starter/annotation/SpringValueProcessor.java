@@ -46,7 +46,7 @@ import java.util.Set;
  * @author github.com/zhegexiaohuozi  seimimaster@gmail.com
  * @since 2017/12/20.
  */
-public class SpringValueProcessor extends DimaondProcessor implements BeanFactoryPostProcessor, BeanFactoryAware {
+public class SpringValueProcessor extends DiamondProcessor implements BeanFactoryPostProcessor, BeanFactoryAware {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 
