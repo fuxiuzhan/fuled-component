@@ -7,14 +7,17 @@ import com.fxz.fuled.common.converter.ValueConverter;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChange;
+import com.fxz.fuled.config.starter.nacos.property.NacosPropertySourceRepository;
 import com.fxz.fuled.config.starter.spring.util.ApplicationContextUtil;
 import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.endpoint.event.RefreshEvent;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author fuled
@@ -35,6 +38,7 @@ public class NacosListener extends AbstractConfigChangeListener {
         log.info("config changes ->{}", configChangeEvent.getChangeItems().toArray());
         ValueConverter converter = ApplicationContextUtil.getConfigurableApplicationContext().getBean(ValueConverter.class);
         Map<String, ConfigChange> changeMap = new HashMap<>();
+        Set<String> changeSet = new HashSet<>();
         configChangeEvent.getChangeItems().forEach(c -> {
             String newValue = c.getNewValue();
             if (converter != null) {
@@ -47,11 +51,13 @@ public class NacosListener extends AbstractConfigChangeListener {
             log.info("config changes key->{}, newValue->{},oldValue->{}", c.getKey(), c.getNewValue(), c.getOldValue());
             //使用overlay方式，类型修改为map，properties无法增加value=null的情况
             SpringInjector.envMap.put(c.getKey(), newValue);
+            NacosPropertySourceRepository.updateExistsValue(c.getKey(), newValue, c.getType());
+            changeSet.add(c.getKey());
         });
         Config config = ConfigService.getConfig(ConfigUtil.getAppId());
         config.fireConfigChange(group, changeMap);
         com.fxz.fuled.config.starter.model.ConfigChangeEvent event = new com.fxz.fuled.config.starter.model.ConfigChangeEvent(group, changeMap);
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(event);
-        ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new RefreshEvent(this, null, "refresh properties"));
+        ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new EnvironmentChangeEvent(changeSet));
     }
 }

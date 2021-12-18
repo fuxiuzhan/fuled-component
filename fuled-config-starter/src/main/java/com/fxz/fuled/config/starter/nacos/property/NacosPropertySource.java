@@ -32,6 +32,7 @@ public class NacosPropertySource extends MapPropertySource {
      */
     private final boolean isRefreshable;
 
+    private Map<String, Object> source;
     NacosPropertySource(String group, String dataId, Map<String, Object> source,
                         Date timestamp, boolean isRefreshable) {
         super(String.join(NacosConfigProperties.COMMAS, dataId, group), source);
@@ -39,6 +40,7 @@ public class NacosPropertySource extends MapPropertySource {
         this.dataId = dataId;
         this.timestamp = timestamp;
         this.isRefreshable = isRefreshable;
+        this.source= source;
     }
 
     NacosPropertySource(List<PropertySource<?>> propertySources, String group,
@@ -83,4 +85,8 @@ public class NacosPropertySource extends MapPropertySource {
         return isRefreshable;
     }
 
+    @Override
+    public Map<String, Object> getSource() {
+        return source;
+    }
 }
