@@ -1,6 +1,7 @@
 package com.fxz.component.fuled.banner;
 
 
+import com.fxz.fuled.common.version.ComponentVersion;
 import com.nepxion.banner.Description;
 import com.nepxion.banner.DescriptionBanner;
 import com.nepxion.banner.LogoBanner;
@@ -19,10 +20,12 @@ public class BannerApplicationContextInitializer implements ApplicationContextIn
     public BannerApplicationContextInitializer() {
     }
 
+    @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         LogoBanner logoBanner = new LogoBanner(BannerApplicationContextInitializer.class, "/logo.txt", "Welcome to FuledFrameWork", 1, 5, new Color[]{Color.red, Color.green, Color.cyan, Color.blue, Color.yellow}, true);
         this.show(logoBanner);
         System.setProperty("nepxion.banner.shown", "false");
+        applicationContext.getBeanFactory().registerSingleton("fuled-banner", new ComponentVersion("fuled-banner.version", "1.0.0.waterdrop", "fuled-banner-component"));
     }
 
     private void show(LogoBanner logoBanner) {

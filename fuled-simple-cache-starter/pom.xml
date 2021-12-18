@@ -50,5 +50,10 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.75</version>
         </dependency>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-common</artifactId>
+            <version>1.0.0.WaterDrop</version>
+        </dependency>
     </dependencies>
 </project>
