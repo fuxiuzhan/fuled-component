@@ -5,13 +5,16 @@ import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.registry.NacosServiceRegistry;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.fxz.fuled.common.version.ComponentVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
@@ -27,9 +30,12 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(NacosServiceRegistry.class);
 
-    public NacosServiceRegistryWrapper(NacosDiscoveryProperties nacosDiscoveryProperties) {
+    private List<ComponentVersion> componentVersions;
+
+    public NacosServiceRegistryWrapper(NacosDiscoveryProperties nacosDiscoveryProperties, List<ComponentVersion> componentVersions) {
         super(nacosDiscoveryProperties);
         this.nacosDiscoveryProperties = nacosDiscoveryProperties;
+        this.componentVersions = componentVersions;
     }
 
 
@@ -76,9 +82,9 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
         instance.setWeight(nacosDiscoveryProperties.getWeight());
         instance.setClusterName(nacosDiscoveryProperties.getClusterName());
         instance.setEnabled(nacosDiscoveryProperties.isInstanceEnabled());
-        Map<String, String> meta = new HashMap<String, String>();
+        Map<String, String> meta = new LinkedHashMap<>();
         meta.putAll(registration.getMetadata());
-        meta.putAll(System.getenv());
+//        meta.putAll(System.getenv());
         appendVersionInfo(meta);
         instance.setEphemeral(nacosDiscoveryProperties.isEphemeral());
         instance.setMetadata(meta);
@@ -86,7 +92,27 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
     }
 
     private void appendVersionInfo(Map meta) {
-        meta.put("Fuled-Framework-Version", "1.1.0.WaterDrop");
+        if (!CollectionUtils.isEmpty(componentVersions)) {
+            componentVersions.forEach(c -> {
+                meta.put(c.getName(), c.getVersion() + "," + c.getDesc());
+            });
+        }
+        meta.put("env", System.getProperties().get("env"));
+        meta.put("os.name", System.getProperties().get("os.name"));
+        meta.put("os.version", System.getProperties().get("os.version"));
+        meta.put("cpus", Runtime.getRuntime().availableProcessors());
+        meta.put("user.name", System.getProperties().get("user.name"));
+        meta.put("PID", System.getProperties().get("PID"));
+        meta.put("user.home", System.getProperties().get("user.home"));
+        meta.put("os.arch", System.getProperties().get("os.arch"));
+        meta.put("@appId", System.getProperties().get("@appId"));
+        meta.put("java.runtime.version", System.getProperties().get("java.runtime.version"));
+        meta.put("java.version", System.getProperties().get("java.version"));
+        meta.put("spring.application.name", System.getProperties().get("spring.application.name"));
+        meta.put("java.vm.name", System.getProperties().get("java.vm.name"));
+        meta.put("line.separator", System.getProperties().get("line.separator"));
+        meta.put("user.timezone", System.getProperties().get("user.timezone"));
+
     }
 
 
