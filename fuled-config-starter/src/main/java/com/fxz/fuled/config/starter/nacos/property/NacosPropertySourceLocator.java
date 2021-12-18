@@ -79,9 +79,9 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
         loadExtConfiguration(composite);
         loadApplicationConfiguration(composite, dataIdPrefix, nacosConfigProperties, env);
         loadApplicationConfiguration(composite, NacosConfigProperties.DEFAULT_PROPERTIES.split("\\.")[0], nacosConfigProperties, env);
-        HashMap hashMap=new HashMap();
-        MapPropertySource mapPropertySource=new MapPropertySource("nacos-rewritable-properties",hashMap);
-        SpringInjector.envMap=hashMap;
+        HashMap hashMap = new HashMap<String, Object>();
+        MapPropertySource mapPropertySource = new MapPropertySource(NacosPropertySourceRepository.WRITEABLE_PROPERTIES, hashMap);
+        SpringInjector.envMap = hashMap;
         composite.addFirstPropertySource(mapPropertySource);
         return composite;
     }
