@@ -8,10 +8,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import java.util.Properties;
+import java.util.HashMap;
 
 public class SpringInjector {
-    public static Properties properties;
+    public static HashMap envMap;
     private static volatile Injector s_injector;
     private static final Object lock = new Object();
 

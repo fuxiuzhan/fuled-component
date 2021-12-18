@@ -12,13 +12,13 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @author fxz
@@ -79,10 +79,10 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
         loadExtConfiguration(composite);
         loadApplicationConfiguration(composite, dataIdPrefix, nacosConfigProperties, env);
         loadApplicationConfiguration(composite, NacosConfigProperties.DEFAULT_PROPERTIES.split("\\.")[0], nacosConfigProperties, env);
-        Properties properties = new Properties();
-        PropertiesPropertySource propertiesPropertySource = new PropertiesPropertySource("nacos-rewritable-properties", properties);
-        SpringInjector.properties = properties;
-        composite.addFirstPropertySource(propertiesPropertySource);
+        HashMap hashMap=new HashMap();
+        MapPropertySource mapPropertySource=new MapPropertySource("nacos-rewritable-properties",hashMap);
+        SpringInjector.envMap=hashMap;
+        composite.addFirstPropertySource(mapPropertySource);
         return composite;
     }
 

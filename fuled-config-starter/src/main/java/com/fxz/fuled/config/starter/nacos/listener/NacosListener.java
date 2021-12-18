@@ -45,7 +45,8 @@ public class NacosListener extends AbstractConfigChangeListener {
             ConfigChange configChange = new ConfigChange(group, ConfigUtil.getAppId(), oldValue, newValue, c.getType());
             changeMap.put(c.getKey(), configChange);
             log.info("config changes key->{}, newValue->{},oldValue->{}", c.getKey(), c.getNewValue(), c.getOldValue());
-            SpringInjector.properties.put(c.getKey(), newValue);
+            //使用overlay方式，类型修改为map，properties无法增加value=null的情况
+            SpringInjector.envMap.put(c.getKey(), newValue);
         });
         Config config = ConfigService.getConfig(ConfigUtil.getAppId());
         config.fireConfigChange(group, changeMap);
