@@ -2,6 +2,7 @@ package com.fxz.fuled.simple.cache;//package com.fxz.dnscore.aspect;
 
 
 import com.alibaba.fastjson.JSON;
+import com.fxz.fuled.common.version.ComponentVersion;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
@@ -33,6 +35,11 @@ public class CacheAspect {
 
     @Value("${method.cache.enabled:true}")
     private boolean cacheEnabled;
+
+    @Bean("SimpleCacheVersion")
+    public ComponentVersion configVersion() {
+        return new ComponentVersion("fuled-simple-cache.version", "1.0.0.waterdrop", "fuled-simple-cache-component");
+    }
 
     private static final String METHOD_CACHE_PREFIX = System.getProperty("app.id", "default");
     @Autowired(required = false)

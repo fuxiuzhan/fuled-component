@@ -2,6 +2,7 @@ package com.fxz.fuled.config.starter.nacos.config;
 
 import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.common.Env;
+import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.config.starter.nacos.NacosConfigManager;
 import com.fxz.fuled.config.starter.nacos.NacosConfigProperties;
 import com.fxz.fuled.config.starter.nacos.property.NacosPropertySourceLocator;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
-public class NacosConfigBootstrapConfiguration  {
+public class NacosConfigBootstrapConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public NacosConfigProperties nacosConfigProperties() {
@@ -36,5 +37,10 @@ public class NacosConfigBootstrapConfiguration  {
     public NacosPropertySourceLocator nacosPropertySourceLocator(
             NacosConfigManager nacosConfigManager) {
         return new NacosPropertySourceLocator(nacosConfigManager);
+    }
+
+    @Bean("diamondVersion")
+    public ComponentVersion configVersion() {
+        return new ComponentVersion("fuled-diamond-config.version", "1.1.0.waterdrop", "fuled-config-component");
     }
 }

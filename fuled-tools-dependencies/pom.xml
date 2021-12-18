@@ -15,7 +15,25 @@
     <properties>
         <java.version>1.8</java.version>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-common</artifactId>
+            <version>1.0.0.WaterDrop</version>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
     </dependencyManagement>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

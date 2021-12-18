@@ -7,6 +7,7 @@ import com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.alibaba.cloud.nacos.registry.NacosRegistrationCustomizer;
 import com.alibaba.cloud.nacos.registry.NacosServiceRegistry;
+import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -33,8 +34,8 @@ public class NacosServiceRegistryAutoConfigurationWrapper {
 
     @Bean
     public NacosServiceRegistry nacosServiceRegistry(
-            NacosDiscoveryProperties nacosDiscoveryProperties) {
-        return new NacosServiceRegistryWrapper(nacosDiscoveryProperties);
+            NacosDiscoveryProperties nacosDiscoveryProperties, List<ComponentVersion> componentVersions) {
+        return new NacosServiceRegistryWrapper(nacosDiscoveryProperties, componentVersions);
     }
 
     @Bean

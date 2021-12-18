@@ -2,6 +2,7 @@ package com.fxz.fuled.logger.starter.aspect;
 
 
 import com.alibaba.fastjson.JSON;
+import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.logger.starter.annotation.Monitor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,6 +10,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,11 +27,15 @@ public class MethodMonitorAspect {
     @Value("${method.monitor.enabled:false}")
     private boolean monitorEnabled;
 
+    @Bean("LoggerVersion")
+    public ComponentVersion configVersion() {
+        return new ComponentVersion("fuled-logger.version", "1.0.0.waterdrop", "fuled-logger-component");
+    }
+
     @Around("@annotation(com.fxz.fuled.logger.starter.annotation.Monitor)")
     public Object monitorAnno(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         return process(proceedingJoinPoint, true);
     }
-
 
     private Object process(ProceedingJoinPoint proceedingJoinPoint, boolean isAnno) throws Throwable {
         if (!monitorEnabled && !isAnno) {
