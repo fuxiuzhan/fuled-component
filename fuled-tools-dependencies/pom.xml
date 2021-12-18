@@ -14,9 +14,6 @@
     <description>fuled-tools-dependencies</description>
     <properties>
         <java.version>1.8</java.version>
-        <swagger.version>2.7.0</swagger.version>
-        <mybatis.starter.version>3.0.1</mybatis.starter.version>
-        <mysql.connector.vserion>5.1.42</mysql.connector.vserion>
     </properties>
     <dependencyManagement>
     </dependencyManagement>
