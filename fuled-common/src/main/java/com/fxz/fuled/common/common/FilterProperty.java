@@ -1,10 +1,13 @@
 package com.fxz.fuled.common.common;
 
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
  * <p>
  * 管理Filter，包括类型，加载方式，加载顺序等
+ *
  * @author fxz
  */
 @Target({ElementType.TYPE})
@@ -15,7 +18,8 @@ public @interface FilterProperty {
 
     int order() default 0;
 
-    FilterType type() default FilterType.PRE;
+    @AliasFor("name")
+    String filterName() default "";
 
     boolean enabled() default true;
 }

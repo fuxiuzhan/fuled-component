@@ -2,14 +2,16 @@ package com.fxz.fuled.common.chain;
 
 
 import com.fxz.fuled.common.common.FilterProperty;
-import com.fxz.fuled.common.common.FilterType;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -22,10 +24,7 @@ public class FilterConfig {
 
     @Autowired
     List<Filter> allFilters;
-
-    private List<Filter> preFilters = new ArrayList<>();
-    private List<Filter> postFilters = new ArrayList<>();
-    private List<Filter> storageFilters = new ArrayList<>();
+    Map<String, List<Filter>> filterGroup = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -33,41 +32,29 @@ public class FilterConfig {
             for (int i = 0; i < allFilters.size(); i++) {
                 Filter filter = allFilters.get(i);
                 FilterProperty annotation = filter.getClass().getAnnotation(FilterProperty.class);
-                if (annotation != null && annotation.enabled()) {
-                    log.info("Filter:name->{},order->{},type->{} added...", annotation.name(), annotation.order(), annotation.type());
-                    switch (annotation.type()) {
-                        case PRE:
-                            preFilters.add(filter);
-                            break;
-                        case POST:
-                            postFilters.add(filter);
-                            break;
-                        case STORAGE:
-                            storageFilters.add(filter);
-                            break;
+                if (annotation != null && annotation.enabled() && StringUtils.hasText(annotation.name())) {
+                    log.info("Filter:name->{},order->{} added...", annotation.name(), annotation.order());
+                    List<Filter> filterList = filterGroup.get(annotation.filterName());
+                    if (filterList == null) {
+                        filterList = new ArrayList<>();
                     }
+                    filterList.add(filter);
+                    filterGroup.put(annotation.filterName(), filterList);
                 } else {
-                    log.warn("filter->{},unknow filter type ,skiped....", new Gson().toJson(filter));
+                    log.warn("filter->{},unknown filter type ,skipped....", new Gson().toJson(filter));
                 }
             }
         }
     }
 
-    public List<Filter> getFiltersByType(FilterType filterType) {
-        if (filterType != null) {
-            switch (filterType) {
-                case PRE:
-                    return sort(preFilters);
-                case POST:
-                    return sort(postFilters);
-                case STORAGE:
-                    return sort(storageFilters);
-            }
+    public List<Filter> getFiltersByName(String filterName) {
+        if (StringUtils.hasText(filterName)) {
+            return sort(filterGroup.get(filterName));
         }
         return new ArrayList<>();
     }
 
-    public List<Filter> sort(List<Filter> filters) {
+    private List<Filter> sort(List<Filter> filters) {
         if (filters == null || filters.size() == 0) {
             return new ArrayList<>();
         }

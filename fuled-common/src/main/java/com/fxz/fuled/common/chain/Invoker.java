@@ -3,13 +3,15 @@ package com.fxz.fuled.common.chain;
 /**
  * 责任链invoker，组装过滤链使用
  *
+ * @author fxz
  * @param <T>
  */
 public interface Invoker<T> {
     /**
-     * 调用下一个invoker
-     *
+     * invoke next
      * @param t
+     * @param <R>
+     * @return
      */
     <R> R invoke(T t);
 }

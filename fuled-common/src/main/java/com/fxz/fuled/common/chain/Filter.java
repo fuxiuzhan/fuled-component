@@ -11,5 +11,5 @@ public interface Filter<T> {
      * @param t
      * @param invoker
      */
-    <R> R filte(T t, Invoker invoker);
+    <R> R filter(T t, Invoker invoker);
 }

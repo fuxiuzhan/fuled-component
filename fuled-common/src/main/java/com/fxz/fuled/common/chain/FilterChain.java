@@ -6,7 +6,7 @@ import java.util.List;
  * <p>
  * 过滤链构建接口
  * <p>
- * 流程为  importor.handle->merticRunner.handle->preHeadInvoker.invoke->reader.read->postHeadInvoker.invoke->exporter.exoprt->storageHeadInvoker->exporter.doExport
+ * example:  importer.handle->metricRunner.handle->preInvoker.invoke->reader.read->postInvoker.invoke->exporter.export->storageHeadInvoker->exporter.doExport
  * @author fxz
  */
 public interface FilterChain<T> {
@@ -19,6 +19,5 @@ public interface FilterChain<T> {
      */
 
     Invoker buildInvokerChain(Invoker invoker, List<Filter> filters);
-
 
 }
