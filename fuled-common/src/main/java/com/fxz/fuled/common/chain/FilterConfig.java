@@ -32,14 +32,14 @@ public class FilterConfig {
             for (int i = 0; i < allFilters.size(); i++) {
                 Filter filter = allFilters.get(i);
                 FilterProperty annotation = filter.getClass().getAnnotation(FilterProperty.class);
-                if (annotation != null && annotation.enabled() && StringUtils.hasText(annotation.name())) {
-                    log.info("Filter:name->{},order->{} added...", annotation.name(), annotation.order());
-                    List<Filter> filterList = filterGroup.get(annotation.filterName());
+                if (annotation != null && annotation.enabled() && StringUtils.hasText(annotation.filterGroup())) {
+                    log.info("Filter:name->{},group->{},order->{} added...", annotation.name(), annotation.filterGroup(), annotation.order());
+                    List<Filter> filterList = filterGroup.get(annotation.filterGroup());
                     if (filterList == null) {
                         filterList = new ArrayList<>();
                     }
                     filterList.add(filter);
-                    filterGroup.put(annotation.filterName(), filterList);
+                    filterGroup.put(annotation.filterGroup(), filterList);
                 } else {
                     log.warn("filter->{},unknown filter type ,skipped....", new Gson().toJson(filter));
                 }

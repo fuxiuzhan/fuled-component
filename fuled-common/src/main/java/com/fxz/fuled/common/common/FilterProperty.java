@@ -1,7 +1,5 @@
 package com.fxz.fuled.common.common;
 
-import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.*;
 
 /**
@@ -14,12 +12,21 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FilterProperty {
+    /**
+     * name example: DNS_PRE_BLACK_FILTER
+     *
+     * @return
+     */
     String name() default "";
 
     int order() default 0;
 
-    @AliasFor("name")
-    String filterName() default "";
+    /**
+     * group example :PRE,POST..
+     *
+     * @return
+     */
+    String filterGroup() default "";
 
     boolean enabled() default true;
 }

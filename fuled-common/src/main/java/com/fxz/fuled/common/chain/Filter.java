@@ -8,8 +8,11 @@ package com.fxz.fuled.common.chain;
  */
 public interface Filter<T> {
     /**
+     * filter context
      * @param t
      * @param invoker
+     * @param <R>
+     * @return
      */
     <R> R filter(T t, Invoker invoker);
 }
