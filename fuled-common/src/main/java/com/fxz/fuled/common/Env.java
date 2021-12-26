@@ -5,7 +5,7 @@ public enum Env {
     TEST("test.nacos.fuled.xyz", 8848),
     PRE("pre.nacos.fuled.xyz", 8848),
     GRAY("gray.nacos.fuled.xyz", 8848),
-    PRD("81.68.198.67", 8848);
+    PRD("prd.nacos.fuled.xyz", 8848);
     private String configServer;
     private int port;
 
