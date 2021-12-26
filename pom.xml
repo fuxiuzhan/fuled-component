@@ -32,7 +32,7 @@
     <distributionManagement>
         <repository>
             <id>releases</id>
-            <url>http://nexus.fuled.xyz:8081/repository/maven_2rd/</url>
+            <url>http://nexus.fuled.xyz:8081/repository/maven_2nd/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>

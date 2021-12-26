@@ -101,6 +101,8 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
         meta.put("os.name", System.getProperties().get("os.name"));
         meta.put("os.version", System.getProperties().get("os.version"));
         meta.put("cpus", Runtime.getRuntime().availableProcessors());
+        meta.put("OS",System.getenv("OS"));
+        meta.put("COMPUTERNAME",System.getenv("COMPUTERNAME"));
         meta.put("user.name", System.getProperties().get("user.name"));
         meta.put("PID", System.getProperties().get("PID"));
         meta.put("user.home", System.getProperties().get("user.home"));
