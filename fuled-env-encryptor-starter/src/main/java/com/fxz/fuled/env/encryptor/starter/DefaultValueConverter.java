@@ -1,8 +1,8 @@
 package com.fxz.fuled.env.encryptor.starter;
 
-import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.common.Env;
 import com.fxz.fuled.common.converter.ValueConverter;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 

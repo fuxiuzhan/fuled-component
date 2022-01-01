@@ -1,7 +1,7 @@
 package com.fxz.fuled.config.starter.nacos.config;
 
-import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.common.Env;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.config.starter.nacos.NacosConfigManager;
 import com.fxz.fuled.config.starter.nacos.NacosConfigProperties;

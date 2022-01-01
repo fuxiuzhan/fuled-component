@@ -2,8 +2,8 @@ package com.fxz.fuled.config.starter.nacos.listener;
 
 import com.alibaba.nacos.api.config.ConfigChangeEvent;
 import com.alibaba.nacos.client.config.listener.impl.AbstractConfigChangeListener;
-import com.fxz.fuled.common.ConfigUtil;
 import com.fxz.fuled.common.converter.ValueConverter;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChange;
