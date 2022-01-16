@@ -47,9 +47,9 @@ public class FilterConfig {
         }
     }
 
-    public List<Filter> getFiltersByName(String filterName) {
-        if (StringUtils.hasText(filterName)) {
-            return sort(filterGroup.get(filterName));
+    public List<Filter> getFiltersByName(String groupName) {
+        if (StringUtils.hasText(groupName)) {
+            return sort(filterGroup.get(groupName));
         }
         return new ArrayList<>();
     }

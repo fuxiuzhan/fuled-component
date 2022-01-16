@@ -6,7 +6,7 @@ package com.fxz.fuled.common.chain;
  * @param <T>
  * @author fxz
  */
-public interface Filter<T> {
+public  interface Filter<T> {
     /**
      * filter context
      * @param t
