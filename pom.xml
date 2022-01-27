@@ -18,6 +18,7 @@
     </properties>
     <modules>
         <module>fuled-banner</module>
+        <module>fuled-cat-starter</module>
         <module>fuled-config-starter</module>
         <module>fuled-simple-cache-starter</module>
         <module>fuled-threadpool-monitor-starter</module>
