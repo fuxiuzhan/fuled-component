@@ -3,13 +3,16 @@ package com.fxz.component.fuled.cat.starter.configuration;
 import com.dianping.cat.servlet.CatFilter;
 import com.fxz.component.fuled.cat.starter.component.http.HttpCatAfterFilter;
 import com.fxz.component.fuled.cat.starter.component.http.HttpCatCrossFilter;
+import com.fxz.component.fuled.cat.starter.mark.Mark;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConditionalOnBean(Mark.MarkClass.class)
 public class CatFilterConfiguration {
     @Value("#{'${cat.filter.url-patterns:/*,}'.replaceAll('[ \\n\\t]', '').split(',', 0)}")
     private String[] catFilterUrlPatterns;

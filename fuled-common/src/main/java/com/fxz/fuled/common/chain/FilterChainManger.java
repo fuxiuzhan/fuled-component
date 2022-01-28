@@ -6,9 +6,10 @@ import java.util.List;
 /**
  * <p>
  * 流程详见上级接口说明
+ *
  * @author fxz
  */
-public class FilterChainManger<T> implements FilterChain<T> {
+public class FilterChainManger implements FilterChain {
     @Override
     public Invoker buildInvokerChain(Invoker invoker, List<Filter> filters) {
         Invoker head = invoker;
@@ -16,12 +17,7 @@ public class FilterChainManger<T> implements FilterChain<T> {
             for (int i = filters.size() - 1; i >= 0; i--) {
                 Filter filter = filters.get(i);
                 Invoker next = head;
-                head = new Invoker() {
-                    @Override
-                    public Object invoke(Object o) {
-                        return filter.filter(o, next);
-                    }
-                };
+                head = o -> filter.filter(o, next);
             }
         }
         return head;

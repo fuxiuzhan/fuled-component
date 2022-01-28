@@ -3,8 +3,10 @@ package com.fxz.component.fuled.cat.starter.configuration;
 import com.fxz.component.fuled.cat.starter.annotation.CatTracing;
 import com.fxz.component.fuled.cat.starter.component.feign.CatFeignAdvisor;
 import com.fxz.component.fuled.cat.starter.custom.CatCustomAdvisor;
+import com.fxz.component.fuled.cat.starter.mark.Mark;
 import com.fxz.component.fuled.cat.starter.util.CatAspectUtil;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
@@ -20,8 +22,8 @@ import org.springframework.stereotype.Service;
  */
 @Configuration
 @Import({CatAspectUtil.class})
-@EnableAspectJAutoProxy(proxyTargetClass = true
-)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@ConditionalOnBean(Mark.MarkClass.class)
 public class CatAspectConfiguration {
 
     @Bean({"CatCustomAdvisorService"})

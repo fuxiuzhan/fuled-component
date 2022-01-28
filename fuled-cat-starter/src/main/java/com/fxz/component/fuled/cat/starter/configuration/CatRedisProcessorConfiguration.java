@@ -2,6 +2,7 @@ package com.fxz.component.fuled.cat.starter.configuration;
 
 import com.fxz.component.fuled.cat.starter.component.redis.RedisTemplateCatPlus;
 import com.fxz.component.fuled.cat.starter.component.redis.StringRedisTemplateCatPlus;
+import com.fxz.component.fuled.cat.starter.mark.Mark;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,6 +20,7 @@ import org.springframework.util.StringUtils;
  * @author fxz
  */
 @Configuration
+@ConditionalOnBean(Mark.MarkClass.class)
 public class CatRedisProcessorConfiguration implements BeanPostProcessor {
     @Autowired
     private DefaultListableBeanFactory beanFactory;
