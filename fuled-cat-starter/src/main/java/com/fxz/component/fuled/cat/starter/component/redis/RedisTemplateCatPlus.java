@@ -6,9 +6,6 @@ import org.springframework.data.redis.core.*;
  * @author fxz
  */
 public class RedisTemplateCatPlus<K, V> extends RedisTemplate<K, V> {
-    public RedisTemplateCatPlus() {
-    }
-
     @Override
     public <HK, HV> HashOperations<K, HK, HV> opsForHash() {
         return (HashOperations) (new CatCglibProxy()).getInstance(super.opsForHash(), new Class[]{RedisTemplate.class}, new Object[]{this});

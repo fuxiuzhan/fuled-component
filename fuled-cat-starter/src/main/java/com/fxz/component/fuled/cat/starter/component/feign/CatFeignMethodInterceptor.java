@@ -11,10 +11,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+/**
+ * @author fuled
+ */
 public class CatFeignMethodInterceptor implements MethodInterceptor {
-    public CatFeignMethodInterceptor() {
-    }
-
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
@@ -27,25 +27,23 @@ public class CatFeignMethodInterceptor implements MethodInterceptor {
             if (ignoreCatTracing == null) {
                 ignoreCatTracing = (IgnoreCatTracing) clazz.getAnnotation(IgnoreCatTracing.class);
             }
-
             if (!Objects.isNull(feignClient) && !Objects.nonNull(ignoreCatTracing)) {
                 Transaction transaction = Cat.newTransaction("RemoteCall", clazz.getSimpleName() + "." + method.getName());
                 CatUtils.createConsumerCross(transaction, feignClient.value(), "", "");
                 CatUtils.createMessageTree();
-
-                Object var8;
+                Object result;
                 try {
                     Object proceed = invocation.proceed();
                     transaction.setStatus("0");
-                    var8 = proceed;
-                } catch (Throwable var12) {
-                    transaction.setStatus(var12);
-                    throw var12;
+                    result = proceed;
+                } catch (Throwable e) {
+                    transaction.setStatus(e);
+                    throw e;
                 } finally {
                     transaction.complete();
                 }
 
-                return var8;
+                return result;
             } else {
                 return invocation.proceed();
             }

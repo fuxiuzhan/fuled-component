@@ -19,9 +19,6 @@ import java.io.IOException;
 public class HttpCatCrossFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(HttpCatCrossFilter.class);
 
-    public HttpCatCrossFilter() {
-    }
-
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
@@ -31,7 +28,6 @@ public class HttpCatCrossFilter implements Filter {
         String child = request.getHeader("_catChildMessageId");
         if (!StringUtils.isEmpty(root) && !StringUtils.isEmpty(parent) && !StringUtils.isEmpty(child)) {
             Transaction t = Cat.newTransaction("ServiceProvider", requestURI);
-
             try {
                 Cat.Context context = new CatPropertyContext();
                 context.addProperty("_catRootMessageId", root);
@@ -41,13 +37,13 @@ public class HttpCatCrossFilter implements Filter {
                 CatUtils.createProviderCross(request, t);
                 filterChain.doFilter(req, resp);
                 t.setStatus("0");
-            } catch (Exception var15) {
-                log.warn("------ Get cat msgtree error : ", var15);
+            } catch (Exception e) {
+                log.warn("------ Get cat msgtree error : ", e);
                 Event event = Cat.newEvent("HTTP_REST_CAT_ERROR", requestURI);
-                event.setStatus(var15);
+                event.setStatus(e);
                 CatUtils.completeEvent(event);
                 t.addChild(event);
-                t.setStatus(var15.getClass().getSimpleName());
+                t.setStatus(e.getClass().getSimpleName());
             } finally {
                 t.complete();
             }
@@ -55,7 +51,6 @@ public class HttpCatCrossFilter implements Filter {
             Cat.getManager().setTraceMode(true);
             filterChain.doFilter(req, resp);
         }
-
     }
 
     @Override

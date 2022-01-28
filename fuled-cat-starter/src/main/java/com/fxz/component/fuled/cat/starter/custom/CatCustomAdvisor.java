@@ -7,9 +7,12 @@ import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * @author fuled
+ */
 public class CatCustomAdvisor extends DefaultPointcutAdvisor {
     public CatCustomAdvisor(Class<? extends Annotation> classAnnotationType) {
-        this(classAnnotationType, (Class)null);
+        this(classAnnotationType, null);
     }
 
     public CatCustomAdvisor(Class<? extends Annotation> classAnnotationType, Class<? extends Annotation> methodAnnotationType) {

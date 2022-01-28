@@ -9,9 +9,10 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * @author fuled
+ */
 public class HttpCatAfterFilter implements Filter {
-    public HttpCatAfterFilter() {
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -27,19 +28,16 @@ public class HttpCatAfterFilter implements Filter {
             if (!StringUtils.isEmpty(catId)) {
                 MDC.put("X-CAT-ID", catId);
             }
-
             if (!StringUtils.isEmpty(catRootId)) {
                 MDC.put("X-CAT-ROOT-ID", catRootId);
             } else if (!StringUtils.isEmpty(catId)) {
                 MDC.put("X-CAT-ROOT-ID", catId);
             }
-
             if (!StringUtils.isEmpty(catParentId)) {
                 MDC.put("X-CAT-PARENT-ID", catParentId);
             } else if (!StringUtils.isEmpty(catId)) {
                 MDC.put("X-CAT-PARENT-ID", catId);
             }
-
             HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
             httpServletResponse.setHeader("X-CAT-SERVER", "");
             filterChain.doFilter(servletRequest, httpServletResponse);

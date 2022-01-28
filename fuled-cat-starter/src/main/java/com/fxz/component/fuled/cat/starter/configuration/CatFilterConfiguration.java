@@ -14,9 +14,6 @@ public class CatFilterConfiguration {
     @Value("#{'${cat.filter.url-patterns:/*,}'.replaceAll('[ \\n\\t]', '').split(',', 0)}")
     private String[] catFilterUrlPatterns;
 
-    public CatFilterConfiguration() {
-    }
-
     @Bean
     public FilterRegistrationBean catRemoteCallFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -34,15 +31,13 @@ public class CatFilterConfiguration {
         CatFilter filter = new CatFilter();
         registration.setFilter(filter);
         registration.addUrlPatterns(this.catFilterUrlPatterns);
-        registration.setName("cat-hthttptp");
+        registration.setName("cat-http");
         registration.setOrder(1);
         return registration;
     }
 
     @Bean
-    @ConditionalOnClass(
-            name = {"org.slf4j.MDC"}
-    )
+    @ConditionalOnClass(name = {"org.slf4j.MDC"})
     public FilterRegistrationBean catAfterFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         HttpCatAfterFilter filter = new HttpCatAfterFilter();

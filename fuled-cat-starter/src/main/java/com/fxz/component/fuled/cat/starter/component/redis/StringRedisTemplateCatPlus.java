@@ -9,13 +9,12 @@ import org.springframework.data.redis.core.*;
  * @author fxz
  */
 public class StringRedisTemplateCatPlus extends StringRedisTemplate {
-    public StringRedisTemplateCatPlus() {
-    }
-
     public StringRedisTemplateCatPlus(RedisConnectionFactory connectionFactory) {
-        this();
         this.setConnectionFactory(connectionFactory);
         this.afterPropertiesSet();
+    }
+
+    public StringRedisTemplateCatPlus() {
     }
 
     @Override

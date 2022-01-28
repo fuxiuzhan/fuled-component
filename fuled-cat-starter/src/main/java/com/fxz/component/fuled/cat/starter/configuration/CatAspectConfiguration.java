@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author fuled
+ */
 @Configuration
 @Import({CatAspectUtil.class})
-@EnableAspectJAutoProxy(
-        proxyTargetClass = true
+@EnableAspectJAutoProxy(proxyTargetClass = true
 )
 public class CatAspectConfiguration {
-    public CatAspectConfiguration() {
-    }
 
     @Bean({"CatCustomAdvisorService"})
     public CatCustomAdvisor catCustomAdvisorService() {
@@ -49,9 +49,7 @@ public class CatAspectConfiguration {
     }
 
     @Bean
-    @ConditionalOnClass(
-            name = {"org.springframework.cloud.openfeign.FeignClient"}
-    )
+    @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.FeignClient"})
     public CatFeignAdvisor monitoringFeignClientAdvisor() {
         CatFeignAdvisor advisor = new CatFeignAdvisor(new AnnotationMatchingPointcut(FeignClient.class, true));
         return advisor;

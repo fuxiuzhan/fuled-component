@@ -20,7 +20,6 @@ public class HttpRequestCatWapper extends HttpRequestWrapper {
     public HttpHeaders getHeaders() {
         return this.httpHeaders;
     }
-
     public void addHeader(String headerName, String headerValue) {
         this.httpHeaders.add(headerName, headerValue);
     }

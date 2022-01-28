@@ -1,10 +1,18 @@
 package com.fxz.component.fuled.cat.starter.util;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import org.aopalliance.intercept.MethodInvocation;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
+/**
+ * @author fuled
+ */
 @Component
 public class CatAspectUtil {
     private static List<String> exceptionIgnore;
@@ -24,54 +32,45 @@ public class CatAspectUtil {
     }
 
     public static Object aspectLogic(ProceedingJoinPoint pjp, Object[] args, Transaction transaction) throws Throwable {
-        Object var4;
+        Object proceed = null;
         try {
-            Object proceed;
             if (args != null && args.length != 0) {
                 proceed = pjp.proceed(args);
             } else {
                 proceed = pjp.proceed();
             }
-
             transaction.setStatus("0");
-            var4 = proceed;
-        } catch (Throwable var8) {
-            if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(var8.getClass().getName())) {
+        } catch (Throwable e) {
+            if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(e.getClass().getName())) {
                 transaction.setStatus("0");
             } else {
-                transaction.setStatus(var8);
+                transaction.setStatus(e);
             }
-
-            throw var8;
+            throw e;
         } finally {
             transaction.complete();
         }
-
-        return var4;
+        return proceed;
     }
 
     public static Object aspectLogic(MethodInvocation invocation, String type) throws Throwable {
         Method method = invocation.getMethod();
         Class clazz = method.getDeclaringClass();
         Transaction transaction = Cat.newTransaction(type, clazz.getSimpleName() + "." + method.getName());
-
-        Object var6;
+        Object proceed = null;
         try {
-            Object proceed = invocation.proceed();
+            proceed = invocation.proceed();
             transaction.setStatus("0");
-            var6 = proceed;
-        } catch (Throwable var10) {
-            if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(var10.getClass().getName())) {
+        } catch (Throwable e) {
+            if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(e.getClass().getName())) {
                 transaction.setStatus("0");
             } else {
-                transaction.setStatus(var10);
+                transaction.setStatus(e);
             }
-
-            throw var10;
+            throw e;
         } finally {
             transaction.complete();
         }
-
-        return var6;
+        return proceed;
     }
 }

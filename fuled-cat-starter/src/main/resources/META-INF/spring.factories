@@ -2,4 +2,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.fxz.component.fuled.cat.starter.configuration.CatRedisProcessorConfiguration,\
   com.fxz.component.fuled.cat.starter.configuration.CatFilterConfiguration,\
   com.fxz.component.fuled.cat.starter.configuration.CatAspectConfiguration,\
-  com.fxz.component.fuled.cat.starter.configuration.ComponentVersionConfiguration
+  com.fxz.component.fuled.cat.starter.configuration.ComponentVersionConfiguration,\
+  com.fxz.component.fuled.cat.starter.configuration.CatMybatisConfiguration,\
+  com.fxz.component.fuled.cat.starter.configuration.CatRestTemplateInterceptorConfiguration

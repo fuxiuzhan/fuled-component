@@ -23,9 +23,6 @@ public class CatRedisProcessorConfiguration implements BeanPostProcessor {
     private DefaultListableBeanFactory beanFactory;
     private static final String TARGET_BEAN_NAME = "redisTemplate";
 
-    public CatRedisProcessorConfiguration() {
-    }
-
     @Override
     public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
         return o;
@@ -33,7 +30,7 @@ public class CatRedisProcessorConfiguration implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (StringUtils.endsWithIgnoreCase(beanName, "redisTemplate") && this.beanFactory.containsBean("redisTemplate")) {
+        if (StringUtils.endsWithIgnoreCase(beanName, TARGET_BEAN_NAME) && this.beanFactory.containsBean(TARGET_BEAN_NAME)) {
             RedisTemplate redisTemplate = null;
             if (bean.getClass().getSimpleName().equals(RedisTemplateCatPlus.class.getSimpleName())) {
                 redisTemplate = (RedisTemplateCatPlus) bean;

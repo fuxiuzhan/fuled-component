@@ -17,10 +17,6 @@ import java.util.Objects;
  */
 public class CatFeignInterceptor implements RequestInterceptor {
     private static final Logger log = LoggerFactory.getLogger(CatFeignInterceptor.class);
-
-    public CatFeignInterceptor() {
-    }
-
     @Override
     public void apply(RequestTemplate requestTemplate) {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();

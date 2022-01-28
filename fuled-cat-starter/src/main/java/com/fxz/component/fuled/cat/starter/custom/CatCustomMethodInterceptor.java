@@ -25,9 +25,9 @@ public class CatCustomMethodInterceptor implements MethodInterceptor {
         if (clazz.isAssignableFrom(Object.class)) {
             return invocation.proceed();
         } else {
-            IgnoreCatTracing ignoreCatTracing = (IgnoreCatTracing)method.getAnnotation(IgnoreCatTracing.class);
+            IgnoreCatTracing ignoreCatTracing = method.getAnnotation(IgnoreCatTracing.class);
             if (ignoreCatTracing == null) {
-                ignoreCatTracing = (IgnoreCatTracing)clazz.getAnnotation(IgnoreCatTracing.class);
+                ignoreCatTracing = (IgnoreCatTracing) clazz.getAnnotation(IgnoreCatTracing.class);
             }
 
             String type = this.classAnnotationType != null ? this.classAnnotationType.getSimpleName() : "MethodInvocation";

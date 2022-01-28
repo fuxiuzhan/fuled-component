@@ -17,8 +17,7 @@ import java.util.Objects;
  */
 public class CatCglibProxy implements MethodInterceptor {
     private Object target;
-    public CatCglibProxy() {
-    }
+
     public Object getInstance(Object target, Class[] argumentTypes, Object[] arguments) {
         this.target = target;
         Enhancer enhancer = new Enhancer();
@@ -26,6 +25,7 @@ public class CatCglibProxy implements MethodInterceptor {
         enhancer.setCallback(this);
         return enhancer.create(argumentTypes, arguments);
     }
+
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         String methodName = method.getName();
@@ -34,20 +34,19 @@ public class CatCglibProxy implements MethodInterceptor {
         } else {
             Transaction catTransaction = Cat.newTransaction("Cache.Redis", methodName);
 
-            Object var8;
+            Object result;
             try {
                 Cat.logEvent("Cache.Redis.args", this.parameterBuilder(objects));
-                Object result = methodProxy.invokeSuper(o, objects);
+                result = methodProxy.invokeSuper(o, objects);
                 Cat.logEvent("Cache.Redis.result", result != null ? result.toString() : null);
                 catTransaction.setStatus("0");
-                var8 = result;
-            } catch (Throwable var12) {
-                catTransaction.setStatus(var12);
-                throw var12;
+            } catch (Throwable e) {
+                catTransaction.setStatus(e);
+                throw e;
             } finally {
                 catTransaction.complete();
             }
-            return var8;
+            return result;
         }
     }
 

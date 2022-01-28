@@ -17,9 +17,6 @@ import java.util.Objects;
  * @author fxz
  */
 public class CatUtils {
-    public CatUtils() {
-    }
-
     public static void createMessageTree() {
         CatPropertyContext context = new CatPropertyContext();
         Cat.logRemoteCallClient(context, Cat.getManager().getDomain());
@@ -49,31 +46,25 @@ public class CatUtils {
     }
 
     private static void serviceCrossBuilder(Transaction transaction, Event... events) {
-        Event[] var2 = events;
-        int var3 = events.length;
-
-        for(int var4 = 0; var4 < var3; ++var4) {
-            Event event = var2[var4];
+        for (int i = 0; i < events.length; ++i) {
+            Event event = events[i];
             event.setStatus("0");
             completeEvent(event);
             transaction.addChild(event);
         }
-
     }
 
     public static void completeEvent(Event event) {
         if (event != NullMessage.EVENT) {
-            AbstractMessage message = (AbstractMessage)event;
+            AbstractMessage message = (AbstractMessage) event;
             message.setCompleted(true);
         }
-
     }
 
     public static String getLocalHost() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException var1) {
-            var1.printStackTrace();
             return "";
         }
     }
