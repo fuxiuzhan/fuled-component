@@ -5,6 +5,7 @@ import com.fxz.fuled.common.common.FilterProperty;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
@@ -20,9 +21,10 @@ import java.util.Map;
  * @author fxz
  */
 @Slf4j
+@Configuration
 public class FilterConfig {
 
-    @Autowired
+    @Autowired(required = false)
     List<Filter> allFilters;
     Map<String, List<Filter>> filterGroup = new HashMap<>();
 
