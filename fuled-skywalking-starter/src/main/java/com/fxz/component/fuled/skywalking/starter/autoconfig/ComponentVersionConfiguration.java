@@ -1,4 +1,4 @@
-package com.fxz.component.fuled.skywalking.satrter.autoconfig;
+package com.fxz.component.fuled.skywalking.starter.autoconfig;
 
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.context.annotation.Bean;

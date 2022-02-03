@@ -1,6 +1,6 @@
-package com.fxz.component.fuled.skywalking.satrter.autoconfig;
+package com.fxz.component.fuled.skywalking.starter.autoconfig;
 
-import com.fxz.component.fuled.skywalking.satrter.webfilter.TraceIdFilter;
+import com.fxz.component.fuled.skywalking.starter.webfilter.TraceIdFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

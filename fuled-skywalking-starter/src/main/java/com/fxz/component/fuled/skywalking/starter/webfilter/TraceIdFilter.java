@@ -1,4 +1,4 @@
-package com.fxz.component.fuled.skywalking.satrter.webfilter;
+package com.fxz.component.fuled.skywalking.starter.webfilter;
 
 import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.apache.skywalking.apm.toolkit.trace.TraceContext;

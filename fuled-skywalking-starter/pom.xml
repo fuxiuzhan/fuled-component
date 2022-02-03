@@ -8,10 +8,10 @@
         <version>1.0.0.WaterDrop</version>
     </parent>
     <groupId>com.fxz.component</groupId>
-    <artifactId>fuled-skywalking-satrter</artifactId>
+    <artifactId>fuled-skywalking-starter</artifactId>
     <version>1.0.0.WaterDrop</version>
-    <name>fuled-skywalking-satrter</name>
-    <description>fuled-skywalking-satrter</description>
+    <name>fuled-skywalking-starter</name>
+    <description>fuled-skywalking-starter</description>
     <properties>
         <java.version>1.8</java.version>
         <skywalking.version>8.3.0</skywalking.version>
