@@ -27,6 +27,7 @@
         <module>fuled-name-starter</module>
         <module>fuled-common</module>
         <module>fuled-env-encryptor-starter</module>
+        <module>fuled-skywalking-satrter</module>
     </modules>
     <dependencies>
     </dependencies>
