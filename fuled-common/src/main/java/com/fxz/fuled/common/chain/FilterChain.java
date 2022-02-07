@@ -7,9 +7,10 @@ import java.util.List;
  * 过滤链构建接口
  * <p>
  * example:  importer.handle->metricRunner.handle->preInvoker.invoke->reader.read->postInvoker.invoke->exporter.export->storageHeadInvoker->exporter.doExport
+ *
  * @author fxz
  */
-public interface FilterChain<T> {
+public interface FilterChain {
     /**
      * 构建处理链，并返回head Invoker
      *

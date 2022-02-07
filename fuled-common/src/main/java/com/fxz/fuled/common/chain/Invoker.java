@@ -1,17 +1,17 @@
 package com.fxz.fuled.common.chain;
 
 /**
- * 责任链invoker，组装过滤链使用
- *
- * @author fxz
- * @param <T>
+ * @author fuled
+ * @param <REQ>
+ * @param <RES>
  */
-public interface Invoker<T> {
+public interface Invoker<REQ, RES> {
+
     /**
      * invoke next
-     * @param t
-     * @param <R>
+     *
+     * @param req
      * @return
      */
-    <R> R invoke(T t);
+    RES invoke(REQ req);
 }

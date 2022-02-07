@@ -3,16 +3,18 @@ package com.fxz.fuled.common.chain;
 /**
  * 过滤器
  *
- * @param <T>
- * @author fxz
+ * @param <REQ>
+ * @param <RES>
+ * @author fuled
  */
-public interface Filter<T> {
+public interface Filter<REQ, RES> {
+
     /**
      * filter context
-     * @param t
+     *
+     * @param req
      * @param invoker
-     * @param <R>
      * @return
      */
-    <R> R filter(T t, Invoker invoker);
+    RES filter(REQ req, Invoker<REQ, RES> invoker);
 }
