@@ -1,6 +1,7 @@
 package com.fxz.fuled.simple.cache;
 
 
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Indexed;
 
 import java.lang.annotation.*;
@@ -24,7 +25,15 @@ public @interface Cache {
      */
     String key() default "";
 
+    @AliasFor("key")
     String value() default "";
+
+    /**
+     * 前缀
+     *
+     * @return
+     */
+    String prefix() default "";
 
     /**
      * 缓存过期时间，启用本地缓存情况下两个缓存的超时时间一致
@@ -62,7 +71,8 @@ public @interface Cache {
     boolean includeNullResult() default false;
 
     /**
-     *条件表达式
+     * 条件表达式
+     *
      * @return
      */
     String condition() default "";
