@@ -10,10 +10,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -43,8 +42,7 @@ public class CacheAspect {
 
     private static final String METHOD_CACHE_PREFIX = System.getProperty("app.id", "default");
     @Autowired(required = false)
-    @Qualifier("redisTemplate")
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     LruCache lruCache = new LruCache(1024);
 
@@ -63,8 +61,8 @@ public class CacheAspect {
                 }
                 if (Objects.nonNull(batchCache)) {
                     if (batchCache.value().length > 0) {
-                        for (Cache cache1 : batchCache.value()) {
-                            rawList.add(cache1);
+                        for (Cache c : batchCache.value()) {
+                            rawList.add(c);
                         }
                     }
                 }
@@ -144,7 +142,7 @@ public class CacheAspect {
     }
 
     private void delCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList) {
-        if (Objects.nonNull(cacheList) || cacheList.size() > 0) {
+        if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             cacheList.stream().forEach(singleCache -> {
                 if (evaluateCondition(proceedingJoinPoint, singleCache)) {
                     String key = evaluateKey(proceedingJoinPoint, singleCache);
@@ -176,8 +174,8 @@ public class CacheAspect {
     private String evaluateKey(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
         if (Objects.nonNull(cache) && StringUtils.hasText(cache.key())) {
             try {
+                String keyPrefix = cache.prefix();
                 String key = evaluate(proceedingJoinPoint, cache.key(), String.class);
-                String keyPrefix = cache.value();
                 return keyPrefix + key;
             } catch (Exception e) {
                 log.warn("cache annotation expression error using default key instead，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
