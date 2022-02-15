@@ -7,6 +7,9 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * @author fxz
+ */
 public class TraceIdFilter implements Filter {
     private static final String traceId = "SW_TRACE_ID";
 

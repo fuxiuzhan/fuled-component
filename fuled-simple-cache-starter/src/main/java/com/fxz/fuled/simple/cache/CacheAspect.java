@@ -168,7 +168,7 @@ public class CacheAspect {
                 log.warn("condition evaluate error，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
             }
         }
-        return true;
+        return false;
     }
 
     private String evaluateKey(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
@@ -176,7 +176,7 @@ public class CacheAspect {
             try {
                 String keyPrefix = cache.prefix();
                 String key = evaluate(proceedingJoinPoint, cache.key(), String.class);
-                return keyPrefix + key;
+                return METHOD_CACHE_PREFIX + keyPrefix + key;
             } catch (Exception e) {
                 log.warn("cache annotation expression error using default key instead，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
             }

@@ -11,6 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Inherited
 public @interface FilterProperty {
     /**
      * name example: DNS_PRE_BLACK_FILTER
