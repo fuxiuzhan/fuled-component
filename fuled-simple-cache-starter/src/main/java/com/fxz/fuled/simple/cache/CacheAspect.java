@@ -168,7 +168,7 @@ public class CacheAspect {
                 log.warn("condition evaluate error，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
             }
         }
-        return true;
+        return false;
     }
 
     private String evaluateKey(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
