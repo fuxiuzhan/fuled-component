@@ -60,8 +60,8 @@ public class CacheAspect {
                     rawList.add(cache);
                 }
                 if (Objects.nonNull(batchCache)) {
-                    if (batchCache.value().length > 0) {
-                        for (Cache c : batchCache.value()) {
+                    if (batchCache.caches().length > 0) {
+                        for (Cache c : batchCache.caches()) {
                             rawList.add(c);
                         }
                     }
