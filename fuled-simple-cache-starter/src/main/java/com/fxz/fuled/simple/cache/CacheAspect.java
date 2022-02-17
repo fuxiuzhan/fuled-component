@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author fxz
@@ -48,7 +49,7 @@ public class CacheAspect {
     @Autowired(required = false)
     private StringRedisTemplate redisTemplate;
 
-    LruCache classMap = new LruCache(1024);
+    Map<String, Class> classMap = new ConcurrentHashMap<>();
 
     LruCache lruCache = new LruCache(1024);
 
@@ -81,7 +82,7 @@ public class CacheAspect {
                 });
                 CacheValue result = getCache(proceedingJoinPoint, saveList);
                 if (Objects.nonNull(result)) {
-                    return JSON.parseObject(result.getObject() + "", (Class) classMap.get(result.getClassName()));
+                    return JSON.parseObject(result.getObject() + "", classMap.get(result.getClassName()));
                 }
                 Object proceedResult = proceedingJoinPoint.proceed();
                 setCache(proceedingJoinPoint, saveList, proceedResult);
@@ -135,6 +136,9 @@ public class CacheAspect {
                     cacheValue.setExprInSeconds(cache.unit().toSeconds(cache.expr()));
                     cacheValue.setObject(result);
                     cacheValue.setClassName(result.getClass().getName());
+                    if (!classMap.containsKey(cacheValue.getClassName())) {
+                        classMap.put(cacheValue.getClassName(), result.getClass());
+                    }
                     if (cache.localTurbo()) {
                         if ((cache.includeNullResult() && Objects.isNull(result)) || (!cache.includeNullResult() && Objects.nonNull(result))) {
                             lruCache.put(key, cacheValue);
