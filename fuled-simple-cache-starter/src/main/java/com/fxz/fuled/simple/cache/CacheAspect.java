@@ -41,8 +41,14 @@ public class CacheAspect {
     }
 
     private static final String METHOD_CACHE_PREFIX = System.getProperty("app.id", "default");
+    /**
+     * 使用StringRedisTemplate 需要实现自己的typeConverter
+     * 使用RedisTemplate则不需要，使用RedisTemplate提供的converter
+     */
     @Autowired(required = false)
     private StringRedisTemplate redisTemplate;
+
+    LruCache classMap = new LruCache(1024);
 
     LruCache lruCache = new LruCache(1024);
 
@@ -75,7 +81,7 @@ public class CacheAspect {
                 });
                 CacheValue result = getCache(proceedingJoinPoint, saveList);
                 if (Objects.nonNull(result)) {
-                    return result.getObject();
+                    return JSON.parseObject(result.getObject() + "", (Class) classMap.get(result.getClassName()));
                 }
                 Object proceedResult = proceedingJoinPoint.proceed();
                 setCache(proceedingJoinPoint, saveList, proceedResult);
@@ -128,6 +134,7 @@ public class CacheAspect {
                     cacheValue.setLastAccessTime(System.currentTimeMillis());
                     cacheValue.setExprInSeconds(cache.unit().toSeconds(cache.expr()));
                     cacheValue.setObject(result);
+                    cacheValue.setClassName(result.getClass().getName());
                     if (cache.localTurbo()) {
                         if ((cache.includeNullResult() && Objects.isNull(result)) || (!cache.includeNullResult() && Objects.nonNull(result))) {
                             lruCache.put(key, cacheValue);
@@ -158,17 +165,19 @@ public class CacheAspect {
     }
 
     private boolean evaluateCondition(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
+        boolean result = Boolean.TRUE;
         if (Objects.nonNull(cache) && StringUtils.hasText(cache.condition())) {
             try {
-                Boolean result = evaluate(proceedingJoinPoint, cache.condition(), Boolean.class);
+                result = evaluate(proceedingJoinPoint, cache.condition(), Boolean.class);
                 if (Objects.nonNull(result)) {
                     return result;
                 }
             } catch (Exception e) {
+                result = Boolean.FALSE;
                 log.warn("condition evaluate error，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
             }
         }
-        return false;
+        return result;
     }
 
     private String evaluateKey(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
@@ -207,6 +216,7 @@ public class CacheAspect {
 
 @Data
 class CacheValue implements Serializable {
+    private String className;
     private Object object;
     private long lastAccessTime;
     private long exprInSeconds;
