@@ -82,7 +82,16 @@ public class CacheAspect {
                 });
                 CacheValue result = getCache(proceedingJoinPoint, saveList);
                 if (Objects.nonNull(result)) {
-                    return JSON.parseObject(result.getObject() + "", classMap.get(result.getClassName()));
+                    if (Objects.nonNull(result.getObject())) {
+                        Class clazz = classMap.get(result.getClassName());
+                        if (Objects.isNull(clazz) && StringUtils.hasText(result.getClassName())) {
+                            clazz = Class.forName(result.getClassName());
+                            classMap.put(result.getClassName(), clazz);
+                        }
+                        return JSON.parseObject(result.getObject() + "", clazz);
+                    } else {
+                        return null;
+                    }
                 }
                 Object proceedResult = proceedingJoinPoint.proceed();
                 setCache(proceedingJoinPoint, saveList, proceedResult);
@@ -135,16 +144,18 @@ public class CacheAspect {
                     cacheValue.setLastAccessTime(System.currentTimeMillis());
                     cacheValue.setExprInSeconds(cache.unit().toSeconds(cache.expr()));
                     cacheValue.setObject(result);
-                    cacheValue.setClassName(result.getClass().getName());
-                    if (!classMap.containsKey(cacheValue.getClassName())) {
-                        classMap.put(cacheValue.getClassName(), result.getClass());
+                    if (Objects.nonNull(result)) {
+                        cacheValue.setClassName(result.getClass().getName());
+                        if (!classMap.containsKey(cacheValue.getClassName())) {
+                            classMap.put(cacheValue.getClassName(), result.getClass());
+                        }
                     }
                     if (cache.localTurbo()) {
-                        if ((cache.includeNullResult() && Objects.isNull(result)) || (!cache.includeNullResult() && Objects.nonNull(result))) {
+                        if (Objects.nonNull(result) || cache.includeNullResult()) {
                             lruCache.put(key, cacheValue);
                         }
                     }
-                    if (Objects.nonNull(redisTemplate) && ((cache.includeNullResult() && Objects.isNull(result)) || (!cache.includeNullResult() && Objects.nonNull(result)))) {
+                    if (Objects.nonNull(redisTemplate) && (Objects.nonNull(result) || cache.includeNullResult())) {
                         redisTemplate.opsForValue().set(key, JSON.toJSONString(cacheValue), cache.expr(), cache.unit());
                     }
                 }
