@@ -7,7 +7,7 @@ import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.fxz.fuled.common.ConfigUtil;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;

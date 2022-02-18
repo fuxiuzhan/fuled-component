@@ -17,7 +17,7 @@
 package com.fxz.fuled.config.starter.annotation;
 
 
-import com.fxz.fuled.common.ConfigUtil;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.config.starter.Config;
 import com.fxz.fuled.config.starter.ConfigService;
 import com.fxz.fuled.config.starter.model.ConfigChangeEvent;

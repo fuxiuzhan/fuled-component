@@ -8,6 +8,9 @@ import org.springframework.core.env.*;
 
 import java.util.Objects;
 
+/**
+ * @author fxz
+ */
 public class EnvPropertiesProcessor implements BeanFactoryPostProcessor {
     private ConfigurableEnvironment environment;
 

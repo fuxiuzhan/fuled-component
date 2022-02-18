@@ -14,9 +14,10 @@
  * limitations under the License.
  *
  */
-package com.fxz.fuled.common;
+package com.fxz.fuled.common.utils;
 
 
+import com.fxz.fuled.common.Env;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;

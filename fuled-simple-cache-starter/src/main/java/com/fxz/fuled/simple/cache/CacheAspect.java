@@ -10,10 +10,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -24,6 +23,7 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author fxz
@@ -42,9 +42,14 @@ public class CacheAspect {
     }
 
     private static final String METHOD_CACHE_PREFIX = System.getProperty("app.id", "default");
+    /**
+     * 使用StringRedisTemplate 需要实现自己的typeConverter
+     * 使用RedisTemplate则不需要，使用RedisTemplate提供的converter
+     */
     @Autowired(required = false)
-    @Qualifier("redisTemplate")
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
+
+    Map<String, Class> classMap = new ConcurrentHashMap<>();
 
     LruCache lruCache = new LruCache(1024);
 
@@ -62,9 +67,9 @@ public class CacheAspect {
                     rawList.add(cache);
                 }
                 if (Objects.nonNull(batchCache)) {
-                    if (batchCache.value().length > 0) {
-                        for (Cache cache1 : batchCache.value()) {
-                            rawList.add(cache1);
+                    if (batchCache.caches().length > 0) {
+                        for (Cache c : batchCache.caches()) {
+                            rawList.add(c);
                         }
                     }
                 }
@@ -77,7 +82,16 @@ public class CacheAspect {
                 });
                 CacheValue result = getCache(proceedingJoinPoint, saveList);
                 if (Objects.nonNull(result)) {
-                    return result.getObject();
+                    if (Objects.nonNull(result.getObject())) {
+                        Class clazz = classMap.get(result.getClassName());
+                        if (Objects.isNull(clazz) && StringUtils.hasText(result.getClassName())) {
+                            clazz = Class.forName(result.getClassName());
+                            classMap.put(result.getClassName(), clazz);
+                        }
+                        return JSON.parseObject(result.getObject() + "", clazz);
+                    } else {
+                        return null;
+                    }
                 }
                 Object proceedResult = proceedingJoinPoint.proceed();
                 setCache(proceedingJoinPoint, saveList, proceedResult);
@@ -130,12 +144,18 @@ public class CacheAspect {
                     cacheValue.setLastAccessTime(System.currentTimeMillis());
                     cacheValue.setExprInSeconds(cache.unit().toSeconds(cache.expr()));
                     cacheValue.setObject(result);
+                    if (Objects.nonNull(result)) {
+                        cacheValue.setClassName(result.getClass().getName());
+                        if (!classMap.containsKey(cacheValue.getClassName())) {
+                            classMap.put(cacheValue.getClassName(), result.getClass());
+                        }
+                    }
                     if (cache.localTurbo()) {
-                        if ((cache.includeNullResult() && Objects.isNull(result)) || (!cache.includeNullResult() && Objects.nonNull(result))) {
+                        if (Objects.nonNull(result) || cache.includeNullResult()) {
                             lruCache.put(key, cacheValue);
                         }
                     }
-                    if (Objects.nonNull(redisTemplate) && ((cache.includeNullResult() && Objects.isNull(result)) || (!cache.includeNullResult() && Objects.nonNull(result)))) {
+                    if (Objects.nonNull(redisTemplate) && (Objects.nonNull(result) || cache.includeNullResult())) {
                         redisTemplate.opsForValue().set(key, JSON.toJSONString(cacheValue), cache.expr(), cache.unit());
                     }
                 }
@@ -144,7 +164,7 @@ public class CacheAspect {
     }
 
     private void delCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList) {
-        if (Objects.nonNull(cacheList) || cacheList.size() > 0) {
+        if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             cacheList.stream().forEach(singleCache -> {
                 if (evaluateCondition(proceedingJoinPoint, singleCache)) {
                     String key = evaluateKey(proceedingJoinPoint, singleCache);
@@ -160,25 +180,27 @@ public class CacheAspect {
     }
 
     private boolean evaluateCondition(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
+        boolean result = Boolean.TRUE;
         if (Objects.nonNull(cache) && StringUtils.hasText(cache.condition())) {
             try {
-                Boolean result = evaluate(proceedingJoinPoint, cache.condition(), Boolean.class);
+                result = evaluate(proceedingJoinPoint, cache.condition(), Boolean.class);
                 if (Objects.nonNull(result)) {
                     return result;
                 }
             } catch (Exception e) {
+                result = Boolean.FALSE;
                 log.warn("condition evaluate error，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
             }
         }
-        return true;
+        return result;
     }
 
     private String evaluateKey(ProceedingJoinPoint proceedingJoinPoint, Cache cache) {
         if (Objects.nonNull(cache) && StringUtils.hasText(cache.key())) {
             try {
+                String keyPrefix = cache.prefix();
                 String key = evaluate(proceedingJoinPoint, cache.key(), String.class);
-                String keyPrefix = cache.value();
-                return keyPrefix + key;
+                return METHOD_CACHE_PREFIX + keyPrefix + key;
             } catch (Exception e) {
                 log.warn("cache annotation expression error using default key instead，method->{}, error->{}", proceedingJoinPoint.getSignature().getName(), e);
             }
@@ -209,6 +231,7 @@ public class CacheAspect {
 
 @Data
 class CacheValue implements Serializable {
+    private String className;
     private Object object;
     private long lastAccessTime;
     private long exprInSeconds;

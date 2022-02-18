@@ -17,14 +17,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 /**
- *
+ * @author fuxiuzhan
  */
 @Aspect
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class MethodMonitorAspect {
-    @Value("${method.monitor.enabled:false}")
+    @Value("${method.monitor.enabled:true}")
     private boolean monitorEnabled;
 
     @Bean("LoggerVersion")
@@ -33,14 +33,12 @@ public class MethodMonitorAspect {
     }
 
     @Around("@annotation(com.fxz.fuled.logger.starter.annotation.Monitor)")
-    public Object monitorAnno(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object monitor(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         return process(proceedingJoinPoint, true);
     }
 
     private Object process(ProceedingJoinPoint proceedingJoinPoint, boolean isAnno) throws Throwable {
-        if (!monitorEnabled && !isAnno) {
-            return proceedingJoinPoint.proceed();
-        } else {
+        if (monitorEnabled && isAnno) {
             String className = proceedingJoinPoint.getSignature().getDeclaringTypeName();
             MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
             boolean printParams = true;
@@ -82,6 +80,8 @@ public class MethodMonitorAspect {
                 stopWatch.stop();
                 log.info("Monitor: class->{},method->{},params->{},result->{},resultType->{},timeElapsed->{} ms,isSecc->{},errorMsg->{}", className, methodName, params, resultJson, returnType, stopWatch.getTotalTimeMillis(), resultFlag, errorMsg);
             }
+        } else {
+            return proceedingJoinPoint.proceed();
         }
     }
 }

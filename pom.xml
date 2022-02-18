@@ -18,6 +18,7 @@
     </properties>
     <modules>
         <module>fuled-banner</module>
+        <module>fuled-cat-starter</module>
         <module>fuled-config-starter</module>
         <module>fuled-simple-cache-starter</module>
         <module>fuled-threadpool-monitor-starter</module>
@@ -26,13 +27,14 @@
         <module>fuled-name-starter</module>
         <module>fuled-common</module>
         <module>fuled-env-encryptor-starter</module>
+        <module>fuled-skywalking-starter</module>
     </modules>
     <dependencies>
     </dependencies>
     <distributionManagement>
         <repository>
             <id>releases</id>
-            <url>http://nexus.fuled.xyz:8081/repository/maven_2rd/</url>
+            <url>http://nexus.fuled.xyz:8081/repository/maven_2nd/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
@@ -48,6 +50,20 @@
                     <source>8</source>
                     <target>8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
