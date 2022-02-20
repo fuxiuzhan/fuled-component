@@ -1,3 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.fxz.component.fuled.skywalking.starter.autoconfig.FilterConfiguration,\
-  com.fxz.component.fuled.skywalking.starter.autoconfig.ComponentVersionConfiguration
+  com.fxz.component.fuled.skywalking.starter.config.FilterConfiguration,\
+  com.fxz.component.fuled.skywalking.starter.config.ComponentVersionConfiguration
