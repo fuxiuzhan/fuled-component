@@ -40,10 +40,6 @@ public class DefaultConfig implements Config {
     }
 
     /**
-     * 增加interestedKeysMap
-     * 确保传入listener的变更都是注解感兴趣的key
-     * 避免不相关的key不传入，设计问题，不是bug
-     *
      * @param namespace
      * @param changes
      */
@@ -54,19 +50,8 @@ public class DefaultConfig implements Config {
         // notify those listeners
         for (ConfigChangeListener listener : listeners) {
             Set<String> interestedChangedKeys = resolveInterestedChangedKeys(listener, changedKeys);
-            Map<String, ConfigChange> interestedKeysMap = new HashMap<>();
-            if (interestedChangedKeys.size() > 0) {
-                interestedChangedKeys.forEach(k -> {
-                    if (changes.get(k) != null) {
-                        interestedKeysMap.put(k, changes.get(k));
-                    }
-                });
-            } else {
-                logger.warn("no interestedChangedKeys skipped changes->{}", changes);
-                return;
-            }
             InterestedConfigChangeEvent interestedConfigChangeEvent = new InterestedConfigChangeEvent(
-                    namespace, interestedKeysMap, interestedChangedKeys);
+                    namespace, changes, interestedChangedKeys);
             this.notifyAsync(listener, interestedConfigChangeEvent);
         }
     }
