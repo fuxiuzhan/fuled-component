@@ -39,6 +39,14 @@ public class DefaultConfig implements Config {
         m_executorService = Executors.newCachedThreadPool();
     }
 
+    /**
+     * 增加interestedKeysMap
+     * 确保传入listener的变更都是注解感兴趣的key
+     * 避免不相关的key不传入，设计问题，不是bug
+     *
+     * @param namespace
+     * @param changes
+     */
     @Override
     public void fireConfigChange(String namespace, Map<String, ConfigChange> changes) {
         final Set<String> changedKeys = changes.keySet();
