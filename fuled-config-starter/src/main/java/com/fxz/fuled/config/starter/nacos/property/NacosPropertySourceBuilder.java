@@ -68,7 +68,7 @@ public class NacosPropertySourceBuilder {
         try {
             data = configService.getConfig(dataId, group, timeout);
             log.info("get config from nacos server : dataId->{},groupId->{},result->{}", dataId, group, data);
-            configService.addListener(dataId, group, new NacosListener(group));
+            configService.addListener(dataId, group, new NacosListener(group, dataId));
             if (StringUtils.isEmpty(data)) {
                 log.warn(
                         "Ignore the empty nacos configuration and get it based on dataId[{}] & group[{}]",
