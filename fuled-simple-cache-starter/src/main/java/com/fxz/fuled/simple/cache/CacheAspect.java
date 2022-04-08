@@ -106,26 +106,28 @@ public class CacheAspect {
     private CacheValue getCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList) {
         if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             for (Cache cache : cacheList) {
-                String key = evaluateKey(proceedingJoinPoint, cache);
-                if (cache.localTurbo()) {
-                    Object o = lruCache.get(key);
-                    if (o != null && o instanceof CacheValue) {
-                        CacheValue localCacheValue = (CacheValue) o;
-                        if (localCacheValue.getExprInSeconds() > 0) {
-                            if ((System.currentTimeMillis() - localCacheValue.getLastAccessTime()) > localCacheValue.getExprInSeconds() * 1000L) {
-                                lruCache.remove(key);
+                if (evaluateCondition(proceedingJoinPoint, cache)) {
+                    String key = evaluateKey(proceedingJoinPoint, cache);
+                    if (cache.localTurbo()) {
+                        Object o = lruCache.get(key);
+                        if (o != null && o instanceof CacheValue) {
+                            CacheValue localCacheValue = (CacheValue) o;
+                            if (localCacheValue.getExprInSeconds() > 0) {
+                                if ((System.currentTimeMillis() - localCacheValue.getLastAccessTime()) > localCacheValue.getExprInSeconds() * 1000L) {
+                                    lruCache.remove(key);
+                                } else {
+                                    return localCacheValue;
+                                }
                             } else {
                                 return localCacheValue;
                             }
-                        } else {
-                            return localCacheValue;
                         }
                     }
-                }
-                if (Objects.nonNull(redisTemplate)) {
-                    Object o = redisTemplate.opsForValue().get(key);
-                    if (Objects.nonNull(o) && o instanceof String) {
-                        return JSON.parseObject(o + "", CacheValue.class);
+                    if (Objects.nonNull(redisTemplate)) {
+                        Object o = redisTemplate.opsForValue().get(key);
+                        if (Objects.nonNull(o) && o instanceof String) {
+                            return JSON.parseObject(o + "", CacheValue.class);
+                        }
                     }
                 }
             }
