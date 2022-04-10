@@ -34,7 +34,7 @@ public class NameAutoConfig {
 
     public static void initEnv(NacosDiscoveryProperties discoveryProperties) {
         ConfigUtil.initialize();
-        discoveryProperties.setServerAddr(ConfigUtil.getEnv().getConfigServer() + ":" + ConfigUtil.getEnv().getPort());
+        discoveryProperties.setServerAddr(ConfigUtil.getEnv().getSchema() + "://" + ConfigUtil.getEnv().getConfigServer() + ":" + ConfigUtil.getEnv().getPort());
         discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
         discoveryProperties.setService(ConfigUtil.getAppId());
     }
