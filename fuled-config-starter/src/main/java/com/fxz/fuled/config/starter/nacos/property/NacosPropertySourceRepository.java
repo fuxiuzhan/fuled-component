@@ -11,13 +11,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 作为env properties的引用，用于更新
+ */
 public class NacosPropertySourceRepository {
     private static final Logger log = LoggerFactory
             .getLogger(NacosPropertySourceRepository.class);
-    /**
-     * 这里要吐槽一下 ConfigChangeItem  没有dataId和groupId等信息，比较尴尬
-     * 使用event机制管理的方式无法区分具体更改的properties
-     */
     public static final String WRITEABLE_PROPERTIES = "nacos-rewritable-properties";
 
     private final static ConcurrentHashMap<String, NacosPropertySource> NACOS_PROPERTY_SOURCE_REPOSITORY = new ConcurrentHashMap<>();
@@ -34,17 +33,15 @@ public class NacosPropertySourceRepository {
     }
 
 
-    @Deprecated
-    public static void collectNacosPropertySources(
-            NacosPropertySource nacosPropertySource) {
-        NACOS_PROPERTY_SOURCE_REPOSITORY.putIfAbsent(nacosPropertySource.getDataId(),
-                nacosPropertySource);
-    }
-
-
+    /**
+     * 直接更新，防止refresh后不一致的情况
+     * 非refresh 操作更新的情况不会有这个问题
+     *
+     * @param nacosPropertySource
+     */
     public static void collectNacosPropertySource(NacosPropertySource nacosPropertySource) {
         NACOS_PROPERTY_SOURCE_REPOSITORY
-                .putIfAbsent(getMapKey(nacosPropertySource.getDataId(),
+                .put(getMapKey(nacosPropertySource.getDataId(),
                         nacosPropertySource.getGroup()), nacosPropertySource);
     }
 
