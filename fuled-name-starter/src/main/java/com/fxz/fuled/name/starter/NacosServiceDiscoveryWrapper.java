@@ -7,7 +7,6 @@ import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.fxz.fuled.common.utils.ConfigUtil;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.util.ArrayList;
@@ -25,19 +24,9 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
     private NacosServiceManager nacosServiceManager;
 
     public NacosServiceDiscoveryWrapper(NacosDiscoveryProperties discoveryProperties, NacosServiceManager nacosServiceManager) {
-        //rewrite env
         super(discoveryProperties, nacosServiceManager);
-        initEnv(discoveryProperties);
         this.discoveryProperties = discoveryProperties;
         this.nacosServiceManager = nacosServiceManager;
-    }
-
-    private void initEnv(NacosDiscoveryProperties discoveryProperties) {
-        ConfigUtil.initialize();
-        discoveryProperties.setServerAddr(ConfigUtil.getEnv().getConfigServer() + ":" + ConfigUtil.getEnv().getPort());
-//        discoveryProperties.setGroup(ConfigUtil.getAppId().toUpperCase());
-        discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
-        discoveryProperties.setService(ConfigUtil.getAppId());
     }
 
     @Override
