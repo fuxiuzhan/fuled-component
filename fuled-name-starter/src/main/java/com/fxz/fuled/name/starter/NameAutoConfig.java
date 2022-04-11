@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author fxz
+ * 重新的目的和配置中心一致
+ * 为了修改nacos的连结地址，其他参数不变
  */
 
 @Configuration(proxyBeanMethods = false)

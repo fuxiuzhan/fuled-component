@@ -15,6 +15,8 @@ import java.util.Base64;
 
 /**
  * @author fxz
+ * 默认配置二次处理类
+ * 主要实现配置的解密，使用AES算法，key=appId+Env
  */
 @Slf4j
 public class DefaultValueConverter implements ValueConverter {

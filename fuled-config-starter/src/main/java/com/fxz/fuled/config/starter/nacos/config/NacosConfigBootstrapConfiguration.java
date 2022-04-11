@@ -11,6 +11,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 使用 BootstrapConfiguration 接口启动，早于容器启动
+ * 在有refreshEvent的情况下会重复初始化
+ * 重写的目的是要控制nacos的连接信息
+ */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
 public class NacosConfigBootstrapConfiguration {
@@ -24,6 +29,9 @@ public class NacosConfigBootstrapConfiguration {
     @ConditionalOnMissingBean
     public NacosConfigManager nacosConfigManager(
             NacosConfigProperties nacosConfigProperties) {
+        /**
+         * 改写naocs连接信息，其他信息不变
+         */
         ConfigUtil.initialize();
         Env envLocal = ConfigUtil.getEnv();
         nacosConfigProperties.setServerAddr(envLocal.getSchema() + "://" + envLocal.getConfigServer() + ":" + envLocal.getPort());
@@ -36,6 +44,17 @@ public class NacosConfigBootstrapConfiguration {
     @ConditionalOnMissingBean
     public NacosPropertySourceLocator nacosPropertySourceLocator(
             NacosConfigManager nacosConfigManager) {
+        /**
+         * 利用springboot提供的配置加载接口，其实还可以使用如下方式
+         * 1.实现envAware接口进行加载
+         * 2.ApplicationContextInitializer 方式加载
+         * 3.beanPostProcessor方式进行加载
+         * 4.SpringApplicationRunListener 方式进行加载
+         * 其实实现的方式很多，但都是在spring容器执行refresh之前进行
+         * 就可以，因为refrsh后bean的配置就会确定下来了。
+         * 但是就实现的有雅兴而言，建议加载和更新分开，单独控制
+         * 而不使用event来进行重复加载来达到更新的目的
+         */
         return new NacosPropertySourceLocator(nacosConfigManager);
     }
 

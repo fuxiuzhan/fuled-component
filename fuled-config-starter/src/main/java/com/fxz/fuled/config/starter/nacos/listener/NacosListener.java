@@ -19,6 +19,8 @@ import java.util.Set;
 
 /**
  * @author fuled
+ * <p>
+ * 每个groupId+dataId都是注册一个listener
  */
 public class NacosListener extends AbstractConfigChangeListener {
     private String group;
@@ -37,6 +39,9 @@ public class NacosListener extends AbstractConfigChangeListener {
         //process event
         log.info("config changes ->{}", configChangeEvent.getChangeItems().toArray());
 //        ValueConverter converter = ApplicationContextUtil.getConfigurableApplicationContext().getBean(ValueConverter.class);
+        /**
+         * 逐条检查并更新变更的值
+         */
         Map<String, ConfigChange> changeMap = new HashMap<>();
         Set<String> changeSet = new HashSet<>();
         configChangeEvent.getChangeItems().forEach(c -> {
@@ -57,9 +62,19 @@ public class NacosListener extends AbstractConfigChangeListener {
             changeSet.add(c.getKey());
         });
         Config config = ConfigService.getConfig(ConfigUtil.getAppId());
+        /**
+         * 处理$value注解的单例bean
+         */
         config.fireConfigChange(ConfigUtil.getAppId(), changeMap);
         com.fxz.fuled.config.starter.model.ConfigChangeEvent event = new com.fxz.fuled.config.starter.model.ConfigChangeEvent(group, changeMap);
+        /**
+         * 发出变更事件
+         */
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(event);
+        /**
+         * 发出环境变更事件，重新绑定非单例bean，如@ConfigurationProperties的bean和其他工厂bean
+         * 不适用refreshEvent，操作过于笨重
+         */
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new EnvironmentChangeEvent(changeSet));
     }
 }

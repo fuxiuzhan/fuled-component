@@ -10,6 +10,8 @@ import java.util.Objects;
 
 /**
  * @author fxz
+ * 将已有的properties进行包装代理，来实现加解密等二次操作
+ * 与配置中心完全解耦
  */
 public class EnvPropertiesProcessor implements BeanFactoryPostProcessor {
     private ConfigurableEnvironment environment;
