@@ -48,11 +48,11 @@ public class NacosConfigBootstrapConfiguration {
          * 利用springboot提供的配置加载接口，其实还可以使用如下方式
          * 1.实现envAware接口进行加载
          * 2.ApplicationContextInitializer 方式加载
-         * 3.beanPostProcessor方式进行加载
-         * 4.SpringApplicationRunListener 方式进行加载
+         * 3.beanPostProcessor方式加载(第一此触发时加载)
+         * 4.SpringApplicationRunListener 方式加载
          * 其实实现的方式很多，但都是在spring容器执行refresh之前进行
-         * 就可以，因为refrsh后bean的配置就会确定下来了。
-         * 但是就实现的有雅兴而言，建议加载和更新分开，单独控制
+         * 就可以，因为refresh后bean的配置就会确定下来了。
+         * 但是就实现的优雅性而言，建议加载和更新分开，单独控制
          * 而不使用event来进行重复加载来达到更新的目的
          */
         return new NacosPropertySourceLocator(nacosConfigManager);
