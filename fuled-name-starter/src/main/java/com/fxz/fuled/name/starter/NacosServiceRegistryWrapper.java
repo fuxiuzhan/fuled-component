@@ -77,7 +77,7 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
 
     /**
      * 增加其他meta信息，这些信息可以作为应用管理的数据，如统计应用及版本信息，自动更新提醒等
-     * 也可以作为负载均衡的参数，如果使用feign方式，直接重写IRule来自定义负载策略
+     * 也可以作为负载均衡或者灰度控制的参数，如果使用feign方式，直接重写IRule来自定义负载策略
      *
      * @param registration
      * @return
@@ -101,7 +101,7 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
     private void appendVersionInfo(Map meta) {
         if (!CollectionUtils.isEmpty(componentVersions)) {
             componentVersions.forEach(c -> {
-                meta.put(c.getName(), c.getVersion() + "," + c.getDesc());
+                meta.put(c.getName(), c.getVersion());
             });
         }
         meta.put("env", System.getProperties().get("env"));
