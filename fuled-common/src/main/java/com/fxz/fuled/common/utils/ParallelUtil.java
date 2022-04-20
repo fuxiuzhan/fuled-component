@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author xiuzhan.fu
@@ -25,37 +27,15 @@ public class ParallelUtil {
      * 　　Nthreads = Ncpu x Ucpu x (1 + W/C)
      * 算了，不折腾了，io线程池直接上16倍吧。
      */
-    static AtomicLong counter = new AtomicLong(0);
-    static ThreadPoolExecutor io_threadPool = new ThreadPoolExecutor(CORES * 16, CORES * 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r);
-            thread.setName("io-thread-pool-" + counter.getAndIncrement());
-            return thread;
-        }
-    });
-    static ThreadPoolExecutor com_threadPool = new ThreadPoolExecutor(CORES, CORES, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r);
-            thread.setName("com-thread-pool-" + counter.getAndIncrement());
-            return thread;
-        }
-    });
+    static ThreadPoolExecutor io_threadPool = new ThreadPoolExecutor(CORES * 16, CORES * 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), ThreadFactoryNamed.builder().namePrefix("io-thread-pool").build());
+    static ThreadPoolExecutor com_threadPool = new ThreadPoolExecutor(CORES, CORES, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), ThreadFactoryNamed.builder().namePrefix("com-thread-pool").build());
 
     public static ThreadPoolExecutor getSingleThreadPool() {
         return new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1));
     }
 
     public static ThreadPoolExecutor getFixedThreadPool(int coreSize) {
-        return new ThreadPoolExecutor(coreSize, coreSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(512), new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("parallel-fixed-threadpool-" + counter.getAndIncrement());
-                return thread;
-            }
-        });
+        return new ThreadPoolExecutor(coreSize, coreSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(512), ThreadFactoryNamed.builder().namePrefix("fixed-thread-pool").build());
     }
 
     public static Future asyncInvoke(Object source, IProcess processor) {
