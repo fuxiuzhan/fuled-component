@@ -27,15 +27,15 @@ public class ParallelUtil {
      * 　　Nthreads = Ncpu x Ucpu x (1 + W/C)
      * 算了，不折腾了，io线程池直接上16倍吧。
      */
-    static ThreadPoolExecutor io_threadPool = new ThreadPoolExecutor(CORES * 16, CORES * 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), ThreadFactoryNamed.builder().namePrefix("io-thread-pool").build());
-    static ThreadPoolExecutor com_threadPool = new ThreadPoolExecutor(CORES, CORES, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), ThreadFactoryNamed.builder().namePrefix("com-thread-pool").build());
+    static ThreadPoolExecutor io_threadPool = new ThreadPoolExecutor(CORES * 16, CORES * 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), ThreadFactoryNamed.named("io-thread-pool"));
+    static ThreadPoolExecutor com_threadPool = new ThreadPoolExecutor(CORES, CORES, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), ThreadFactoryNamed.named("com-thread-pool"));
 
     public static ThreadPoolExecutor getSingleThreadPool() {
         return new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1));
     }
 
     public static ThreadPoolExecutor getFixedThreadPool(int coreSize) {
-        return new ThreadPoolExecutor(coreSize, coreSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(512), ThreadFactoryNamed.builder().namePrefix("fixed-thread-pool").build());
+        return new ThreadPoolExecutor(coreSize, coreSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(512), ThreadFactoryNamed.named("fixed-thread-pool"));
     }
 
     public static Future asyncInvoke(Object source, IProcess processor) {
