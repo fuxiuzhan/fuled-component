@@ -1,14 +1,11 @@
 package com.fxz.fuled.common.utils;
 
-import lombok.Builder;
-
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author fxz
  */
-@Builder
 public class ThreadFactoryNamed implements ThreadFactory {
     private String namePrefix;
     private boolean daemon = Boolean.TRUE;
@@ -29,5 +26,13 @@ public class ThreadFactoryNamed implements ThreadFactory {
         thread.setDaemon(daemon);
         thread.setName(namePrefix + "-" + counter.incrementAndGet());
         return thread;
+    }
+
+    public static ThreadFactoryNamed named(String namePrefix) {
+        return new ThreadFactoryNamed(namePrefix);
+    }
+
+    public static ThreadFactoryNamed named(String namePrefix, boolean daemon) {
+        return new ThreadFactoryNamed(namePrefix, daemon);
     }
 }
