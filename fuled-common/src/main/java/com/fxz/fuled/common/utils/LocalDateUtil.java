@@ -25,9 +25,6 @@ public class LocalDateUtil {
     private static String[] availableDF = new String[]{"MMdd", "yyyyMMdd", "yyMMdd", "MM-dd", "MM-dd HH", "HH:mm", "yyyy-MM-dd", "yyyy-MM", "yyyy-MM-dd HH", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSS", "HH:mm:ss", "yyyyMMddHHmmss", "yyyyMMddHHmmssSSS"};
     private static final ZoneId zoneId = ZoneId.systemDefault();
 
-    public LocalDateUtil() {
-    }
-
     public static LocalDateTime stringToLocalDateTime(String dateString, String format) {
         return null != dateString && null != format ? LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(format)) : null;
     }
@@ -64,65 +61,6 @@ public class LocalDateUtil {
         return null == str || str.length() <= 0 || str.trim() == "" || str.trim().equals("") || "null".equals(str.trim().toLowerCase());
     }
 
-    public static LocalDateTime strToDate(String strDate) throws ParseException {
-        if (isNullString(strDate)) {
-            return null;
-        } else {
-            int _L = strDate.trim().length();
-            String format = "";
-            switch (_L) {
-                case 4:
-                    format = "MMdd";
-                    break;
-                case 5:
-                    if (strDate.indexOf("-") != -1) {
-                        format = "MM-dd";
-                    } else if (strDate.indexOf(":") != -1) {
-                        format = "HH:mm";
-                    }
-                    break;
-                case 6:
-                    format = "yyMMdd";
-                    break;
-                case 7:
-                    format = "yyyy-MM";
-                    break;
-                case 8:
-                    if (strDate.indexOf("-") != -1) {
-                        format = "MM-dd HH";
-                    } else {
-                        format = "yyyyMMdd";
-                    }
-                    break;
-                case 9:
-                case 11:
-                case 12:
-                case 14:
-                case 15:
-                case 17:
-                case 18:
-                case 20:
-                default:
-                    throw new ParseException("", 0);
-                case 10:
-                    format = "yyyy-MM-dd";
-                    break;
-                case 13:
-                    format = "yyyy-MM-dd HH";
-                    break;
-                case 16:
-                    format = "yyyy-MM-dd HH:mm";
-                    break;
-                case 19:
-                    format = "yyyy-MM-dd HH:mm:ss";
-                    break;
-                case 21:
-                    format = "yyyy-MM-dd HH:mm:ss.SSS";
-            }
-
-            return LocalDateTime.parse(strDate, DateTimeFormatter.ofPattern(format));
-        }
-    }
 
     public static String dateToStr(LocalDateTime localDateTime, String format) {
         if (localDateTime == null) {
@@ -136,18 +74,6 @@ public class LocalDateUtil {
 
             return "";
         }
-    }
-
-    public static String dateRangeByMonthStr(LocalDateTime startDate, LocalDateTime endDate) {
-        if (startDate == null) {
-            startDate = LocalDateTime.now();
-        }
-
-        if (endDate == null) {
-            endDate = LocalDateTime.now();
-        }
-
-        return startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "" + endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public static LocalDateTime getHourStart(LocalDateTime localDateTime) {
@@ -172,37 +98,6 @@ public class LocalDateUtil {
 
     public static LocalDateTime addDate(LocalDateTime localDateTime, int day) {
         return localDateTime == null ? null : localDateTime.plusDays((long) day);
-    }
-
-    public static String formatTime(long time) {
-        long hour = time / 3600L;
-        long tempTime = time % 3600L;
-        long min = tempTime / 60L;
-        long sec = tempTime % 60L;
-        return hour + " H" + min + " M" + sec + " S";
-    }
-
-    public static String formatTime2(long milliSecondTime) {
-        long minuteTime = milliSecondTime / 1000L;
-        long tempTime1 = minuteTime % 86400L;
-        long hour = minuteTime / 3600L;
-        long tempTime = tempTime1 % 3600L;
-        long min = tempTime / 60L;
-        long sec = tempTime % 60L;
-        StringBuffer sb = new StringBuffer();
-        if (hour > 0L) {
-            sb.append(hour);
-        }
-
-        if (min > 0L) {
-            sb.append(min);
-        }
-
-        if (sec > 0L) {
-            sb.append(sec);
-        }
-
-        return sb.length() == 0 ? "0" : sb.toString();
     }
 
     public static String getLogTime() {
@@ -306,30 +201,6 @@ public class LocalDateUtil {
         return localDateTime.getYear() == 1970;
     }
 
-    public static String fromLongToDDmmSS(long mss) {
-        long days = mss / 86400000L;
-        long hours = mss % 86400000L / 3600000L;
-        long minutes = mss % 3600000L / 60000L;
-        long seconds = mss % 60000L / 1000L;
-        StringBuffer sb = new StringBuffer();
-        if (days > 0L) {
-            sb.append(days);
-        }
-
-        if (hours > 0L) {
-            sb.append(hours);
-        }
-
-        if (minutes > 0L) {
-            sb.append(minutes);
-        }
-
-        if (seconds > 0L) {
-            sb.append(seconds);
-        }
-
-        return sb.length() == 0 ? "0" : sb.toString();
-    }
 
     public static LocalDateTime getWeekStart(LocalDateTime localDateTime) {
         return localDateTime.with(DayOfWeek.MONDAY);
@@ -377,7 +248,7 @@ public class LocalDateUtil {
     }
 
     public static synchronized long getDaySub(LocalDate beginDate, LocalDate endDate) {
-        return (long) daysBetween(beginDate, endDate);
+        return daysBetween(beginDate, endDate);
     }
 
     public static synchronized long getDayTime(LocalDateTime localDateTime) {

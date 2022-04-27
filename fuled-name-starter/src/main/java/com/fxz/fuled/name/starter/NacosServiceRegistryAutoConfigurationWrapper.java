@@ -35,6 +35,7 @@ public class NacosServiceRegistryAutoConfigurationWrapper {
     @Bean
     public NacosServiceRegistry nacosServiceRegistry(
             NacosDiscoveryProperties nacosDiscoveryProperties, List<ComponentVersion> componentVersions) {
+        NameAutoConfig.initEnv(nacosDiscoveryProperties);
         return new NacosServiceRegistryWrapper(nacosDiscoveryProperties, componentVersions);
     }
 

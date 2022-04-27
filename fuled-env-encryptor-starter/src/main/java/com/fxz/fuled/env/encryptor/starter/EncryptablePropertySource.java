@@ -26,6 +26,9 @@ public class EncryptablePropertySource<T> extends PropertySource<T> {
         if (Objects.nonNull(property)) {
             //process value
             //for example encrypt or decrypt
+            /**
+             * 二次处理的主要实现
+             */
             String converted = valueConverter.convert(property.toString());
             log.info("PropertySourceWrapper key->{},value->{}", name, converted);
             return converted;

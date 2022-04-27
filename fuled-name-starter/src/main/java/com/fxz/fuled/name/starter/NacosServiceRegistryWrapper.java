@@ -75,6 +75,13 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
                 .getNamingService(nacosDiscoveryProperties.getNacosProperties());
     }
 
+    /**
+     * 增加其他meta信息，这些信息可以作为应用管理的数据，如统计应用及版本信息，自动更新提醒等
+     * 也可以作为负载均衡或者灰度控制的参数，如果使用feign方式，直接重写IRule来自定义负载策略
+     *
+     * @param registration
+     * @return
+     */
     private Instance getNacosInstanceFromRegistration(Registration registration) {
         Instance instance = new Instance();
         instance.setIp(registration.getHost());
@@ -94,15 +101,15 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
     private void appendVersionInfo(Map meta) {
         if (!CollectionUtils.isEmpty(componentVersions)) {
             componentVersions.forEach(c -> {
-                meta.put(c.getName(), c.getVersion() + "," + c.getDesc());
+                meta.put(c.getName(), c.getVersion());
             });
         }
         meta.put("env", System.getProperties().get("env"));
         meta.put("os.name", System.getProperties().get("os.name"));
         meta.put("os.version", System.getProperties().get("os.version"));
         meta.put("cpus", Runtime.getRuntime().availableProcessors());
-        meta.put("OS",System.getenv("OS"));
-        meta.put("COMPUTERNAME",System.getenv("COMPUTERNAME"));
+        meta.put("OS", System.getenv("OS"));
+        meta.put("COMPUTERNAME", System.getenv("COMPUTERNAME"));
         meta.put("user.name", System.getProperties().get("user.name"));
         meta.put("PID", System.getProperties().get("PID"));
         meta.put("user.home", System.getProperties().get("user.home"));
@@ -116,6 +123,4 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
         meta.put("user.timezone", System.getProperties().get("user.timezone"));
 
     }
-
-
 }

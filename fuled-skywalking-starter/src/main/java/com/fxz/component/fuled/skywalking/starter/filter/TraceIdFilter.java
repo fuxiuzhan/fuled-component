@@ -9,6 +9,8 @@ import java.io.IOException;
 
 /**
  * @author fxz
+ * <p>
+ * 将traceId传给其他系统或者前端
  */
 public class TraceIdFilter implements Filter {
     private static final String TRACE_ID = "SW_TRACE_ID";

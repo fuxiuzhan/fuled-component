@@ -4,6 +4,7 @@ import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
@@ -12,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author fxz
+ * 重新的目的和配置中心一致
+ * 为了修改nacos的连结地址，其他参数不变
  */
 
 @Configuration(proxyBeanMethods = false)
@@ -27,7 +30,15 @@ public class NameAutoConfig {
 
     @Bean
     public NacosServiceDiscovery nacosServiceDiscovery(NacosDiscoveryProperties discoveryProperties, NacosServiceManager nacosServiceManager) {
+        initEnv(discoveryProperties);
         return new NacosServiceDiscoveryWrapper(discoveryProperties, nacosServiceManager);
+    }
+
+    public static void initEnv(NacosDiscoveryProperties discoveryProperties) {
+        ConfigUtil.initialize();
+        discoveryProperties.setServerAddr(ConfigUtil.getEnv().getSchema() + "://" + ConfigUtil.getEnv().getConfigServer() + ":" + ConfigUtil.getEnv().getPort());
+        discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
+        discoveryProperties.setService(ConfigUtil.getAppId());
     }
 
     @Bean("namingVersion")
