@@ -29,6 +29,12 @@
             <groupId>com.nepxion</groupId>
             <artifactId>banner</artifactId>
             <version>${banner.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fxz.component</groupId>
