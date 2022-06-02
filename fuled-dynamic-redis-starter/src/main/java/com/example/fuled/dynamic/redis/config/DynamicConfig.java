@@ -188,6 +188,6 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
 
     @Bean("DynamicRedisVersion")
     public ComponentVersion configVersion() {
-        return new ComponentVersion("fuled-dynamic-redis-component.version", "1.0.0.waterdrop", "fuled-dynamic-redis-component");
+        return new ComponentVersion("fuled-dynamic-redis.version", "1.0.0.waterdrop", "fuled-dynamic-redis-component");
     }
 }
