@@ -1,6 +1,10 @@
 package com.fxz.fuled.env.encryptor.starter;
 
 import com.fxz.fuled.common.converter.ValueConverter;
+import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptableEnumerablePropertySourceWrapper;
+import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptableMapPropertySourceWrapper;
+import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptablePropertySource;
+import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptablePropertySourceWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -27,18 +31,22 @@ public class EnvPropertiesProcessor implements BeanFactoryPostProcessor {
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         MutablePropertySources propertySources = environment.getPropertySources();
         propertySources.forEach(ps -> {
-            EncryptablePropertySource wrapper = null;
-            //Some Spring Boot code actually casts property sources to this specific type so must be proxied.
-            //for example
-            //org.springframework.boot.context.config.ConfigFileApplicationListener$ConfigurationPropertySources
-            if (ps instanceof MapPropertySource) {
-                wrapper = new EncryptablePropertySource(ps.getName(), ps, valueConverter);
-            }
-            if (ps instanceof EnumerablePropertySource) {
-                wrapper = new EncryptablePropertySource(ps.getName(), ps, valueConverter);
-            }
-            if (Objects.nonNull(wrapper)) {
-                propertySources.replace(ps.getName(), wrapper);
+            if (!(ps instanceof EncryptablePropertySource)) {
+                PropertySource propertySource = null;
+                if (ps instanceof SystemEnvironmentPropertySource) {
+                }
+                if (ps instanceof PropertiesPropertySource) {
+                    propertySource = new EncryptablePropertySourceWrapper<>(ps, valueConverter);
+                }
+                if (ps instanceof MapPropertySource) {
+                    propertySource = new EncryptableMapPropertySourceWrapper(ps, valueConverter);
+                }
+                if (ps instanceof EnumerablePropertySource) {
+                    propertySource = new EncryptableEnumerablePropertySourceWrapper<>(ps, valueConverter);
+                }
+                if (Objects.nonNull(propertySource)) {
+                    propertySources.replace(ps.getName(), propertySource);
+                }
             }
         });
     }

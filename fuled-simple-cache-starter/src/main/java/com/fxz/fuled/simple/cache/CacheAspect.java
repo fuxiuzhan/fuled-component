@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -47,6 +48,7 @@ public class CacheAspect {
      * 使用RedisTemplate则不需要，使用RedisTemplate提供的converter
      */
     @Autowired(required = false)
+    @Qualifier("stringRedisTemplate")
     private StringRedisTemplate redisTemplate;
 
     Map<String, Class> classMap = new ConcurrentHashMap<>();
