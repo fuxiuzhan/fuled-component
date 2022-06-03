@@ -7,6 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 如果有原生的redis
+ * 可以将原生的配置提出来作为默认配置
+ * 会将master指定的redis 作为默认注入容器
+ * <p>
+ * spring.dynamic.redis.master=default
+ * spring.dynamic.redis.default=xxxxx
+ *
  * @author fxz
  */
 @ConfigurationProperties("spring.dynamic.redis")
