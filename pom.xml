@@ -28,6 +28,7 @@
         <module>fuled-common</module>
         <module>fuled-env-encryptor-starter</module>
         <module>fuled-skywalking-starter</module>
+        <module>fuled-dynamic-redis-starter</module>
     </modules>
     <dependencies>
     </dependencies>

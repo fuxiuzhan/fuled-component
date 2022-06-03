@@ -8,50 +8,59 @@
         <version>1.0.0.WaterDrop</version>
     </parent>
     <groupId>com.fxz.component</groupId>
-    <artifactId>fuled-banner</artifactId>
+    <artifactId>fuled-dynamic-redis-starter</artifactId>
     <version>1.0.0.WaterDrop</version>
-    <name>fuled-banner</name>
-    <description>fuled-component-banner</description>
+    <name>fuled-dynamic-redis-starter</name>
+    <description>fuled-dynamic-redis-starter</description>
     <properties>
         <java.version>1.8</java.version>
-        <banner.version>1.0.2</banner.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.nepxion</groupId>
-            <artifactId>banner</artifactId>
-            <version>${banner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fxz.component</groupId>
             <artifactId>fuled-common</artifactId>
             <version>1.0.0.WaterDrop</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-context</artifactId>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
