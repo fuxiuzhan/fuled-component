@@ -1,7 +1,7 @@
 package com.fxz.fuled.dynamic.redis.config;
 
-import com.fxz.fuled.dynamic.redis.properties.DynamicProperties;
 import com.fxz.fuled.common.version.ComponentVersion;
+import com.fxz.fuled.dynamic.redis.properties.DynamicProperties;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -11,10 +11,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -36,6 +35,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author fxz
  */
+
+@ConditionalOnBean(DynamicProperties.class)
 public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
     private final String stringTemplateSuffix = "StringRedisTemplate";
@@ -51,12 +52,12 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     ConfigurableListableBeanFactory factory;
     AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
 
-    @Bean("dynamicProperties")
-    @ConditionalOnMissingBean
-    @Primary
-    public DynamicProperties dynamicProperties() {
-        return new DynamicProperties();
-    }
+//    @Bean("dynamicProperties")
+//    @ConditionalOnMissingBean
+//    @Primary
+//    public DynamicProperties dynamicProperties() {
+//        return new DynamicProperties();
+//    }
 
     /**
      * 在此书初始化的原因是
@@ -192,4 +193,5 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-dynamic-redis.version", "1.0.0.waterdrop", "fuled-dynamic-redis-component");
     }
+
 }
