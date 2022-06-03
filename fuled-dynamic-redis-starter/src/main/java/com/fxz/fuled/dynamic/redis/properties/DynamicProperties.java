@@ -1,4 +1,4 @@
-package com.example.fuled.dynamic.redis.properties;
+package com.fxz.fuled.dynamic.redis.properties;
 
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;

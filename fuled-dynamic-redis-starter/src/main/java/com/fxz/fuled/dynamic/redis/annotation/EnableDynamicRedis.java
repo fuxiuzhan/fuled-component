@@ -1,7 +1,6 @@
-package com.example.fuled.dynamic.redis.annotation;
+package com.fxz.fuled.dynamic.redis.annotation;
 
-import com.example.fuled.dynamic.redis.config.DynamicConfig;
-import com.example.fuled.dynamic.redis.properties.DynamicProperties;
+import com.fxz.fuled.dynamic.redis.config.DynamicConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

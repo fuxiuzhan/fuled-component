@@ -1,6 +1,6 @@
-package com.example.fuled.dynamic.redis.config;
+package com.fxz.fuled.dynamic.redis.config;
 
-import com.example.fuled.dynamic.redis.properties.DynamicProperties;
+import com.fxz.fuled.dynamic.redis.properties.DynamicProperties;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.BeansException;
