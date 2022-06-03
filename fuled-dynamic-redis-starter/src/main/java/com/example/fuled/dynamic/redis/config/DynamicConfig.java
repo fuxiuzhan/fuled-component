@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -50,7 +51,8 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     ConfigurableListableBeanFactory factory;
     AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
 
-    @Bean
+    @Bean("dynamicProperties")
+    @ConditionalOnMissingBean
     @Primary
     public DynamicProperties dynamicProperties() {
         return new DynamicProperties();

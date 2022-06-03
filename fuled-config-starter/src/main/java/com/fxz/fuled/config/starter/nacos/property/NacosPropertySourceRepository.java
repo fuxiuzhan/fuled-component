@@ -67,6 +67,8 @@ public class NacosPropertySourceRepository {
                     } else {
                         nacosPropertySource.getSource().put(key, value);
                     }
+                } else {
+                    nacosPropertySource.getSource().put(key, value);
                 }
             }
         } else {

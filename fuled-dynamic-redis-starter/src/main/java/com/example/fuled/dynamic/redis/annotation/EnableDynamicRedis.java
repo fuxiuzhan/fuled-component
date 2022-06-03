@@ -1,6 +1,7 @@
 package com.example.fuled.dynamic.redis.annotation;
 
 import com.example.fuled.dynamic.redis.config.DynamicConfig;
+import com.example.fuled.dynamic.redis.properties.DynamicProperties;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -12,6 +13,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(DynamicConfig.class)
+@Import({DynamicConfig.class})
 public @interface EnableDynamicRedis {
 }

@@ -1,6 +1,5 @@
 package com.example.fuled.dynamic.redis.properties;
 
-import lombok.Data;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -10,8 +9,7 @@ import java.util.Map;
 /**
  * @author fxz
  */
-@ConfigurationProperties(prefix = "spring.dynamic.redis")
-@Data
+@ConfigurationProperties("spring.dynamic.redis")
 public class DynamicProperties {
     /**
      * set primary redis
@@ -23,4 +21,28 @@ public class DynamicProperties {
      * 多redis配置
      */
     Map<String, RedisProperties> config = new HashMap();
+
+    public void setMaster(String master) {
+        this.master = master;
+    }
+
+    public void setConfig(Map<String, RedisProperties> config) {
+        this.config = config;
+    }
+
+    public String getMaster() {
+        return master;
+    }
+
+    public Map<String, RedisProperties> getConfig() {
+        return config;
+    }
+
+    @Override
+    public String toString() {
+        return "DynamicProperties{" +
+                "master='" + master + '\'' +
+                ", config=" + config +
+                '}';
+    }
 }
