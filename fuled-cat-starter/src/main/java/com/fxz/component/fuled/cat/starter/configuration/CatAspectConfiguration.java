@@ -26,25 +26,25 @@ import org.springframework.stereotype.Service;
 @ConditionalOnBean(Mark.MarkClass.class)
 public class CatAspectConfiguration {
 
-    @Bean({"CatCustomAdvisorService"})
+    @Bean({"catCustomAdvisorService"})
     public CatCustomAdvisor catCustomAdvisorService() {
         CatCustomAdvisor advisor = new CatCustomAdvisor(Service.class);
         return advisor;
     }
 
-    @Bean({"CatCustomAdvisorComponent"})
+    @Bean({"catCustomAdvisorComponent"})
     public CatCustomAdvisor catCustomAdvisorComponent() {
         CatCustomAdvisor advisor = new CatCustomAdvisor(Component.class);
         return advisor;
     }
 
-    @Bean({"CatCustomAdvisorRepository"})
+    @Bean({"catCustomAdvisorRepository"})
     public CatCustomAdvisor catCustomAdvisorRepository() {
         CatCustomAdvisor advisor = new CatCustomAdvisor(Repository.class);
         return advisor;
     }
 
-    @Bean({"CatCustomAdvisorCatTracing"})
+    @Bean({"catCustomAdvisorCatTracing"})
     public CatCustomAdvisor catCustomAdvisorCatTracing() {
         CatCustomAdvisor advisor = new CatCustomAdvisor(CatTracing.class, CatTracing.class);
         return advisor;

@@ -186,7 +186,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
         this.factory = beanFactory;
     }
 
-    @Bean("DynamicRedisVersion")
+    @Bean("dynamicRedisVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-dynamic-redis.version", "1.0.0.waterdrop", "fuled-dynamic-redis-component");
     }

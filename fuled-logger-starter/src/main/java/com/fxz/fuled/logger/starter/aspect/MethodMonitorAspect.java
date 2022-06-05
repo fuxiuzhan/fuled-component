@@ -27,7 +27,7 @@ public class MethodMonitorAspect {
     @Value("${method.monitor.enabled:true}")
     private boolean monitorEnabled;
 
-    @Bean("LoggerVersion")
+    @Bean("loggerVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-logger.version", "1.0.0.waterdrop", "fuled-logger-component");
     }

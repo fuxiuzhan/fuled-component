@@ -37,7 +37,7 @@ public class CacheAspect {
     @Value("${method.cache.enabled:true}")
     private boolean cacheEnabled;
 
-    @Bean("SimpleCacheVersion")
+    @Bean("simpleCacheVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-simple-cache.version", "1.0.0.waterdrop", "fuled-simple-cache-component");
     }
