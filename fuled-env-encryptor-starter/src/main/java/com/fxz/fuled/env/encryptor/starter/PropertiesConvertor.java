@@ -5,12 +5,13 @@ import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptableEnumerableProperty
 import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptableMapPropertySourceWrapper;
 import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptablePropertySource;
 import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptablePropertySourceWrapper;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.*;
 
 import java.util.Objects;
 
-@Configuration
+/**
+ * @author fxz
+ */
 public class PropertiesConvertor {
     private ValueConverter valueConverter;
 
