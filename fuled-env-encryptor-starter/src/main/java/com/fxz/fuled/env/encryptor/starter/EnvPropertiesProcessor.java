@@ -8,6 +8,7 @@ import com.fxz.fuled.env.encryptor.starter.wrapper.EncryptablePropertySourceWrap
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.*;
 
 import java.util.Objects;
@@ -17,7 +18,7 @@ import java.util.Objects;
  * 将已有的properties进行包装代理，来实现加解密等二次操作
  * 与配置中心完全解耦
  */
-public class EnvPropertiesProcessor implements BeanFactoryPostProcessor {
+public class EnvPropertiesProcessor implements BeanFactoryPostProcessor, Ordered {
     private ConfigurableEnvironment environment;
 
     private ValueConverter valueConverter;
@@ -34,21 +35,23 @@ public class EnvPropertiesProcessor implements BeanFactoryPostProcessor {
             if (!(ps instanceof EncryptablePropertySource)) {
                 PropertySource propertySource = null;
                 if (ps instanceof SystemEnvironmentPropertySource) {
-                }
-                if (ps instanceof PropertiesPropertySource) {
+                } else if (ps instanceof PropertiesPropertySource) {
                     propertySource = new EncryptablePropertySourceWrapper<>(ps, valueConverter);
-                }
-                if (ps instanceof MapPropertySource) {
+                } else if (ps instanceof MapPropertySource) {
                     propertySource = new EncryptableMapPropertySourceWrapper(ps, valueConverter);
-                }
-                if (ps instanceof EnumerablePropertySource) {
+                } else if (ps instanceof EnumerablePropertySource) {
                     propertySource = new EncryptableEnumerablePropertySourceWrapper<>(ps, valueConverter);
                 }
                 if (Objects.nonNull(propertySource)) {
                     propertySources.replace(ps.getName(), propertySource);
                 }
             }
+
         });
     }
 
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE - 100;
+    }
 }
