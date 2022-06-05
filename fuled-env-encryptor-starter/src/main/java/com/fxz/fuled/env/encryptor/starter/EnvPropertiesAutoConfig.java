@@ -4,24 +4,34 @@ import com.fxz.fuled.common.converter.ValueConverter;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * @author fxz
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnProperty(name = "fuled.env.encryptor.enabled", matchIfMissing = true)
+@Import({ApplicationEventListener.class})
 public class EnvPropertiesAutoConfig {
     @Bean
-    BeanFactoryPostProcessor envPropertiesProcessor(ConfigurableEnvironment environment, ValueConverter valueConverter) {
-        return new EnvPropertiesProcessor(environment, valueConverter);
+    BeanFactoryPostProcessor envPropertiesProcessor(ConfigurableEnvironment environment, PropertiesConvertor propertiesConvertor) {
+        return new EnvPropertiesProcessor(environment, propertiesConvertor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    ValueConverter defaultValueConverter() {
+    public ValueConverter defaultValueConverter() {
         return new DefaultValueConverter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public PropertiesConvertor propertiesConvertor(ValueConverter valueConverter) {
+        return new PropertiesConvertor(valueConverter);
     }
 
     @Bean("ConfigEncryptVersion")
