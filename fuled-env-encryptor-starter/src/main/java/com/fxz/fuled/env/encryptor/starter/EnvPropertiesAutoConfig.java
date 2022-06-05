@@ -4,35 +4,34 @@ import com.fxz.fuled.common.converter.ValueConverter;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 
 /**
  * @author fxz
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class EnvPropertiesAutoConfig implements EnvironmentAware {
-    private ConfigurableEnvironment environment;
-
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnProperty(name = "fuled.env.encryptor.enabled", matchIfMissing = true)
+@Import({ApplicationEventListener.class})
+public class EnvPropertiesAutoConfig {
     @Bean
-    @Order()
-    BeanFactoryPostProcessor envPropertiesProcessor(ValueConverter valueConverter) {
-        return new EnvPropertiesProcessor(environment, valueConverter);
+    BeanFactoryPostProcessor envPropertiesProcessor(ConfigurableEnvironment environment, PropertiesConvertor propertiesConvertor) {
+        return new EnvPropertiesProcessor(environment, propertiesConvertor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    ValueConverter defaultValueConverter() {
+    public ValueConverter defaultValueConverter() {
         return new DefaultValueConverter();
     }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = (ConfigurableEnvironment) environment;
+    @Bean
+    @ConditionalOnMissingBean
+    public PropertiesConvertor propertiesConvertor(ValueConverter valueConverter) {
+        return new PropertiesConvertor(valueConverter);
     }
 
     @Bean("ConfigEncryptVersion")
