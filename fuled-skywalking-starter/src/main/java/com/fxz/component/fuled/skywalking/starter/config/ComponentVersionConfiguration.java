@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ComponentVersionConfiguration {
-    @Bean("SkywalkingComponentVersion")
+    @Bean("skywalkingComponentVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-skywalking-component.version", "1.0.0.waterdrop", "fuled-skywalking-component");
     }

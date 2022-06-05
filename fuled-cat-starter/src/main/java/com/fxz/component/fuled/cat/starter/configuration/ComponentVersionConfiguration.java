@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnBean(Mark.MarkClass.class)
 public class ComponentVersionConfiguration {
-    @Bean("CatComponentVersion")
+    @Bean("catComponentVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-cat-component.version", "1.0.0.waterdrop", "fuled-cat-component");
     }

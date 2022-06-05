@@ -34,7 +34,7 @@ public class EnvPropertiesAutoConfig {
         return new PropertiesConvertor(valueConverter);
     }
 
-    @Bean("ConfigEncryptVersion")
+    @Bean("configEncryptVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-config-encrypt.version", "1.1.0.waterdrop", "fuled-config-encrypt-component");
     }
