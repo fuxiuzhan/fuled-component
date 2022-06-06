@@ -1,14 +1,35 @@
 package com.fxz.fuled.threadpool.monitor.wrapper;
 
-import java.util.concurrent.RejectedExecutionHandler;
+import com.fxz.fuled.threadpool.monitor.manage.Manageable;
+import com.fxz.fuled.threadpool.monitor.pojo.ChangePair;
+import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
+
+import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * @author fxz
  */
-public class ScheduledThreadPoolExecutorWrapper extends ScheduledThreadPoolExecutor {
-    public ScheduledThreadPoolExecutorWrapper(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
-        super(corePoolSize, threadFactory, handler);
+public class ScheduledThreadPoolExecutorWrapper extends Manageable {
+    private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
+    private String threadPoolName;
+
+    private RejectHandlerWrapper rejectHandlerWrapper;
+
+    public ScheduledThreadPoolExecutorWrapper(String threadPoolName, ScheduledThreadPoolExecutor scheduledThreadPoolExecutor) {
+        this.scheduledThreadPoolExecutor = scheduledThreadPoolExecutor;
+        this.threadPoolName = threadPoolName;
+        rejectHandlerWrapper = new RejectHandlerWrapper(scheduledThreadPoolExecutor.getRejectedExecutionHandler());
+        scheduledThreadPoolExecutor.setRejectedExecutionHandler(rejectHandlerWrapper);
+    }
+
+    @Override
+    public ReporterDto getRecord() {
+        return null;
+    }
+
+    @Override
+    public void onChange(String threadPoolName, List<ChangePair> types) {
+
     }
 }
