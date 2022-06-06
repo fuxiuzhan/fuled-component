@@ -3,7 +3,9 @@ package com.fxz.fuled.threadpool.monitor;
 import com.fxz.fuled.threadpool.monitor.manage.Manageable;
 import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
 import com.fxz.fuled.threadpool.monitor.reporter.Reporter;
+import com.fxz.fuled.threadpool.monitor.wrapper.QueueWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ScheduledThreadPoolExecutorWrapper;
+import com.fxz.fuled.threadpool.monitor.wrapper.ThreadFactoryWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -74,6 +76,9 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
         } else {
             manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
         }
+        //想办法代理queue
+        QueueWrapper.wrapper(threadPoolExecutor.getQueue());
+        threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory()));
         manageableMap.put(threadPoolName, manageable);
         start();
         log.info("threadPoolName->{} registered", threadPoolName);
