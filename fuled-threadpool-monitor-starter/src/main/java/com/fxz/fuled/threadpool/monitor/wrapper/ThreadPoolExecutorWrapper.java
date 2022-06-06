@@ -33,4 +33,10 @@ public class ThreadPoolExecutorWrapper extends Manageable {
     public void onChange(String threadPoolName, List<ChangePair> types) {
 
     }
+
+    @Override
+    public void updateCoreSize(int coreSize) {
+        threadPoolExecutor.setCorePoolSize(coreSize);
+        threadPoolExecutor.setMaximumPoolSize(coreSize);
+    }
 }

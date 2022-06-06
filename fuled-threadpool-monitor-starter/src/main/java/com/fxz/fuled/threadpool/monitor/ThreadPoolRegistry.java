@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,7 +50,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     /**
      * 队列类型
      */
-    private static Queue<ReporterDto> reportQueue;
+    private static BlockingQueue<ReporterDto> reportQueue;
 
     private static List<ReporterDto> tempList = null;
 
@@ -66,6 +68,12 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
 
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4));
 
+    /**
+     * 线程池注册入口
+     *
+     * @param threadPoolName
+     * @param threadPoolExecutor
+     */
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor) {
         if (StringUtils.isEmpty(threadPoolName) || Objects.isNull(threadPoolExecutor)) {
             log.error("threadPoolName and threadPool must not be null");
@@ -77,11 +85,47 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
             manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
         }
         //想办法代理queue
-        QueueWrapper.wrapper(threadPoolExecutor.getQueue());
+
+        BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue());
+        try {
+            modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
+        } catch (Exception e) {
+            log.error("inject queue error ->{}", e);
+        }
         threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory()));
         manageableMap.put(threadPoolName, manageable);
         start();
         log.info("threadPoolName->{} registered", threadPoolName);
+    }
+
+    /**
+     * 更新线程池核心线程数
+     *
+     * @param threadPoolName
+     * @param coreSize
+     */
+    public static void updateCoreSize(String threadPoolName, int coreSize) {
+        if (coreSize <= 0) {
+            log.error("coreSize must be >0,name->{},size->{}", threadPoolName, coreSize);
+            return;
+        }
+        Manageable manageable = manageableMap.get(threadPoolName);
+        if (Objects.isNull(manageable)) {
+            log.error("threadPoolName not exits");
+            return;
+        }
+        manageable.updateCoreSize(coreSize);
+    }
+
+    private static void modifyFinal(Object object, String fieldName, Object newFieldValue) throws Exception {
+        Field field = object.getClass().getDeclaredField(fieldName);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+        }
+        field.set(object, newFieldValue);
     }
 
     private static void start() {
@@ -106,16 +150,22 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
                         if (Objects.isNull(tempList)) {
                             tempList = new ArrayList<>(batchSize);
                         }
-                        while (tempList.size() < batchSize) {
-                            tempList.add(reportQueue.poll());
-                        }
-                        beansOfType.forEach((k, v) -> {
-                            try {
-                                v.report(tempList);
-                            } catch (Exception e) {
-                                log.error("report error ,name->{},error->{}", k, e);
+                        long start = System.currentTimeMillis();
+                        while ((tempList.size() < batchSize) && ((System.currentTimeMillis() - start) < reportInternalInSeconds * 1000L)) {
+                            ReporterDto poll = reportQueue.poll(1000, TimeUnit.MILLISECONDS);
+                            if (Objects.nonNull(poll)) {
+                                tempList.add(poll);
                             }
-                        });
+                        }
+                        if (!CollectionUtils.isEmpty(tempList)) {
+                            beansOfType.forEach((k, v) -> {
+                                try {
+                                    v.report(tempList);
+                                } catch (Exception e) {
+                                    log.error("report error ,name->{},error->{}", k, e);
+                                }
+                            });
+                        }
                         tempList.clear();
                     } catch (Exception e) {
                         log.error("report error->{}", e);
@@ -133,7 +183,10 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
             if (!CollectionUtils.isEmpty(manageableMap)) {
                 manageableMap.forEach((k, v) -> {
                     //不关心结果
-                    reportQueue.offer(v.getRecord());
+                    ReporterDto record = v.getRecord();
+                    if (Objects.nonNull(record)) {
+                        reportQueue.offer(record);
+                    }
                 });
             }
         } catch (Exception e) {

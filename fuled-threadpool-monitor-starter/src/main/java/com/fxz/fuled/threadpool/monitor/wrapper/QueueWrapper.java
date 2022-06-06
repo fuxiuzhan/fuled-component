@@ -1,9 +1,11 @@
 package com.fxz.fuled.threadpool.monitor.wrapper;
 
-import java.lang.reflect.InvocationHandler;
+import com.fxz.fuled.threadpool.monitor.RpcContext;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 /**
  * 包装queue
@@ -11,15 +13,19 @@ import java.util.concurrent.BlockingQueue;
 public class QueueWrapper {
     public static BlockingQueue wrapper(BlockingQueue blockingQueue) {
         return (BlockingQueue) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{BlockingQueue.class},
-                new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) {
-                        if ("workQueue".equals(method.getName())) {
-                            //包装runnable
-                            return invoke(blockingQueue, method, args);
+                (proxy, method, args) -> {
+                    if ("offer".equals(method.getName())) {
+                        //包装runnable
+                        Object[] newArgs = args;
+                        if (args[0] instanceof Runnable) {
+                            newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get())};
+                        } else if (args[0] instanceof Callable) {
+                            newArgs = new Object[]{new CallableWrapper<>((Callable) args[0], RpcContext.get())};
                         }
-                        return invoke(blockingQueue, method, args);
+                        return blockingQueue.offer(newArgs[0]);
                     }
+                    Method targetMethod = blockingQueue.getClass().getMethod(method.getName(), method.getParameterTypes());
+                    return targetMethod.invoke(blockingQueue, args);
                 });
     }
 }

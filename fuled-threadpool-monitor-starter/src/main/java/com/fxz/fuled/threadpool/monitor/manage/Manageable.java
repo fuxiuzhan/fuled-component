@@ -9,4 +9,5 @@ package com.fxz.fuled.threadpool.monitor.manage;
  */
 public abstract class Manageable implements ChangeListener, Recordable {
 
+    public abstract void updateCoreSize(int coreSize);
 }

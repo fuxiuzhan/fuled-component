@@ -2,8 +2,6 @@ package com.fxz.fuled.threadpool.monitor.wrapper;
 
 import com.fxz.fuled.threadpool.monitor.RpcContext;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
@@ -12,17 +10,17 @@ import java.util.concurrent.Callable;
  */
 public class CallableWrapper<V> implements Callable<V> {
     private Callable callable;
-    private Map<Object, Object> metaMap;
+    private Object meta;
 
-    public CallableWrapper(Callable callable, Map<Object, Object> metaMap) {
+    public CallableWrapper(Callable callable, Object meta) {
         this.callable = callable;
-        this.metaMap = metaMap;
+        this.meta = meta;
     }
 
     @Override
     public V call() throws Exception {
         try {
-            RpcContext.set(metaMap);
+            RpcContext.set(meta);
             return (V) callable.call();
         } finally {
             RpcContext.remove();

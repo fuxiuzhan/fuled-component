@@ -1,17 +1,26 @@
 package com.fxz.fuled.threadpool.monitor;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.fxz.fuled.threadpool.monitor.manage.ObjectCone;
 
 public class RpcContext {
-    static ThreadLocal<Map<Object, Object>> store = ThreadLocal.withInitial(() -> new HashMap<>());
 
-    public static Map<Object, Object> get() {
-        return store.get();
+    public static void setObjectCone(ObjectCone objectCone) {
+        RpcContext.objectCone = objectCone;
     }
 
-    public static void set(Map<Object, Object> objectObjectMap) {
-        store.set(objectObjectMap);
+    /**
+     * 复杂对象需要做深copy
+     */
+    private static ObjectCone objectCone = obj -> obj;
+
+    private static ThreadLocal<Object> store = new ThreadLocal<>();
+
+    public static Object get() {
+        return objectCone.clone(store.get());
+    }
+
+    public static void set(Object obj) {
+        store.set(obj);
     }
 
     public static void remove() {
