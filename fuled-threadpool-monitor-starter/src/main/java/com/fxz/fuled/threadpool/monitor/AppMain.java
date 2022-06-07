@@ -1,5 +1,12 @@
 package com.fxz.fuled.threadpool.monitor;
 
+import com.fxz.fuled.threadpool.monitor.wrapper.ThreadFactoryWrapper;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * MEMO：
  * <p>
@@ -20,4 +27,45 @@ package com.fxz.fuled.threadpool.monitor;
  */
 public class AppMain {
 
+    public static void main(String[] args) {
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
+        ThreadPoolRegistry.registerThreadPool("test", threadPoolExecutor);
+        RpcContext.set("1");
+        threadPoolExecutor.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("rpc->" + RpcContext.get());
+        });
+        RpcContext.set("2");
+        threadPoolExecutor.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("rpc->" + RpcContext.get());
+        });
+        RpcContext.set("3");
+        threadPoolExecutor.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("rpc->" + RpcContext.get());
+        });
+        RpcContext.set("4");
+        threadPoolExecutor.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("rpc->" + RpcContext.get());
+        });
+        RpcContext.set("5");
+    }
 }
