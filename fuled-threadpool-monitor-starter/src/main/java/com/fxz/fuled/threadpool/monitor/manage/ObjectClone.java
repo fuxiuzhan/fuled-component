@@ -1,6 +1,6 @@
 package com.fxz.fuled.threadpool.monitor.manage;
 
-public interface ObjectCone {
+public interface ObjectClone {
 
     Object clone(Object obj);
 }

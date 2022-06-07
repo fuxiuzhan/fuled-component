@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class AppMain {
 
     public static void main(String[] args) {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
         ThreadPoolRegistry.registerThreadPool("test", threadPoolExecutor);
         RpcContext.set("1");
         threadPoolExecutor.execute(() -> {
@@ -49,5 +49,23 @@ public class AppMain {
             System.out.println("rpc->" + RpcContext.get());
         });
         RpcContext.set("3");
+        threadPoolExecutor.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("rpc->" + RpcContext.get());
+        });
+        RpcContext.set("4");
+        threadPoolExecutor.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("rpc->" + RpcContext.get());
+        });
+        RpcContext.set("5");
     }
 }
