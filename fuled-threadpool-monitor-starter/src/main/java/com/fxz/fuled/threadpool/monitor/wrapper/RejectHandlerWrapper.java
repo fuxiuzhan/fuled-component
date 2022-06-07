@@ -15,6 +15,10 @@ public class RejectHandlerWrapper implements RejectedExecutionHandler {
 
     private AtomicLong counter = new AtomicLong(0);
 
+    public RejectedExecutionHandler getRejectedExecutionHandler() {
+        return rejectedExecutionHandler;
+    }
+
     public long getCounter() {
         return counter.get();
     }

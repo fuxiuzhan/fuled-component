@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
  */
 public class QueueWrapper {
     public static BlockingQueue wrapper(BlockingQueue blockingQueue) {
-        return (BlockingQueue) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{BlockingQueue.class},
+        return (BlockingQueue) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{BlockingQueue.class, Raw.class},
                 (proxy, method, args) -> {
                     if ("offer".equals(method.getName())) {
                         //包装runnable
@@ -24,8 +24,16 @@ public class QueueWrapper {
                         }
                         return blockingQueue.offer(newArgs[0]);
                     }
+                    //获取被代理对象
+                    if ("getNative".equals(method.getName())) {
+                        return blockingQueue;
+                    }
                     Method targetMethod = blockingQueue.getClass().getMethod(method.getName(), method.getParameterTypes());
                     return targetMethod.invoke(blockingQueue, args);
                 });
+    }
+
+    public interface Raw {
+        Object getNative();
     }
 }

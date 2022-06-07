@@ -25,7 +25,7 @@ public class ScheduledThreadPoolExecutorWrapper extends Manageable {
 
     @Override
     public ReporterDto getRecord() {
-        return null;
+        return build(threadPoolName, scheduledThreadPoolExecutor);
     }
 
     @Override
