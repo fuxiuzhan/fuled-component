@@ -2,6 +2,7 @@ package com.fxz.fuled.threadpool.monitor;
 
 import com.fxz.fuled.threadpool.monitor.manage.Manageable;
 import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
+import com.fxz.fuled.threadpool.monitor.pojo.ThreadPoolProperties;
 import com.fxz.fuled.threadpool.monitor.reporter.Reporter;
 import com.fxz.fuled.threadpool.monitor.wrapper.QueueWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ScheduledThreadPoolExecutorWrapper;
@@ -9,8 +10,10 @@ import com.fxz.fuled.threadpool.monitor.wrapper.ThreadFactoryWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.event.EventListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -197,5 +200,17 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
+    }
+
+    @EventListener
+    public void eventListener(EnvironmentChangeEvent event) {
+        ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+        if (Objects.nonNull(bean)) {
+            if (!CollectionUtils.isEmpty(bean.getConfig())) {
+                bean.getConfig().forEach((k, v) -> {
+                    updateCoreSize(k, v.getCoreSize());
+                });
+            }
+        }
     }
 }
