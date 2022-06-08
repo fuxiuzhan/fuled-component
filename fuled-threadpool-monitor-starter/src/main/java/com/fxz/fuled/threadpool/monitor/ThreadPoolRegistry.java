@@ -210,7 +210,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     private void wrapperContext() {
         ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
         if (Objects.nonNull(bean)) {
-            if (bean.isWrapperContext()) {
+            if (bean.isWrapper()) {
                 Map<String, ThreadPoolExecutor> threadPools = applicationContext.getBeansOfType(ThreadPoolExecutor.class);
                 if (!CollectionUtils.isEmpty(threadPools)) {
                     threadPools.forEach((k, v) -> {

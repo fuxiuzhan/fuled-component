@@ -14,7 +14,7 @@ public class ThreadPoolProperties {
     /**
      * 是否包装容器内的线程池
      */
-    private boolean wrapperContext = Boolean.FALSE;
+    private boolean wrapper = Boolean.FALSE;
     /**
      * 配置线程池的参数
      */
