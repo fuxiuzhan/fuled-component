@@ -213,15 +213,11 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
             if (bean.isWrapper()) {
                 Map<String, ThreadPoolExecutor> threadPools = applicationContext.getBeansOfType(ThreadPoolExecutor.class);
                 if (!CollectionUtils.isEmpty(threadPools)) {
-                    threadPools.forEach((k, v) -> {
-                        registerThreadPool(k, v);
-                    });
+                    threadPools.forEach((k, v) -> registerThreadPool(k, v));
                 }
                 Map<String, ScheduledThreadPoolExecutor> scheduledPools = applicationContext.getBeansOfType(ScheduledThreadPoolExecutor.class);
                 if (!CollectionUtils.isEmpty(scheduledPools)) {
-                    scheduledPools.forEach((k, v) -> {
-                        registerThreadPool(k, v);
-                    });
+                    scheduledPools.forEach((k, v) -> registerThreadPool(k, v));
                 }
             }
         }
