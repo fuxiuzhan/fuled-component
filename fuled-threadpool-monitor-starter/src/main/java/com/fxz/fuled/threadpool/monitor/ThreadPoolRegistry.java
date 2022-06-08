@@ -200,8 +200,38 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
+        wrapperContext();
+        eventListener(null);
     }
 
+    /**
+     * 包装容器内的threadPool
+     */
+    private void wrapperContext() {
+        ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+        if (Objects.nonNull(bean)) {
+            if (bean.isWrapperContext()) {
+                Map<String, ThreadPoolExecutor> threadPools = applicationContext.getBeansOfType(ThreadPoolExecutor.class);
+                if (!CollectionUtils.isEmpty(threadPools)) {
+                    threadPools.forEach((k, v) -> {
+                        registerThreadPool(k, v);
+                    });
+                }
+                Map<String, ScheduledThreadPoolExecutor> scheduledPools = applicationContext.getBeansOfType(ScheduledThreadPoolExecutor.class);
+                if (!CollectionUtils.isEmpty(scheduledPools)) {
+                    scheduledPools.forEach((k, v) -> {
+                        registerThreadPool(k, v);
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * 动态变更threadPool参数
+     *
+     * @param event
+     */
     @EventListener
     public void eventListener(EnvironmentChangeEvent event) {
         ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);

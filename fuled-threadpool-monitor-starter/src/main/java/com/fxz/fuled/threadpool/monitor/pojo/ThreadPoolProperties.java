@@ -11,10 +11,20 @@ import java.util.Map;
 @Configuration
 public class ThreadPoolProperties {
 
+    /**
+     * 是否包装容器内的线程池
+     */
+    private boolean wrapperContext = Boolean.FALSE;
+    /**
+     * 配置线程池的参数
+     */
     private Map<String, SimpleProp> config;
 
     @Data
     public static class SimpleProp {
+        /**
+         * 线程池核心线程数数量
+         */
         private int coreSize;
     }
 }
