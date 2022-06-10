@@ -1,7 +1,9 @@
 package com.fxz.fuled.threadpool.monitor;
 
+import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.threadpool.monitor.manage.Manageable;
 import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
+import com.fxz.fuled.threadpool.monitor.pojo.ThreadPoolProperties;
 import com.fxz.fuled.threadpool.monitor.reporter.Reporter;
 import com.fxz.fuled.threadpool.monitor.wrapper.QueueWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ScheduledThreadPoolExecutorWrapper;
@@ -9,8 +11,10 @@ import com.fxz.fuled.threadpool.monitor.wrapper.ThreadFactoryWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.event.EventListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -66,7 +70,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      */
     private static AtomicBoolean started = new AtomicBoolean(Boolean.FALSE);
 
-    private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4));
+    private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
+            new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor"));
 
     /**
      * 线程池注册入口
@@ -197,5 +202,43 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
+        wrapperContext();
+        eventListener(null);
+    }
+
+    /**
+     * 包装容器内的threadPool
+     */
+    private void wrapperContext() {
+        ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+        if (Objects.nonNull(bean)) {
+            if (bean.isWrapper()) {
+                Map<String, ThreadPoolExecutor> threadPools = applicationContext.getBeansOfType(ThreadPoolExecutor.class);
+                if (!CollectionUtils.isEmpty(threadPools)) {
+                    threadPools.forEach((k, v) -> registerThreadPool(k, v));
+                }
+                Map<String, ScheduledThreadPoolExecutor> scheduledPools = applicationContext.getBeansOfType(ScheduledThreadPoolExecutor.class);
+                if (!CollectionUtils.isEmpty(scheduledPools)) {
+                    scheduledPools.forEach((k, v) -> registerThreadPool(k, v));
+                }
+            }
+        }
+    }
+
+    /**
+     * 动态变更threadPool参数
+     *
+     * @param event
+     */
+    @EventListener
+    public void eventListener(EnvironmentChangeEvent event) {
+        ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+        if (Objects.nonNull(bean)) {
+            if (!CollectionUtils.isEmpty(bean.getConfig())) {
+                bean.getConfig().forEach((k, v) -> {
+                    updateCoreSize(k, v.getCoreSize());
+                });
+            }
+        }
     }
 }
