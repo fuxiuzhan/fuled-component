@@ -8,6 +8,10 @@ import lombok.Data;
 @Data
 public class ReporterDto {
     /**
+     * 时间戳
+     */
+    private long timeStamp = System.currentTimeMillis();
+    /**
      * 应用名称
      */
     private String appName;
