@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ThreadFactoryNamed implements ThreadFactory {
     private String namePrefix;
-    private boolean daemon = Boolean.TRUE;
+    private boolean daemon = Boolean.FALSE;
     private AtomicLong counter = new AtomicLong(0);
 
     ThreadFactoryNamed(String namePrefix) {

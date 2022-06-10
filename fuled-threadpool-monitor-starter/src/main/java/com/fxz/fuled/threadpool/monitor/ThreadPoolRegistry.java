@@ -1,5 +1,6 @@
 package com.fxz.fuled.threadpool.monitor;
 
+import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.threadpool.monitor.manage.Manageable;
 import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
 import com.fxz.fuled.threadpool.monitor.pojo.ThreadPoolProperties;
@@ -69,7 +70,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      */
     private static AtomicBoolean started = new AtomicBoolean(Boolean.FALSE);
 
-    private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4));
+    private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
+            new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor"));
 
     /**
      * 线程池注册入口
