@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 带计数器的rejectHandler
+ * 统计被拒绝的线程数
+ * 对原有的RejectHandler进行代理
  *
  * @author fxz
  */

@@ -20,6 +20,9 @@ public class QueueWrapper {
                         if (args[0] instanceof Runnable) {
                             newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get())};
                         } else if (args[0] instanceof Callable) {
+                            //callable其实线程池也是包装成runnable进行运行的，所以这条逻辑不会执行到，
+                            //如果是拦截入口的话就需要了
+                            //原理提示作用
                             newArgs = new Object[]{new CallableWrapper<>((Callable) args[0], RpcContext.get())};
                         }
                         return blockingQueue.offer(newArgs[0]);
