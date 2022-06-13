@@ -83,7 +83,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
         if (StringUtils.isEmpty(threadPoolName) || Objects.isNull(threadPoolExecutor)) {
             log.error("threadPoolName and threadPool must not be null");
         }
-        Manageable manageable = null;
+        Manageable manageable;
         if (threadPoolExecutor instanceof ScheduledThreadPoolExecutor) {
             //线程池的监控主要是监控ThreadPoolExecutor，对于定时线程池由于其内部队列原理是采用list的大小堆排序的queue
             //所以像核心线程数最大线程数拒绝策略均有所不同，此处增加处理作原理说明
