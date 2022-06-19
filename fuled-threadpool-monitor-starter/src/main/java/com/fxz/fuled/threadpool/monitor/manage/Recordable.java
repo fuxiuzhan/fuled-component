@@ -10,4 +10,10 @@ import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
 public interface Recordable {
 
     ReporterDto getRecord();
+
+    /**
+     *
+     */
+    default void shutdown() {
+    }
 }
