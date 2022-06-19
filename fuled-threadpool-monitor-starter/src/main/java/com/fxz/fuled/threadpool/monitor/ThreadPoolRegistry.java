@@ -238,6 +238,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     @EventListener
     public void eventListener(ApplicationEvent event) {
         if (event instanceof EnvironmentChangeEvent) {
+            //MEMO 在刷新过程中可能会触发多次，但是最后一次是最新的。
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
             if (Objects.nonNull(bean)) {
                 if (!CollectionUtils.isEmpty(bean.getConfig())) {
