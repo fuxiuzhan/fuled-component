@@ -28,6 +28,17 @@ import java.util.concurrent.TimeUnit;
 public class AppMain {
 
     public static void main(String[] args) {
+        /**
+         * 对于手动注册和需要threadLocal通过线程池传递需要做如下操作
+         * 其实只需要对线程池进行注册即可，如下示例
+         *
+         * 如果是使用spring容器管理的
+         * ThreadPoolExecutor 可打开如下配置开关
+         * 则会自动处理容器内的ThreadPoolExecutor，
+         * 默认关闭
+         * fuled.thread.pool.wrapper=true
+         */
+
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
         ThreadPoolRegistry.registerThreadPool("test", threadPoolExecutor);
         RpcContext.set("1");

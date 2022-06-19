@@ -2,6 +2,7 @@ package com.fxz.fuled.threadpool.monitor.wrapper;
 
 import com.fxz.fuled.threadpool.monitor.RpcContext;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.BlockingQueue;
@@ -20,6 +21,9 @@ public class QueueWrapper {
                         if (args[0] instanceof Runnable) {
                             newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get())};
                         } else if (args[0] instanceof Callable) {
+                            //callable其实线程池也是包装成runnable进行运行的，所以这条逻辑不会执行到，
+                            //如果是拦截入口的话就需要了
+                            //原理提示作用
                             newArgs = new Object[]{new CallableWrapper<>((Callable) args[0], RpcContext.get())};
                         }
                         return blockingQueue.offer(newArgs[0]);
@@ -29,7 +33,12 @@ public class QueueWrapper {
                         return blockingQueue;
                     }
                     Method targetMethod = blockingQueue.getClass().getMethod(method.getName(), method.getParameterTypes());
-                    return targetMethod.invoke(blockingQueue, args);
+                    try {
+                        return targetMethod.invoke(blockingQueue, args);
+                        //处理原始异常，不然使用代理的捕获异常机制会失效
+                    } catch (InvocationTargetException ex) {
+                        throw ex.getTargetException();
+                    }
                 });
     }
 

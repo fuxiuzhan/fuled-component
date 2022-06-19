@@ -14,6 +14,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -83,14 +84,18 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
         if (StringUtils.isEmpty(threadPoolName) || Objects.isNull(threadPoolExecutor)) {
             log.error("threadPoolName and threadPool must not be null");
         }
-        Manageable manageable = null;
+        Manageable manageable;
         if (threadPoolExecutor instanceof ScheduledThreadPoolExecutor) {
+            //线程池的监控主要是监控ThreadPoolExecutor，对于定时线程池由于其内部队列原理是采用list的大小堆排序的queue
+            //所以像核心线程数最大线程数拒绝策略均有所不同，此处增加处理作原理说明
             manageable = new ScheduledThreadPoolExecutorWrapper(threadPoolName, (ScheduledThreadPoolExecutor) threadPoolExecutor);
         } else {
             manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
         }
         //想办法代理queue
-
+        //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
+        //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
+        //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
         BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue());
         try {
             modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
@@ -203,7 +208,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
         wrapperContext();
-        eventListener(null);
+        eventListener(new EnvironmentChangeEvent(new HashSet<>()));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> ThreadPoolRegistry.this.stop()));
     }
 
     /**
@@ -231,14 +237,31 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      * @param event
      */
     @EventListener
-    public void eventListener(EnvironmentChangeEvent event) {
-        ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
-        if (Objects.nonNull(bean)) {
-            if (!CollectionUtils.isEmpty(bean.getConfig())) {
-                bean.getConfig().forEach((k, v) -> {
-                    updateCoreSize(k, v.getCoreSize());
-                });
+    public void eventListener(ApplicationEvent event) {
+        //环境变更或者注册中心变更事件
+        if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
+            //MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
+            //这个与具体使用了那种动态配置方式是有关系的。
+            ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+            if (Objects.nonNull(bean)) {
+                if (!CollectionUtils.isEmpty(bean.getConfig())) {
+                    bean.getConfig().forEach((k, v) -> {
+                        updateCoreSize(k, v.getCoreSize());
+                    });
+                }
             }
+        }
+    }
+
+    /**
+     * stop all
+     */
+    private void stop() {
+        if (!CollectionUtils.isEmpty(manageableMap)) {
+            manageableMap.forEach((k, v) -> {
+                v.shutdown();
+                log.info("ThreadPool shutdown threadPoolName->{}", k);
+            });
         }
     }
 }
