@@ -209,6 +209,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
         ThreadPoolRegistry.applicationContext = applicationContext;
         wrapperContext();
         eventListener(new EnvironmentChangeEvent(new HashSet<>()));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> ThreadPoolRegistry.this.stop()));
     }
 
     /**
@@ -239,7 +240,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     public void eventListener(ApplicationEvent event) {
         //环境变更或者注册中心变更事件
         if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
-            //MEMO 在刷新过程中可能会触发多次，但是最后一次是最新的。
+            //MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
+            //这个与具体使用了那种动态配置方式是有关系的。
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
             if (Objects.nonNull(bean)) {
                 if (!CollectionUtils.isEmpty(bean.getConfig())) {
@@ -248,6 +250,18 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
                     });
                 }
             }
+        }
+    }
+
+    /**
+     * stop all
+     */
+    private void stop() {
+        if (!CollectionUtils.isEmpty(manageableMap)) {
+            manageableMap.forEach((k, v) -> {
+                v.shutdown();
+                log.info("ThreadPool shutdown threadPoolName->{}", k);
+            });
         }
     }
 }
