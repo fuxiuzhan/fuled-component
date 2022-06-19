@@ -208,7 +208,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
         wrapperContext();
-        eventListener(null);
+        eventListener(new EnvironmentChangeEvent(new HashSet<>()));
     }
 
     /**
