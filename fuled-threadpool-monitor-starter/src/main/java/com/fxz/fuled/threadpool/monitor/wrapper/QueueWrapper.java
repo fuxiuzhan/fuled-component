@@ -2,6 +2,7 @@ package com.fxz.fuled.threadpool.monitor.wrapper;
 
 import com.fxz.fuled.threadpool.monitor.RpcContext;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.BlockingQueue;
@@ -34,8 +35,9 @@ public class QueueWrapper {
                     Method targetMethod = blockingQueue.getClass().getMethod(method.getName(), method.getParameterTypes());
                     try {
                         return targetMethod.invoke(blockingQueue, args);
-                    } catch (Throwable e) {
-                        throw e.getCause();
+                        //处理原始异常，不然使用代理的捕获异常机制会失效
+                    } catch (InvocationTargetException ex) {
+                        throw ex.getTargetException();
                     }
                 });
     }
