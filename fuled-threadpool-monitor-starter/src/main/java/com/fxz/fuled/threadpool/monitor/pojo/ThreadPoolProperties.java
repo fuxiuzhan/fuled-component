@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @ConfigurationProperties(prefix = "fuled.thread.pool")
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ThreadPoolProperties {
 
     /**
