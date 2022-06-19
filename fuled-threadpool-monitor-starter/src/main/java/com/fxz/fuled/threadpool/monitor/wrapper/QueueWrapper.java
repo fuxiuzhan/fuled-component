@@ -32,7 +32,11 @@ public class QueueWrapper {
                         return blockingQueue;
                     }
                     Method targetMethod = blockingQueue.getClass().getMethod(method.getName(), method.getParameterTypes());
-                    return targetMethod.invoke(blockingQueue, args);
+                    try {
+                        return targetMethod.invoke(blockingQueue, args);
+                    } catch (Throwable e) {
+                        throw e.getCause();
+                    }
                 });
     }
 
