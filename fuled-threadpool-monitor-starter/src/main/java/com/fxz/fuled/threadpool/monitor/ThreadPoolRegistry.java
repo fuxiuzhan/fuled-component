@@ -14,6 +14,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -235,13 +236,15 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      * @param event
      */
     @EventListener
-    public void eventListener(EnvironmentChangeEvent event) {
-        ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
-        if (Objects.nonNull(bean)) {
-            if (!CollectionUtils.isEmpty(bean.getConfig())) {
-                bean.getConfig().forEach((k, v) -> {
-                    updateCoreSize(k, v.getCoreSize());
-                });
+    public void eventListener(ApplicationEvent event) {
+        if (event instanceof EnvironmentChangeEvent) {
+            ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+            if (Objects.nonNull(bean)) {
+                if (!CollectionUtils.isEmpty(bean.getConfig())) {
+                    bean.getConfig().forEach((k, v) -> {
+                        updateCoreSize(k, v.getCoreSize());
+                    });
+                }
             }
         }
     }
