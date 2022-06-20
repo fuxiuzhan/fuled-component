@@ -11,7 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- *
  * @author fxz
  */
 @Slf4j
@@ -57,4 +56,9 @@ public abstract class Manageable implements ChangeListener, Recordable {
         }
         return reporterDto;
     }
+
+    /**
+     * shutdown
+     */
+    public abstract void shutdown();
 }
