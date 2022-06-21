@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * 线程池管理工具
@@ -153,20 +154,20 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      */
     private static void doReport() {
         while (whileCondition.get()) {
-            if (Objects.nonNull(applicationContext)) {
-                Map<String, Reporter> beansOfType = applicationContext.getBeansOfType(Reporter.class);
-                try {
-                    if (Objects.isNull(tempList)) {
-                        tempList = new ArrayList<>(batchSize);
+            try {
+                if (Objects.isNull(tempList)) {
+                    tempList = new ArrayList<>(batchSize);
+                }
+                long start = System.currentTimeMillis();
+                while ((tempList.size() < batchSize) && ((System.currentTimeMillis() - start) < reportInternalInSeconds * 1000L)) {
+                    ReporterDto poll = reportQueue.poll(1000, TimeUnit.MILLISECONDS);
+                    if (Objects.nonNull(poll)) {
+                        tempList.add(poll);
                     }
-                    long start = System.currentTimeMillis();
-                    while ((tempList.size() < batchSize) && ((System.currentTimeMillis() - start) < reportInternalInSeconds * 1000L)) {
-                        ReporterDto poll = reportQueue.poll(1000, TimeUnit.MILLISECONDS);
-                        if (Objects.nonNull(poll)) {
-                            tempList.add(poll);
-                        }
-                    }
-                    if (!CollectionUtils.isEmpty(tempList)) {
+                }
+                if (!CollectionUtils.isEmpty(tempList)) {
+                    if (Objects.nonNull(applicationContext)) {
+                        Map<String, Reporter> beansOfType = applicationContext.getBeansOfType(Reporter.class);
                         if (!CollectionUtils.isEmpty(beansOfType)) {
                             beansOfType.forEach((k, v) -> {
                                 try {
@@ -177,10 +178,10 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
                             });
                         }
                     }
-                    tempList.clear();
-                } catch (Exception e) {
-                    log.error("report error->{}", e);
                 }
+                tempList.clear();
+            } catch (Exception e) {
+                log.error("report error->{}", e);
             }
         }
     }
