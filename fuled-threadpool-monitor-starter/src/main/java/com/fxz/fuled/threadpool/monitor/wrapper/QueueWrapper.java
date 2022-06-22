@@ -1,6 +1,7 @@
 package com.fxz.fuled.threadpool.monitor.wrapper;
 
 import com.fxz.fuled.threadpool.monitor.RpcContext;
+import com.fxz.fuled.threadpool.monitor.manage.ThreadExecuteHook;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,14 +13,14 @@ import java.util.concurrent.Callable;
  * 包装queue
  */
 public class QueueWrapper {
-    public static BlockingQueue wrapper(BlockingQueue blockingQueue) {
+    public static BlockingQueue wrapper(BlockingQueue blockingQueue, ThreadExecuteHook threadExecuteHook) {
         return (BlockingQueue) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{BlockingQueue.class, Raw.class},
                 (proxy, method, args) -> {
                     if ("offer".equals(method.getName())) {
                         //包装runnable
                         Object[] newArgs = args;
                         if (args[0] instanceof Runnable) {
-                            newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get())};
+                            newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get(), threadExecuteHook)};
                         } else if (args[0] instanceof Callable) {
                             //callable其实线程池也是包装成runnable进行运行的，所以这条逻辑不会执行到，
                             //如果是拦截入口的话就需要了

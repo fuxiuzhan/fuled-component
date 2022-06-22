@@ -1,6 +1,7 @@
 package com.fxz.fuled.threadpool.monitor.wrapper;
 
 import com.fxz.fuled.threadpool.monitor.RpcContext;
+import com.fxz.fuled.threadpool.monitor.manage.ThreadExecuteHook;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -23,13 +24,15 @@ import java.util.concurrent.ThreadFactory;
 public class ThreadFactoryWrapper implements ThreadFactory {
 
     private ThreadFactory threadFactory;
+    private ThreadExecuteHook threadExecuteHook;
 
-    public ThreadFactoryWrapper(ThreadFactory threadFactory) {
+    public ThreadFactoryWrapper(ThreadFactory threadFactory, ThreadExecuteHook threadExecuteHook) {
         this.threadFactory = threadFactory;
+        this.threadExecuteHook = threadExecuteHook;
     }
 
     @Override
     public Thread newThread(Runnable r) {
-        return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get()));
+        return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get(),threadExecuteHook));
     }
 }
