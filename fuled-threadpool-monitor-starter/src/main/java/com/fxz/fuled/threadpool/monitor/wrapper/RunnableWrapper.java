@@ -21,6 +21,7 @@ public class RunnableWrapper implements Runnable {
     @Override
     public void run() {
         try {
+            //将threadLocal设置在hook可见范围内
             RpcContext.set(meta);
             //此处增加方法即可实现如下两个只有继承线程池才能实现的方法
             //beforeExecute
@@ -29,8 +30,8 @@ public class RunnableWrapper implements Runnable {
         } catch (Throwable throwable) {
             threadExecuteHook.onException(runnable, throwable);
         } finally {
-            RpcContext.remove();
             threadExecuteHook.afterExecute(runnable);
+            RpcContext.remove();
             //afterExecute
         }
     }
