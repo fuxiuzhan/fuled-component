@@ -2,6 +2,7 @@ package com.fxz.fuled.threadpool.monitor;
 
 import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.threadpool.monitor.manage.Manageable;
+import com.fxz.fuled.threadpool.monitor.manage.ThreadExecuteHook;
 import com.fxz.fuled.threadpool.monitor.pojo.ReporterDto;
 import com.fxz.fuled.threadpool.monitor.pojo.ThreadPoolProperties;
 import com.fxz.fuled.threadpool.monitor.reporter.Reporter;
@@ -74,6 +75,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
             new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor"));
 
+
     /**
      * 线程池注册入口
      *
@@ -81,6 +83,18 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      * @param threadPoolExecutor
      */
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor) {
+        registerThreadPool(threadPoolName, threadPoolExecutor, new ThreadExecuteHook() {
+        });
+    }
+
+    /**
+     * 线程池注册入口
+     *
+     * @param threadPoolName
+     * @param threadPoolExecutor
+     * @param threadExecuteHook
+     */
+    public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor, ThreadExecuteHook threadExecuteHook) {
         if (StringUtils.isEmpty(threadPoolName) || Objects.isNull(threadPoolExecutor)) {
             log.error("threadPoolName and threadPool must not be null");
         }
@@ -96,13 +110,13 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
         //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
         //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
         //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
-        BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue());
+        BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook);
         try {
             modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
         } catch (Exception e) {
             log.error("inject queue error ->{}", e);
         }
-        threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory()));
+        threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory(), threadExecuteHook));
         manageableMap.put(threadPoolName, manageable);
         start();
         log.info("threadPoolName->{} registered", threadPoolName);
