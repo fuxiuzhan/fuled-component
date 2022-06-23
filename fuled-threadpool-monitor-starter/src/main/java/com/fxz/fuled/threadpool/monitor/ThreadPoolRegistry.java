@@ -72,6 +72,9 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      */
     private static AtomicBoolean started = new AtomicBoolean(Boolean.FALSE);
 
+    private static ThreadExecuteHook defaultExecuteHook = new ThreadExecuteHook() {
+    };
+
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
             new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor"));
 
@@ -83,8 +86,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      * @param threadPoolExecutor
      */
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor) {
-        registerThreadPool(threadPoolName, threadPoolExecutor, new ThreadExecuteHook() {
-        });
+        registerThreadPool(threadPoolName, threadPoolExecutor, defaultExecuteHook);
     }
 
     /**
