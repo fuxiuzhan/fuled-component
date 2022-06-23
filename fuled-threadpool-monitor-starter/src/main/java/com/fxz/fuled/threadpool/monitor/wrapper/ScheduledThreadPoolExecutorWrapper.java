@@ -38,8 +38,10 @@ public class ScheduledThreadPoolExecutorWrapper extends Manageable {
     @Override
     public void updateCoreSize(int coreSize) {
         int old = scheduledThreadPoolExecutor.getCorePoolSize();
-        scheduledThreadPoolExecutor.setCorePoolSize(coreSize);
-        scheduledThreadPoolExecutor.setMaximumPoolSize(coreSize);
+        if (old != coreSize) {
+            scheduledThreadPoolExecutor.setCorePoolSize(coreSize);
+            scheduledThreadPoolExecutor.setMaximumPoolSize(coreSize);
+        }
         log.info("update threadPool oldCoreSize->{},currentCoreSize->{}", old, coreSize);
     }
 
