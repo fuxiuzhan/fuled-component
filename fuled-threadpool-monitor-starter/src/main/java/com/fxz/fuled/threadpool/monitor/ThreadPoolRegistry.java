@@ -230,7 +230,13 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
         ThreadPoolRegistry.applicationContext = applicationContext;
         wrapperContext();
         eventListener(new EnvironmentChangeEvent(new HashSet<>()));
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> ThreadPoolRegistry.this.stop()));
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                setName("threadShutdownHook");
+                ThreadPoolRegistry.this.stop();
+            }
+        });
     }
 
     /**
