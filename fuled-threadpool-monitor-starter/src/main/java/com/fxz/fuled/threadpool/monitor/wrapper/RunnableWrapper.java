@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -204,16 +205,22 @@ public class RunnableWrapper implements Runnable {
                     ReflectionUtils.makeAccessible(tableFiled);
                     Object tableObj = tableFiled.get(threadLocalObj);
                     if (Objects.nonNull(tableObj)) {
-                        //TODO ?如何创建一个新的threadLocalMap对象
-                        Object threadLocalMap = threadLocalObj;//.getClass().newInstance();
-                        Optional<Method> setOpt = Arrays.stream(threadLocalMap.getClass().getDeclaredMethods()).filter(e -> e.getName().equals("set")).findFirst();
+                        Object threadLocalMap = null;
+                        Optional<Method> setOpt = Arrays.stream(threadLocalObj.getClass().getDeclaredMethods()).filter(e -> e.getName().equals("set")).findFirst();
                         Method setMethod = setOpt.get();
                         setMethod.setAccessible(Boolean.TRUE);
                         WeakReference<ThreadLocal<?>>[] entries = (WeakReference<ThreadLocal<?>>[]) tableObj;
                         for (WeakReference<ThreadLocal<?>> entry : entries) {
                             if (Objects.nonNull(entry)) {
                                 ThreadLocal<?> threadLocal = entry.get();
-                                setMethod.invoke(threadLocalMap, threadLocal, threadLocal.get());
+                                if (Objects.isNull(threadLocalMap)) {
+                                    //首次需要初始化
+                                    Constructor<?> constructor = threadLocalObj.getClass().getDeclaredConstructor(ThreadLocal.class, Object.class);
+                                    constructor.setAccessible(Boolean.TRUE);
+                                    threadLocalMap = constructor.newInstance(threadLocal, threadLocal.get());
+                                } else {
+                                    setMethod.invoke(threadLocalMap, threadLocal, threadLocal.get());
+                                }
                                 log.info("key->{} value->{}", threadLocal, threadLocal.get());
                             }
                         }
