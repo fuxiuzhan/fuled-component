@@ -50,7 +50,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     private static int queueSize = 1024;
 
     /**
-     * 单词批量上传
+     * 单次批量上传
      */
     private static int batchSize = 50;
     /**
