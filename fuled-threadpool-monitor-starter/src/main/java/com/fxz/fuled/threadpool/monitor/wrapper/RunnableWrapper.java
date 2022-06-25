@@ -213,15 +213,18 @@ public class RunnableWrapper implements Runnable {
                         for (WeakReference<ThreadLocal<?>> entry : entries) {
                             if (Objects.nonNull(entry)) {
                                 ThreadLocal<?> threadLocal = entry.get();
-                                if (Objects.isNull(threadLocalMap)) {
-                                    //首次需要初始化
-                                    Constructor<?> constructor = threadLocalObj.getClass().getDeclaredConstructor(ThreadLocal.class, Object.class);
-                                    constructor.setAccessible(Boolean.TRUE);
-                                    threadLocalMap = constructor.newInstance(threadLocal, threadLocal.get());
-                                } else {
-                                    setMethod.invoke(threadLocalMap, threadLocal, threadLocal.get());
+                                Object value = threadLocal.get();
+                                if (Objects.nonNull(value)) {
+                                    if (Objects.isNull(threadLocalMap)) {
+                                        //首次需要初始化
+                                        Constructor<?> constructor = threadLocalObj.getClass().getDeclaredConstructor(ThreadLocal.class, Object.class);
+                                        constructor.setAccessible(Boolean.TRUE);
+                                        threadLocalMap = constructor.newInstance(threadLocal, value);
+                                    } else {
+                                        setMethod.invoke(threadLocalMap, threadLocal, value);
+                                    }
+                                    log.info("key->{} value->{}", threadLocal, value);
                                 }
-                                log.info("key->{} value->{}", threadLocal, threadLocal.get());
                             }
                         }
                         return threadLocalMap;
