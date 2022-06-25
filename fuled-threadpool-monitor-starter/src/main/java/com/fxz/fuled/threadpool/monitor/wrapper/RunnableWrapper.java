@@ -5,6 +5,7 @@ import com.fxz.fuled.threadpool.monitor.manage.ThreadExecuteHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -143,7 +144,7 @@ public class RunnableWrapper implements Runnable {
      */
     private void setThreadLocalMap(Object threadLocalMap) {
         if (Objects.nonNull(threadLocalMap)) {
-            updateThreadLocal((ThreadLocal) threadLocalMap, Boolean.FALSE);
+            updateThreadLocal(threadLocalMap, Boolean.FALSE);
         } else {
             updateThreadLocal(null, Boolean.FALSE);
         }
@@ -173,14 +174,14 @@ public class RunnableWrapper implements Runnable {
         if (inheritable) {
             filed = "inheritableThreadLocals";
         }
-        if (inheritable) {
-            //itl
-            Thread parent = Thread.currentThread();
-            Field threadLocals = ReflectionUtils.findField(Thread.class, filed);
-            if (!threadLocals.isAccessible()) {
-                ReflectionUtils.makeAccessible(threadLocals);
-            }
-            try {
+        Thread parent = Thread.currentThread();
+        Field threadLocals = ReflectionUtils.findField(Thread.class, filed);
+        if (!threadLocals.isAccessible()) {
+            ReflectionUtils.makeAccessible(threadLocals);
+        }
+        try {
+            if (inheritable) {
+                //itl
                 //inheritableThreadLocals
                 Object threadLocalObj = threadLocals.get(parent);
                 if (Objects.nonNull(threadLocalObj)) {
@@ -190,11 +191,38 @@ public class RunnableWrapper implements Runnable {
                     ReflectionUtils.makeAccessible(createInheritedMap);
                     return createInheritedMap.invoke(threadLocalObj.getClass(), threadLocalObj);
                 }
-            } catch (Exception e) {
-                log.error("copy threadLocal from parentThread error->{}", e);
+
+            } else {
+                //ThreadLocal 需要手动copy，
+                //首先获取所有的entry对象
+                //然后创建一个新的threadLocal，将entry对象都放进去
+                //tl
+                Object threadLocalObj = threadLocals.get(parent);
+                if (Objects.nonNull(threadLocalObj)) {
+                    //copy table
+                    Field tableFiled = ReflectionUtils.findField(threadLocalObj.getClass(), "table");
+                    ReflectionUtils.makeAccessible(tableFiled);
+                    Object tableObj = tableFiled.get(threadLocalObj);
+                    if (Objects.nonNull(tableObj)) {
+                        //TODO ?如何创建一个新的threadLocalMap对象
+                        Object threadLocalMap = threadLocalObj;//.getClass().newInstance();
+                        Optional<Method> setOpt = Arrays.stream(threadLocalMap.getClass().getDeclaredMethods()).filter(e -> e.getName().equals("set")).findFirst();
+                        Method setMethod = setOpt.get();
+                        setMethod.setAccessible(Boolean.TRUE);
+                        WeakReference<ThreadLocal<?>>[] entries = (WeakReference<ThreadLocal<?>>[]) tableObj;
+                        for (WeakReference<ThreadLocal<?>> entry : entries) {
+                            if (Objects.nonNull(entry)) {
+                                ThreadLocal<?> threadLocal = entry.get();
+                                setMethod.invoke(threadLocalMap, threadLocal, threadLocal.get());
+                                log.info("key->{} value->{}", threadLocal, threadLocal.get());
+                            }
+                        }
+                        return threadLocalMap;
+                    }
+                }
             }
-        } else {
-            //TODO tl
+        } catch (Exception e) {
+            log.error("copy threadLocal from parentThread error->{}", e);
         }
         return null;
     }
