@@ -19,6 +19,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author fxz
  */
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationRunner {
 
     private static ApplicationContext applicationContext;
