@@ -77,47 +77,55 @@ public class RunnableWrapper implements Runnable {
      * 备份当前线程的tl & itl 并清理
      */
     private void backUpAndClearThreadLocal() {
-        //backup tl
-        backTheadLocalMap = getThreadLocal();
-        //backup itl
-        backIThreadLocalMap = getInheritThreadLocal();
-        //clean tl
-        cleanThreadLocal(Boolean.FALSE);
-        //clean itl
-        cleanThreadLocal(Boolean.TRUE);
+        if (threadExecuteHook.threadLocalSupport()) {
+            //backup tl
+            backTheadLocalMap = getThreadLocal();
+            //backup itl
+            backIThreadLocalMap = getInheritThreadLocal();
+            //clean tl
+            cleanThreadLocal(Boolean.FALSE);
+            //clean itl
+            cleanThreadLocal(Boolean.TRUE);
+        }
     }
 
     /**
      * 存储父线程的tl和itl数据
      */
     private void storeThreadLocal() {
-        //将父线程的tl & itl 备份起来
-        parentThreadLocalMap = getThreadLocal();
-        parentIThreadLocalMap = getInheritThreadLocal();
+        if (threadExecuteHook.threadLocalSupport()) {
+            //将父线程的tl & itl 备份起来
+            parentThreadLocalMap = getThreadLocal();
+            parentIThreadLocalMap = getInheritThreadLocal();
+        }
     }
 
     /**
      * 设置父线程的tl & itl
      */
     private void setStoreThreadLocal() {
-        //set tl
-        setThreadLocalMap(parentThreadLocalMap);
-        //set itl
-        setIThreadLocalMap(parentIThreadLocalMap);
+        if (threadExecuteHook.threadLocalSupport()) {
+            //set tl
+            setThreadLocalMap(parentThreadLocalMap);
+            //set itl
+            setIThreadLocalMap(parentIThreadLocalMap);
+        }
     }
 
     /**
      * 清理当前线程的tl & itl 并恢复原始的
      */
     private void clearAndRecoverBackupThreadLocal() {
-        //clean tl
-        cleanThreadLocal(Boolean.FALSE);
-        //clean itl
-        cleanThreadLocal(Boolean.TRUE);
-        //set backup tl
-        setThreadLocalMap(backTheadLocalMap);
-        //set backup itl
-        setIThreadLocalMap(backIThreadLocalMap);
+        if (threadExecuteHook.threadLocalSupport()) {
+            //clean tl
+            cleanThreadLocal(Boolean.FALSE);
+            //clean itl
+            cleanThreadLocal(Boolean.TRUE);
+            //set backup tl
+            setThreadLocalMap(backTheadLocalMap);
+            //set backup itl
+            setIThreadLocalMap(backIThreadLocalMap);
+        }
     }
 
     /**
