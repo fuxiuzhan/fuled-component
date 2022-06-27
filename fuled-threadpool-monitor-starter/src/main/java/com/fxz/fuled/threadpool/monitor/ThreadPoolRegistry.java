@@ -12,6 +12,8 @@ import com.fxz.fuled.threadpool.monitor.wrapper.ThreadFactoryWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -32,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author fxz
  */
 @Slf4j
-public class ThreadPoolRegistry implements ApplicationContextAware {
+public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationRunner {
 
     private static ApplicationContext applicationContext;
     /**
@@ -228,15 +230,6 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
-        wrapperContext();
-        eventListener(new EnvironmentChangeEvent(new HashSet<>()));
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                setName("threadShutdownHook");
-                ThreadPoolRegistry.this.stop();
-            }
-        });
     }
 
     /**
@@ -290,5 +283,22 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
                 log.info("ThreadPool shutdown threadPoolName->{}", k);
             });
         }
+    }
+
+    /**
+     * 处理容器，刷新和注册钩子
+     *
+     * @param args incoming application arguments
+     */
+    @Override
+    public void run(ApplicationArguments args) {
+        wrapperContext();
+        eventListener(new EnvironmentChangeEvent(new HashSet<>()));
+        Runtime.getRuntime().addShutdownHook(new Thread("threadShutdownHook") {
+            @Override
+            public void run() {
+                ThreadPoolRegistry.this.stop();
+            }
+        });
     }
 }
