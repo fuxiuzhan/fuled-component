@@ -12,6 +12,8 @@ import com.fxz.fuled.threadpool.monitor.wrapper.ThreadFactoryWrapper;
 import com.fxz.fuled.threadpool.monitor.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -32,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author fxz
  */
 @Slf4j
-public class ThreadPoolRegistry implements ApplicationContextAware {
+public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationRunner {
 
     private static ApplicationContext applicationContext;
     /**
@@ -50,7 +52,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     private static int queueSize = 1024;
 
     /**
-     * 单词批量上传
+     * 单次批量上传
      */
     private static int batchSize = 50;
     /**
@@ -72,6 +74,9 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      */
     private static AtomicBoolean started = new AtomicBoolean(Boolean.FALSE);
 
+    private static ThreadExecuteHook defaultExecuteHook = new ThreadExecuteHook() {
+    };
+
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
             new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor"));
 
@@ -83,8 +88,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
      * @param threadPoolExecutor
      */
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor) {
-        registerThreadPool(threadPoolName, threadPoolExecutor, new ThreadExecuteHook() {
-        });
+        registerThreadPool(threadPoolName, threadPoolExecutor, defaultExecuteHook);
     }
 
     /**
@@ -97,29 +101,34 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor, ThreadExecuteHook threadExecuteHook) {
         if (StringUtils.isEmpty(threadPoolName) || Objects.isNull(threadPoolExecutor)) {
             log.error("threadPoolName and threadPool must not be null");
+            return;
         }
-        Manageable manageable;
-        if (threadPoolExecutor instanceof ScheduledThreadPoolExecutor) {
-            //线程池的监控主要是监控ThreadPoolExecutor，对于定时线程池由于其内部队列原理是采用list的大小堆排序的queue
-            //所以像核心线程数最大线程数拒绝策略均有所不同，此处增加处理作原理说明
-            manageable = new ScheduledThreadPoolExecutorWrapper(threadPoolName, (ScheduledThreadPoolExecutor) threadPoolExecutor);
+        if (!manageableMap.containsKey(threadPoolName)) {
+            Manageable manageable;
+            if (threadPoolExecutor instanceof ScheduledThreadPoolExecutor) {
+                //线程池的监控主要是监控ThreadPoolExecutor，对于定时线程池由于其内部队列原理是采用list的大小堆排序的queue
+                //所以像核心线程数最大线程数拒绝策略均有所不同，此处增加处理作原理说明
+                manageable = new ScheduledThreadPoolExecutorWrapper(threadPoolName, (ScheduledThreadPoolExecutor) threadPoolExecutor);
+            } else {
+                manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
+            }
+            //想办法代理queue
+            //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
+            //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
+            //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
+            BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook);
+            try {
+                modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
+            } catch (Exception e) {
+                log.error("inject queue error ->{}", e);
+            }
+            threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory(), threadExecuteHook));
+            manageableMap.put(threadPoolName, manageable);
+            start();
+            log.info("threadPoolName->{} registered", threadPoolName);
         } else {
-            manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
+            log.warn("threadPoolName->{} has been registered,skipped", threadPoolName);
         }
-        //想办法代理queue
-        //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
-        //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
-        //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
-        BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook);
-        try {
-            modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
-        } catch (Exception e) {
-            log.error("inject queue error ->{}", e);
-        }
-        threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory(), threadExecuteHook));
-        manageableMap.put(threadPoolName, manageable);
-        start();
-        log.info("threadPoolName->{} registered", threadPoolName);
     }
 
     /**
@@ -221,9 +230,6 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
-        wrapperContext();
-        eventListener(new EnvironmentChangeEvent(new HashSet<>()));
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> ThreadPoolRegistry.this.stop()));
     }
 
     /**
@@ -277,5 +283,22 @@ public class ThreadPoolRegistry implements ApplicationContextAware {
                 log.info("ThreadPool shutdown threadPoolName->{}", k);
             });
         }
+    }
+
+    /**
+     * 处理容器，刷新和注册钩子
+     *
+     * @param args incoming application arguments
+     */
+    @Override
+    public void run(ApplicationArguments args) {
+        wrapperContext();
+        eventListener(new EnvironmentChangeEvent(new HashSet<>()));
+        Runtime.getRuntime().addShutdownHook(new Thread("threadShutdownHook") {
+            @Override
+            public void run() {
+                ThreadPoolRegistry.this.stop();
+            }
+        });
     }
 }

@@ -5,7 +5,7 @@ package com.fxz.fuled.threadpool.monitor.manage;
  *
  * 线程执行hook
  */
-public interface ThreadExecuteHook {
+public interface ThreadExecuteHook extends ThreadLocalTransmitSupport{
 
     /**
      * 线程执行前
