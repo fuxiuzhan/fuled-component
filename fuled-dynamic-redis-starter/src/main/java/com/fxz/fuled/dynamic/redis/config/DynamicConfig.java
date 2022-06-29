@@ -119,6 +119,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                 registry.registerBeanDefinition(k + redisPropertiesSuffix, redisPropertiesBeanDef);
                 if (isPrimary) {
                     BeanDefinition redisPropertiesBeanDefPrimary = BeanDefinitionBuilder.genericBeanDefinition(RedisProperties.class, () -> v).getRawBeanDefinition();
+                    redisPropertiesBeanDefPrimary.setPrimary(Boolean.TRUE);
                     replaceBeanDefIfPresent(redisPropertiesBeanDefPrimary, defaultRedisPropertiesBeanName);
                 }
             });
@@ -131,7 +132,6 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
      */
     private void replaceBeanDefIfPresent(BeanDefinition beanDefinition, String beanName) {
         removeBeanDefIfPresent(beanName);
-        beanDefinition.setPrimary(Boolean.TRUE);
         registry.registerBeanDefinition(beanName, beanDefinition);
     }
 
