@@ -92,6 +92,12 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                 RedisConnectionFactory lettuceConnectionFactory = createLettuceConnectionFactory(v);
                 BeanDefinitionBuilder redisConnectionFactoryBeanDefBuilder = BeanDefinitionBuilder.genericBeanDefinition(RedisConnectionFactory.class, () -> lettuceConnectionFactory);
                 BeanDefinition redisConnectionFactoryBeanDef = redisConnectionFactoryBeanDefBuilder.getRawBeanDefinition();
+                if (isPrimary) {
+                    if (registry.containsBeanDefinition(k + redisConnectionFactorySuffix)) {
+                        registry.removeBeanDefinition(k + redisConnectionFactorySuffix);
+                    }
+                    redisConnectionFactoryBeanDef.setPrimary(Boolean.TRUE);
+                }
                 registry.registerBeanDefinition(k + redisConnectionFactorySuffix, redisConnectionFactoryBeanDef);
                 //注入stringRedisTemplate
                 BeanDefinitionBuilder stringRedisTemplateBeanDefBuilder = BeanDefinitionBuilder.genericBeanDefinition(StringRedisTemplate.class, () -> {
@@ -118,7 +124,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                         registry.removeBeanDefinition(defaultRedisPropertiesBeanName);
                     }
                     BeanDefinition redisPropertiesBeanDefPrimary = BeanDefinitionBuilder.genericBeanDefinition(RedisProperties.class, () -> v).getRawBeanDefinition();
-                    redisPropertiesBeanDefPrimary.setPrimary(true);
+                    redisPropertiesBeanDefPrimary.setPrimary(Boolean.TRUE);
                     registry.registerBeanDefinition(defaultRedisPropertiesBeanName, redisPropertiesBeanDefPrimary);
                 }
             });
