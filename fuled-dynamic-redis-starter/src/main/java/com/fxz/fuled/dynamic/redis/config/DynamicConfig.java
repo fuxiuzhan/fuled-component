@@ -93,9 +93,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                 BeanDefinitionBuilder redisConnectionFactoryBeanDefBuilder = BeanDefinitionBuilder.genericBeanDefinition(RedisConnectionFactory.class, () -> lettuceConnectionFactory);
                 BeanDefinition redisConnectionFactoryBeanDef = redisConnectionFactoryBeanDefBuilder.getRawBeanDefinition();
                 if (isPrimary) {
-                    if (registry.containsBeanDefinition(k + redisConnectionFactorySuffix)) {
-                        registry.removeBeanDefinition(k + redisConnectionFactorySuffix);
-                    }
+                    removeBeanDefIfPresent(k + redisConnectionFactorySuffix);
                     redisConnectionFactoryBeanDef.setPrimary(Boolean.TRUE);
                 }
                 registry.registerBeanDefinition(k + redisConnectionFactorySuffix, redisConnectionFactoryBeanDef);
@@ -120,14 +118,30 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                 BeanDefinition redisPropertiesBeanDef = redisPropertiesBeanDefBuilder.getRawBeanDefinition();
                 registry.registerBeanDefinition(k + redisPropertiesSuffix, redisPropertiesBeanDef);
                 if (isPrimary) {
-                    if (registry.containsBeanDefinition(defaultRedisPropertiesBeanName)) {
-                        registry.removeBeanDefinition(defaultRedisPropertiesBeanName);
-                    }
                     BeanDefinition redisPropertiesBeanDefPrimary = BeanDefinitionBuilder.genericBeanDefinition(RedisProperties.class, () -> v).getRawBeanDefinition();
-                    redisPropertiesBeanDefPrimary.setPrimary(Boolean.TRUE);
-                    registry.registerBeanDefinition(defaultRedisPropertiesBeanName, redisPropertiesBeanDefPrimary);
+                    replaceBeanDefIfPresent(redisPropertiesBeanDefPrimary, defaultRedisPropertiesBeanName);
                 }
             });
+        }
+    }
+
+    /**
+     * @param beanDefinition
+     * @param beanName
+     */
+    private void replaceBeanDefIfPresent(BeanDefinition beanDefinition, String beanName) {
+        removeBeanDefIfPresent(beanName);
+        beanDefinition.setPrimary(Boolean.TRUE);
+        registry.registerBeanDefinition(beanName, beanDefinition);
+    }
+
+
+    /**
+     * @param beanName
+     */
+    private void removeBeanDefIfPresent(String beanName) {
+        if (registry.containsBeanDefinition(beanName)) {
+            registry.removeBeanDefinition(beanName);
         }
     }
 
