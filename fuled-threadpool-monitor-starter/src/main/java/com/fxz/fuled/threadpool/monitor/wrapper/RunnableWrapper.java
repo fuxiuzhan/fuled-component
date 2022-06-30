@@ -152,11 +152,7 @@ public class RunnableWrapper implements Runnable {
      * @param threadLocalMap
      */
     private void setThreadLocalMap(Object threadLocalMap) {
-        if (Objects.nonNull(threadLocalMap)) {
-            updateThreadLocal(threadLocalMap, Boolean.FALSE);
-        } else {
-            updateThreadLocal(null, Boolean.FALSE);
-        }
+        updateThreadLocal(threadLocalMap, Boolean.FALSE);
     }
 
     /**
@@ -165,11 +161,7 @@ public class RunnableWrapper implements Runnable {
      * @param threadLocalMap
      */
     private void setIThreadLocalMap(Object threadLocalMap) {
-        if (Objects.nonNull(threadLocalMap)) {
-            updateThreadLocal(threadLocalMap, Boolean.TRUE);
-        } else {
-            updateThreadLocal(null, Boolean.TRUE);
-        }
+        updateThreadLocal(threadLocalMap, Boolean.TRUE);
     }
 
     /**
@@ -261,11 +253,7 @@ public class RunnableWrapper implements Runnable {
         }
         try {
             //type check
-            if (Objects.isNull(threadLocal)) {
-                threadLocals.set(Thread.currentThread(), null);
-            } else {
-                threadLocals.set(Thread.currentThread(), threadLocal);
-            }
+            threadLocals.set(Thread.currentThread(), threadLocal);
         } catch (Exception e) {
             log.info("clean threadLocal error, threadName->{},error->{}", Thread.currentThread().getName(), e);
         }
