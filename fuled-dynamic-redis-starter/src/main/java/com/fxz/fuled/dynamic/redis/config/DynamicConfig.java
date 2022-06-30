@@ -46,16 +46,9 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     private final String redisPropertiesSuffix = "RedisProperties";
 
     private final String defaultRedisPropertiesBeanName = "redisProperties";
-    BeanDefinitionRegistry registry;
-    ConfigurableListableBeanFactory beanFactory;
-    AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
-
-//    @Bean("dynamicProperties")
-//    @ConditionalOnMissingBean
-//    @Primary
-//    public DynamicProperties dynamicProperties() {
-//        return new DynamicProperties();
-//    }
+    private BeanDefinitionRegistry registry;
+    private ConfigurableListableBeanFactory beanFactory;
+    private AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
 
     /**
      * 在此处初始化的原因是
@@ -193,7 +186,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
             redisConfiguration = redisStandaloneConfiguration;
         }
         Duration duration = redisProperties.getTimeout();
-        if (Objects.isNull(redisProperties.getTimeout())) {
+        if (Objects.isNull(duration)) {
             duration = Duration.ofMillis(5000);
         }
         LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder().commandTimeout(duration).shutdownTimeout(Duration.ofMillis(1000)).poolConfig(genericObjectPoolConfig).build();
