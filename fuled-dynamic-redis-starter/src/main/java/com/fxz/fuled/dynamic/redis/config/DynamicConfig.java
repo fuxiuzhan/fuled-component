@@ -46,16 +46,9 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     private final String redisPropertiesSuffix = "RedisProperties";
 
     private final String defaultRedisPropertiesBeanName = "redisProperties";
-    BeanDefinitionRegistry registry;
-    ConfigurableListableBeanFactory beanFactory;
-    AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
-
-//    @Bean("dynamicProperties")
-//    @ConditionalOnMissingBean
-//    @Primary
-//    public DynamicProperties dynamicProperties() {
-//        return new DynamicProperties();
-//    }
+    private BeanDefinitionRegistry registry;
+    private ConfigurableListableBeanFactory beanFactory;
+    private AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
 
     /**
      * 在此处初始化的原因是
@@ -92,6 +85,10 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                 RedisConnectionFactory lettuceConnectionFactory = createLettuceConnectionFactory(v);
                 BeanDefinitionBuilder redisConnectionFactoryBeanDefBuilder = BeanDefinitionBuilder.genericBeanDefinition(RedisConnectionFactory.class, () -> lettuceConnectionFactory);
                 BeanDefinition redisConnectionFactoryBeanDef = redisConnectionFactoryBeanDefBuilder.getRawBeanDefinition();
+                if (isPrimary) {
+                    removeBeanDefIfPresent(k + redisConnectionFactorySuffix);
+                    redisConnectionFactoryBeanDef.setPrimary(Boolean.TRUE);
+                }
                 registry.registerBeanDefinition(k + redisConnectionFactorySuffix, redisConnectionFactoryBeanDef);
                 //注入stringRedisTemplate
                 BeanDefinitionBuilder stringRedisTemplateBeanDefBuilder = BeanDefinitionBuilder.genericBeanDefinition(StringRedisTemplate.class, () -> {
@@ -114,14 +111,30 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
                 BeanDefinition redisPropertiesBeanDef = redisPropertiesBeanDefBuilder.getRawBeanDefinition();
                 registry.registerBeanDefinition(k + redisPropertiesSuffix, redisPropertiesBeanDef);
                 if (isPrimary) {
-                    if (registry.containsBeanDefinition(defaultRedisPropertiesBeanName)) {
-                        registry.removeBeanDefinition(defaultRedisPropertiesBeanName);
-                    }
                     BeanDefinition redisPropertiesBeanDefPrimary = BeanDefinitionBuilder.genericBeanDefinition(RedisProperties.class, () -> v).getRawBeanDefinition();
-                    redisPropertiesBeanDefPrimary.setPrimary(true);
-                    registry.registerBeanDefinition(defaultRedisPropertiesBeanName, redisPropertiesBeanDefPrimary);
+                    redisPropertiesBeanDefPrimary.setPrimary(Boolean.TRUE);
+                    replaceBeanDefIfPresent(redisPropertiesBeanDefPrimary, defaultRedisPropertiesBeanName);
                 }
             });
+        }
+    }
+
+    /**
+     * @param beanDefinition
+     * @param beanName
+     */
+    private void replaceBeanDefIfPresent(BeanDefinition beanDefinition, String beanName) {
+        removeBeanDefIfPresent(beanName);
+        registry.registerBeanDefinition(beanName, beanDefinition);
+    }
+
+
+    /**
+     * @param beanName
+     */
+    private void removeBeanDefIfPresent(String beanName) {
+        if (registry.containsBeanDefinition(beanName)) {
+            registry.removeBeanDefinition(beanName);
         }
     }
 
@@ -173,7 +186,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
             redisConfiguration = redisStandaloneConfiguration;
         }
         Duration duration = redisProperties.getTimeout();
-        if (Objects.isNull(redisProperties.getTimeout())) {
+        if (Objects.isNull(duration)) {
             duration = Duration.ofMillis(5000);
         }
         LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder().commandTimeout(duration).shutdownTimeout(Duration.ofMillis(1000)).poolConfig(genericObjectPoolConfig).build();
