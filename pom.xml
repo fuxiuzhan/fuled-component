@@ -21,7 +21,7 @@
         <module>fuled-cat-starter</module>
         <module>fuled-config-starter</module>
         <module>fuled-simple-cache-starter</module>
-        <module>fuled-threadpool-monitor-starter</module>
+        <module>fuled-dynamic-threadpool-starter</module>
         <module>fuled-tools-dependencies</module>
         <module>fuled-logger-starter</module>
         <module>fuled-name-starter</module>
