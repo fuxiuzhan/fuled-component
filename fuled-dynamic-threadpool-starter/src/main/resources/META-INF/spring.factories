@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.fxz.fuled.threadpool.monitor.starter.AutoConfiguration
+ com.fxz.fuled.dynamic.threadpool.starter.AutoConfiguration
