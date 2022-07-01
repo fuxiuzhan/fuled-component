@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Import;
 @Import({ThreadPoolRegistry.class, ThreadPoolProperties.class})
 public class AutoConfiguration {
 
-    @Bean("threadPoolMonitorVersion")
+    @Bean("dynamicThreadPoolVersion")
     public ComponentVersion configVersion() {
-        return new ComponentVersion("fuled-threadpool-monitor.version", "1.0.0.waterdrop", "fuled-threadpool-monitor-component");
+        return new ComponentVersion("fuled-dynamic-threadpool.version", "1.0.0.waterdrop", "fuled-dynamic-threadpool-component");
     }
 }
