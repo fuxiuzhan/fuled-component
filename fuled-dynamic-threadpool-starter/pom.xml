@@ -8,10 +8,10 @@
 		<version>1.0.0.WaterDrop</version>
 	</parent>
 	<groupId>com.fxz.component</groupId>
-	<artifactId>fuled-threadpool-monitor-starter</artifactId>
+	<artifactId>fuled-dynamic-threadpool-starter</artifactId>
 	<version>1.0.0.WaterDrop</version>
-	<name>fuled-threadpool-monitor-starter</name>
-	<description>Demo project for Spring Boot</description>
+	<name>fuled-dynamic-threadpool-starter</name>
+	<description>fuled-dynamic-threadpool-starter</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
