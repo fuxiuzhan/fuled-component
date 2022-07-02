@@ -16,7 +16,7 @@ public class QueueWrapper {
     public static BlockingQueue wrapper(BlockingQueue blockingQueue, ThreadExecuteHook threadExecuteHook) {
         return (BlockingQueue) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{BlockingQueue.class, Raw.class},
                 (proxy, method, args) -> {
-                    if ("offer".equals(method.getName())) {
+                    if ("offer".equals(method.getName()) || "add".equals(method.getName())) {
                         //包装runnable
                         Object[] newArgs = args;
                         if (args[0] instanceof Runnable) {

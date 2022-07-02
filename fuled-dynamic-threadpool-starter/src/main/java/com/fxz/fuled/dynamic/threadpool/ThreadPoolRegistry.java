@@ -110,20 +110,20 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
             Manageable manageable;
             if (threadPoolExecutor instanceof ScheduledThreadPoolExecutor) {
                 //线程池的监控主要是监控ThreadPoolExecutor，对于定时线程池由于其内部队列原理是采用list的大小堆排序的queue
-                //所以像核心线程数最大线程数拒绝策略均有所不同，此处增加处理作原理说明
+                //所以像核心线程数最大线程数拒绝策略均有所不同，此处增加处理作原理说明，此处不处理定时线程池
                 manageable = new ScheduledThreadPoolExecutorWrapper(threadPoolName, (ScheduledThreadPoolExecutor) threadPoolExecutor);
             } else {
                 manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
-            }
-            //想办法代理queue
-            //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
-            //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
-            //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
-            BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook);
-            try {
-                modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
-            } catch (Exception e) {
-                log.error("inject queue error ->{}", e);
+                //想办法代理queue
+                //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
+                //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
+                //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
+                BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook);
+                try {
+                    modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
+                } catch (Exception e) {
+                    log.warn("warn: inject queue error ->{}, threadLocal transmit invalid", e.getMessage());
+                }
             }
             threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory(), threadExecuteHook));
             manageableMap.put(threadPoolName, manageable);
@@ -154,7 +154,13 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     }
 
     private static void modifyFinal(Object object, String fieldName, Object newFieldValue) throws Exception {
-        Field field = object.getClass().getDeclaredField(fieldName);
+        Field field = null;
+        if (object.getClass().equals(ThreadPoolExecutor.class)) {
+            field = object.getClass().getDeclaredField(fieldName);
+        } else if (object.getClass().equals(ScheduledThreadPoolExecutor.class)) {
+            //获取父类
+            field = object.getClass().getSuperclass().getDeclaredField(fieldName);
+        }
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
