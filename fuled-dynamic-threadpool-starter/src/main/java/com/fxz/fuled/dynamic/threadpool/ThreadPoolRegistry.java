@@ -114,7 +114,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
                 manageable = new ScheduledThreadPoolExecutorWrapper(threadPoolName, (ScheduledThreadPoolExecutor) threadPoolExecutor);
             } else {
                 manageable = new ThreadPoolExecutorWrapper(threadPoolName, threadPoolExecutor);
-                //想办法代理queue
+                //ScheduledThreadPoolExecutor 不代理queue，所以不支持ThreadLocal很好的传递，重点处理ThreadPoolExecutor
                 //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
                 //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
                 //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
