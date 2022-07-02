@@ -2,6 +2,8 @@ package com.fxz.fuled.dynamic.threadpool.pojo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author fxz
  */
@@ -19,6 +21,11 @@ public class ReporterDto {
      * 线程池名称
      */
     private String threadPoolName;
+
+    /**
+     * endpoint ip
+     */
+    private List<String> ips;
     /**
      * 线程池类型
      */
