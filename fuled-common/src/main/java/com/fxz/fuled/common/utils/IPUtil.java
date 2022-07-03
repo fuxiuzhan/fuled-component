@@ -34,6 +34,7 @@ public class IPUtil {
         }
         list.remove("127.0.0.1");
         list.remove("::1");
+        list.remove("0:0:0:0:0:0:0:1");
         return list;
     }
 }
