@@ -1,6 +1,7 @@
 package com.fxz.fuled.dynamic.threadpool.manage;
 
 import com.fxz.fuled.common.utils.ConfigUtil;
+import com.fxz.fuled.common.utils.IPUtil;
 import com.fxz.fuled.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.dynamic.threadpool.wrapper.RejectHandlerWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public abstract class Manageable implements ChangeListener, Recordable {
     public ReporterDto build(String poolName, ThreadPoolExecutor threadPoolExecutor) {
         ReporterDto reporterDto = new ReporterDto();
         reporterDto.setAppName(ConfigUtil.getAppId());
+        reporterDto.setIps(IPUtil.getIpAddress());
         reporterDto.setCorePoolSize(threadPoolExecutor.getCorePoolSize());
         reporterDto.setMaximumPoolSize(threadPoolExecutor.getMaximumPoolSize());
         reporterDto.setCurrentPoolSize(threadPoolExecutor.getPoolSize());
