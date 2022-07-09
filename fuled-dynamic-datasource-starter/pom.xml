@@ -9,11 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fuled-dynamic-mybatis-starter</artifactId>
+    <artifactId>fuled-dynamic-datasource-starter</artifactId>
     <groupId>com.fxz.component</groupId>
     <version>1.1.0.WaterDrop</version>
-    <name>fuled-dynamic-mybatis-starter</name>
-    <description>fuled-dynamic-mybatis-starter</description>
+    <name>fuled-dynamic-datasource-starter</name>
+    <description>fuled-dynamic-datasource-starter</description>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
