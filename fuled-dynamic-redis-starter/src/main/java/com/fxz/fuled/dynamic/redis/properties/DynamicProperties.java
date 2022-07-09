@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author fxz
  */
-@ConfigurationProperties("spring.dynamic.redis")
+@ConfigurationProperties("fuled.dynamic.redis")
 public class DynamicProperties {
     /**
      * set primary redis
