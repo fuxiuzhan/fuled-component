@@ -13,4 +13,8 @@ public class EncryptColumn {
     public EncryptColumn(String value) {
         this.value = value;
     }
+
+    public static EncryptColumn create(String value) {
+        return new EncryptColumn(value);
+    }
 }
