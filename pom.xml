@@ -29,6 +29,7 @@
         <module>fuled-env-encryptor-starter</module>
         <module>fuled-skywalking-starter</module>
         <module>fuled-dynamic-redis-starter</module>
+        <module>fuled-dynamic-mybatis-starter</module>
     </modules>
     <dependencies>
     </dependencies>
