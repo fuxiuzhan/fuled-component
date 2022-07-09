@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Map;
 
 @Data
-@ConfigurationProperties(prefix = "fuled.thread.pool")
+@ConfigurationProperties(prefix = "fuled.dynamic.threadpool")
 @Configuration(proxyBeanMethods = false)
 public class ThreadPoolProperties {
 
