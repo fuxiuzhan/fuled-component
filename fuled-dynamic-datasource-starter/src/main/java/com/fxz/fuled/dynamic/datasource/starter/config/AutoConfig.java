@@ -36,9 +36,9 @@ public class AutoConfig implements InitializingBean {
         if (!CollectionUtils.isEmpty(sessionFactoryList)) {
             //WARN
             // baomidou的dynamic datasource 只会将primary 的datasource 的sqlSession注入容器
-            //其他的都是通过内部的map自行管理，所以此处只会对primary的datasource有效
-            //其他的datasource可以自行注入容器来实现自动添加typeHandler，dataSouce->sqlSession转换
-            //详情见->com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration#sqlSessionFactory
+            //其他的dataSource都是通过内部的map自行管理，不过并不影响，sqlSession是高于dataSource一层的逻辑
+            //dataSource是DynamicRoutingDataSource，mybatis执行语句的时候会通过dataSource getConnection
+            //获取新的链接，然后通过dataSource的标记来选择特定的数据源
             sessionFactoryList.forEach(f -> f.getConfiguration().getTypeHandlerRegistry().register(EncryptColumn.class, EncryptColumnHandler.class));
         }
     }
