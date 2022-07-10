@@ -34,6 +34,11 @@ public class AutoConfig implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         if (!CollectionUtils.isEmpty(sessionFactoryList)) {
+            //WARN
+            // baomidou的dynamic datasource 只会将primary 的datasource 的sqlSession注入容器
+            //其他的dataSource都是通过内部的map自行管理，不过并不影响，sqlSession是高于dataSource一层的逻辑
+            //dataSource是DynamicRoutingDataSource，mybatis执行语句的时候会通过dataSource getConnection
+            //获取新的链接，然后通过dataSource的标记来选择特定的数据源
             sessionFactoryList.forEach(f -> f.getConfiguration().getTypeHandlerRegistry().register(EncryptColumn.class, EncryptColumnHandler.class));
         }
     }
