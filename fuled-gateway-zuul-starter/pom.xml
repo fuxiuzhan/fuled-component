@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>fuled-component</artifactId>
+        <groupId>com.fxz</groupId>
+        <version>1.0.0.WaterDrop</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>fuled-gateway-zuul-starter</artifactId>
+    <groupId>com.fxz.component</groupId>
+    <version>1.0.0.WaterDrop</version>
+    <name>fuled-gateway-zuul-starter</name>
+    <description>fuled-gateway-zuul-starter</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <logback.version>1.2.3</logback.version>
+        <janino.version>3.0.8</janino.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-name-starter</artifactId>
+            <version>1.0.0.WaterDrop</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-config-starter</artifactId>
+            <version>1.1.0.WaterDrop</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
