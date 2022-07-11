@@ -30,6 +30,7 @@
         <module>fuled-skywalking-starter</module>
         <module>fuled-dynamic-redis-starter</module>
         <module>fuled-dynamic-datasource-starter</module>
+        <module>fuled-gateway-zuul-starter</module>
     </modules>
     <dependencies>
         <dependency>
