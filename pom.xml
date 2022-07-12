@@ -31,6 +31,9 @@
         <module>fuled-dynamic-redis-starter</module>
         <module>fuled-dynamic-datasource-starter</module>
         <module>fuled-gateway-zuul-starter</module>
+        <module>fuled-swagger-starter</module>
+        <module>fuled-sentinel-starter</module>
+        <module>fuled-oauth-server-starter</module>
     </modules>
     <dependencies>
         <dependency>
@@ -39,6 +42,15 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.75</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <distributionManagement>
         <repository>
             <id>releases</id>
