@@ -48,18 +48,13 @@ public class RouteLocator extends SimpleRouteLocator implements RefreshableRoute
 
     @Override
     protected Map<String, ZuulRoute> locateRoutes() {
-        //从自定义配置中加载路由信息
         Map<String, ZuulRoute> routesMap = locateRoutesFromProperties();
-
         if (CollectionUtils.isEmpty(routesMap)) {
             routesMap = super.locateRoutes();
         }
-
-        //优化一下配置
         LinkedHashMap<String, ZuulRoute> values = new LinkedHashMap<>();
         for (Map.Entry<String, ZuulRoute> entry : routesMap.entrySet()) {
             String path = entry.getKey();
-            // Prepend with slash if not already present.
             if (!path.startsWith("/")) {
                 path = "/" + path;
             }
