@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -28,7 +29,7 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     private String version;
     @Value("${fuled.app.swagger.desc:appDesc}")
     private String desc;
-    @Value("${fuled.app.swagger.title:title}")
+    @Value("${fuled.app.swagger.title:}")
     private String title;
     private static AnnotationMetadata importingClassMetadata;
 
@@ -41,7 +42,7 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
                 .apis(RequestHandlerSelectors.basePackage(ClassUtils.getPackageName(importingClassMetadata.getClassName())))
                 .paths(PathSelectors.any())
                 .build().apiInfo(new ApiInfoBuilder()
-                        .title(title)
+                        .title(StringUtils.isEmpty(title) ? appName : title)
                         .description(desc)
                         .version(version)
                         .contact(new Contact(appName, url, mail))
