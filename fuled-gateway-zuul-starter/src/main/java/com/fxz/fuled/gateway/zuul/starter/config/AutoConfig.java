@@ -1,5 +1,6 @@
 package com.fxz.fuled.gateway.zuul.starter.config;
 
+import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.gateway.zuul.starter.locator.RouteLocator;
 import com.fxz.fuled.gateway.zuul.starter.properties.RoutesProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -19,5 +20,10 @@ public class AutoConfig {
     @ConditionalOnMissingBean
     public RouteLocator customRouteLocator(ServerProperties serverProperties, ZuulProperties zuulProperties, RoutesProperties routesProperties) {
         return new RouteLocator(serverProperties.getServlet().getContextPath(), zuulProperties, routesProperties);
+    }
+
+    @Bean("gatewayZuulVersion")
+    public ComponentVersion configVersion() {
+        return new ComponentVersion("fuled-gateway-zuul.version", "1.0.0.waterdrop", "fuled-gateway-zuul-component");
     }
 }

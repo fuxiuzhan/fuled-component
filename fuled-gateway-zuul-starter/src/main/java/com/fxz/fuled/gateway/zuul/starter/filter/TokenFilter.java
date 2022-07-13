@@ -1,10 +1,10 @@
 package com.fxz.fuled.gateway.zuul.starter.filter;
 
 import com.netflix.zuul.ZuulFilter;
-import com.netflix.zuul.constants.ZuulConstants;
 import com.netflix.zuul.exception.ZuulException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class TokenFilter extends ZuulFilter implements InitializingBean {
+
+    @Value("${fuled.zuul.filter.token.enabled:true}")
+    private boolean enabled;
 
     @Override
     public String filterType() {
@@ -26,7 +29,7 @@ public class TokenFilter extends ZuulFilter implements InitializingBean {
 
     @Override
     public boolean shouldFilter() {
-        return false;
+        return enabled;
     }
 
     @Override
