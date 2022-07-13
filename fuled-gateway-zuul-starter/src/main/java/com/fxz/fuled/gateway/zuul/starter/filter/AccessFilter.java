@@ -16,7 +16,7 @@ public class AccessFilter extends ZuulFilter implements InitializingBean {
 
     @Override
     public String filterType() {
-        return null;
+        return "PRE";
     }
 
     @Override
