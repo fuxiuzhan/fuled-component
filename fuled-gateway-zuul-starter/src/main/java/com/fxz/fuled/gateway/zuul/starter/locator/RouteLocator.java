@@ -6,6 +6,8 @@ import org.springframework.cloud.netflix.zuul.filters.RefreshableRouteLocator;
 import org.springframework.cloud.netflix.zuul.filters.SimpleRouteLocator;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties.ZuulRoute;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class RouteLocator extends SimpleRouteLocator implements RefreshableRouteLocator {
+public class RouteLocator extends SimpleRouteLocator implements RefreshableRouteLocator, ApplicationListener<ApplicationEvent> {
 
     private ZuulProperties zuulProperties;
 
@@ -38,12 +40,6 @@ public class RouteLocator extends SimpleRouteLocator implements RefreshableRoute
     @Override
     public void refresh() {
         super.doRefresh();
-    }
-
-
-    public Map<String, ZuulRoute> getRoute() {
-        super.doRefresh();
-        return locateRoutes();
     }
 
     @Override
@@ -82,4 +78,10 @@ public class RouteLocator extends SimpleRouteLocator implements RefreshableRoute
         return routes;
     }
 
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if ("ConfigChangeEvent".equals(event.getClass().getSimpleName())) {
+            doRefresh();
+        }
+    }
 }

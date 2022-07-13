@@ -8,7 +8,7 @@
         <version>1.0.0.WaterDrop</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <groupId>com.fxz.component</groupId>
     <artifactId>fuled-swagger-starter</artifactId>
     <version>1.0.0.WaterDrop</version>
     <name>fuled-swagger-starter</name>
@@ -22,6 +22,16 @@
             <groupId>com.fxz.component</groupId>
             <artifactId>fuled-common</artifactId>
             <version>1.0.0.WaterDrop</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
         </dependency>
     </dependencies>
     <build>
