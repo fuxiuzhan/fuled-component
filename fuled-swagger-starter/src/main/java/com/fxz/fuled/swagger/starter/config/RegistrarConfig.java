@@ -3,6 +3,7 @@ package com.fxz.fuled.swagger.starter.config;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -20,6 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Component
 @EnableSwagger2
+@ConditionalOnWebApplication
 public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     @Value(("${fuled.app.swagger.url:}"))
     private String url;
