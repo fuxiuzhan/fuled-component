@@ -33,6 +33,8 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     private String desc;
     @Value("${fuled.app.swagger.title:}")
     private String title;
+    @Value("${fuled.app.swagger.license:}")
+    private String license;
     private static AnnotationMetadata importingClassMetadata;
 
     @Bean
@@ -48,7 +50,7 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
                         .description(desc)
                         .version(version)
                         .contact(new Contact(appName, url, mail))
-                        .license("")
+                        .license(license)
                         .licenseUrl(url)
                         .build());
     }
