@@ -3,12 +3,14 @@ package com.fxz.fuled.swagger.starter.config;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -19,6 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Component
 @EnableSwagger2
+@ConditionalOnWebApplication
 public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     @Value(("${fuled.app.swagger.url:}"))
     private String url;
@@ -28,8 +31,10 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     private String version;
     @Value("${fuled.app.swagger.desc:appDesc}")
     private String desc;
-    @Value("${fuled.app.swagger.title:title}")
+    @Value("${fuled.app.swagger.title:}")
     private String title;
+    @Value("${fuled.app.swagger.license:}")
+    private String license;
     private static AnnotationMetadata importingClassMetadata;
 
     @Bean
@@ -41,11 +46,11 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
                 .apis(RequestHandlerSelectors.basePackage(ClassUtils.getPackageName(importingClassMetadata.getClassName())))
                 .paths(PathSelectors.any())
                 .build().apiInfo(new ApiInfoBuilder()
-                        .title(title)
+                        .title(StringUtils.isEmpty(title) ? appName : title)
                         .description(desc)
                         .version(version)
                         .contact(new Contact(appName, url, mail))
-                        .license("")
+                        .license(license)
                         .licenseUrl(url)
                         .build());
     }

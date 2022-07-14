@@ -1,10 +1,12 @@
 package com.fxz.fuled.gateway.zuul.starter.filter;
 
+import com.fxz.fuled.gateway.zuul.starter.constant.Constant;
 import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class AccessFilter extends ZuulFilter implements InitializingBean {
+public class AccessFilter extends ZuulFilter {
 
 
     @Value("${fuled.zuul.filter.access.enabled:true}")
@@ -21,26 +23,23 @@ public class AccessFilter extends ZuulFilter implements InitializingBean {
 
     @Override
     public String filterType() {
-        return "PRE";
+        return FilterConstants.PRE_TYPE;
     }
 
     @Override
     public int filterOrder() {
-        return 10;
+        return Constant.BASE_ORDER + 10;
     }
 
     @Override
     public boolean shouldFilter() {
-        return enabled;
+        RequestContext ctx = RequestContext.getCurrentContext();
+        return enabled && ctx.getBoolean(Constant.AUTH_RESULT);
     }
 
     @Override
     public Object run() throws ZuulException {
+        //跳转验证
         return null;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-
     }
 }
