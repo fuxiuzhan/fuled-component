@@ -1,6 +1,8 @@
 package com.fxz.fuled.gateway.zuul.starter.config;
 
 import com.fxz.fuled.common.version.ComponentVersion;
+import com.fxz.fuled.gateway.zuul.starter.filter.AccessFilter;
+import com.fxz.fuled.gateway.zuul.starter.filter.TokenFilter;
 import com.fxz.fuled.gateway.zuul.starter.locator.RouteLocator;
 import com.fxz.fuled.gateway.zuul.starter.properties.RoutesProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -25,5 +27,15 @@ public class AutoConfig {
     @Bean("gatewayZuulVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-gateway-zuul.version", "1.0.0.waterdrop", "fuled-gateway-zuul-component");
+    }
+
+    @Bean
+    public TokenFilter tokenFilter() {
+        return new TokenFilter();
+    }
+
+    @Bean
+    public AccessFilter accessFilter() {
+        return new AccessFilter();
     }
 }

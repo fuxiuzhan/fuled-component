@@ -22,14 +22,6 @@ public class RouteLocator extends SimpleRouteLocator implements RefreshableRoute
 
     private RoutesProperties zuulRoutesProperties;
 
-    public RouteLocator(String servletPath, ZuulProperties properties) {
-        super(servletPath, properties);
-        this.zuulProperties = properties;
-        if (log.isDebugEnabled()) {
-            log.debug("servletPath:{}", servletPath);
-        }
-    }
-
     public RouteLocator(String servletPath, ZuulProperties properties, RoutesProperties zuulRoutesProperties) {
         super(servletPath, properties);
         this.zuulProperties = properties;
