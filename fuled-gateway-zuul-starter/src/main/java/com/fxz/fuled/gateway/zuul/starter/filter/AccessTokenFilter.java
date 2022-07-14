@@ -1,6 +1,5 @@
 package com.fxz.fuled.gateway.zuul.starter.filter;
 
-import com.fxz.fuled.common.utils.Result;
 import com.fxz.fuled.gateway.zuul.starter.auth.AuthService;
 import com.fxz.fuled.gateway.zuul.starter.constant.Constant;
 import com.fxz.fuled.gateway.zuul.starter.pojo.JwtInfo;
@@ -21,12 +20,12 @@ import java.util.Objects;
  */
 @Component
 @Slf4j
-public class TokenFilter extends ZuulFilter {
+public class AccessTokenFilter extends ZuulFilter {
 
     @Autowired
     AuthService authService;
 
-    @Value("${fuled.zuul.filter.token.enabled:true}")
+    @Value("${fuled.zuul.filter.access.token.enabled:true}")
     private boolean enabled;
 
     @Override
@@ -50,10 +49,8 @@ public class TokenFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         ctx.addZuulRequestHeader("Proxy-Client-IP", RequestUtils.getClientIp(request));
         String token = RequestUtils.accessToken(request);
-        Result<JwtInfo> jwtInfoResult = authService.getByToken(token, request.getRequestURI());
-
-        if (jwtInfoResult.isSuccess() && Objects.nonNull(jwtInfoResult.getData())) {
-            JwtInfo jwtInfo = jwtInfoResult.getData();
+        JwtInfo jwtInfo = authService.getByToken(token, request.getRequestURI());
+        if (Objects.nonNull(jwtInfo)) {
             ctx.addZuulRequestHeader(Constant.HEADER_USER_NAME, jwtInfo.getUserName());
             ctx.addZuulRequestHeader(Constant.HEADER_USER_ID, jwtInfo.getUserId());
             ctx.addZuulRequestHeader(Constant.HEADER_USER_ALIAS, jwtInfo.getAlias());

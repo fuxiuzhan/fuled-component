@@ -2,6 +2,8 @@ package com.fxz.fuled.gateway.zuul.starter.pojo;
 
 import lombok.Data;
 
+import java.util.Map;
+
 @Data
 public class JwtInfo {
     /**
@@ -24,4 +26,9 @@ public class JwtInfo {
      * 部门
      */
     private String dept;
+
+    /**
+     * meta
+     */
+    private Map<String, Object> meta;
 }
