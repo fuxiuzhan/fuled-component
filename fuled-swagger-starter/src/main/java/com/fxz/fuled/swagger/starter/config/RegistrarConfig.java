@@ -2,6 +2,7 @@ package com.fxz.fuled.swagger.starter.config;
 
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
@@ -70,5 +71,8 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         RegistrarConfig.importingClassMetadata = importingClassMetadata;
+        if (!registry.containsBeanDefinition(RegistrarConfig.class.getName())) {
+            registry.registerBeanDefinition(RegistrarConfig.class.getName(), BeanDefinitionBuilder.genericBeanDefinition(RegistrarConfig.class).getBeanDefinition());
+        }
     }
 }
