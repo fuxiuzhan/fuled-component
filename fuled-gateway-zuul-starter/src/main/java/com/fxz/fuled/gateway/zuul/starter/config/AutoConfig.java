@@ -4,6 +4,7 @@ import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.gateway.zuul.starter.auth.AuthService;
 import com.fxz.fuled.gateway.zuul.starter.filter.AccessFilter;
 import com.fxz.fuled.gateway.zuul.starter.filter.AccessTokenFilter;
+import com.fxz.fuled.gateway.zuul.starter.filter.BlackFilter;
 import com.fxz.fuled.gateway.zuul.starter.locator.RouteLocator;
 import com.fxz.fuled.gateway.zuul.starter.pojo.JwtInfo;
 import com.fxz.fuled.gateway.zuul.starter.properties.RoutesProperties;
@@ -39,6 +40,11 @@ public class AutoConfig {
     @Bean
     public AccessFilter accessFilter() {
         return new AccessFilter();
+    }
+
+    @Bean
+    public BlackFilter blackFilter() {
+        return new BlackFilter();
     }
 
     @Bean

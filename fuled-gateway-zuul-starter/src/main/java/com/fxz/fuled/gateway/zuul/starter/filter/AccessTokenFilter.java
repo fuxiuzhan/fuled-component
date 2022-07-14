@@ -35,7 +35,7 @@ public class AccessTokenFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return Constant.BASE_ORDER;
+        return Constant.BASE_ORDER + 5;
     }
 
     @Override
