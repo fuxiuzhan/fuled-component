@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.fxz.component</groupId>
     <artifactId>fuled-sentinel-starter</artifactId>
     <version>1.0.0.WaterDrop</version>
     <name>fuled-sentinel-starter</name>
@@ -19,9 +20,17 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fxz.component</groupId>
             <artifactId>fuled-common</artifactId>
             <version>1.0.0.WaterDrop</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-context</artifactId>
         </dependency>
     </dependencies>
     <build>

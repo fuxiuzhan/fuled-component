@@ -23,7 +23,7 @@ public class BlackFilter extends ZuulFilter implements InitializingBean {
     @Value("${fuled.zuul.filter.black.enabled:true}")
     private boolean enabled;
 
-    @Autowired
+    @Autowired(required = false)
     List<EndpointAccess> accessList;
 
     @Override
