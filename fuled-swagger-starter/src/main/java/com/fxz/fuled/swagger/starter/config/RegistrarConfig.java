@@ -1,6 +1,7 @@
 package com.fxz.fuled.swagger.starter.config;
 
 import com.fxz.fuled.common.version.ComponentVersion;
+import com.fxz.fuled.swagger.starter.advice.ControllerExceptionAdvice;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -66,6 +67,11 @@ public class RegistrarConfig implements ImportBeanDefinitionRegistrar {
     @Bean("swaggerVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-swagger.version", "1.0.0.waterdrop", "fuled-swagger-component");
+    }
+
+    @Bean
+    public ControllerExceptionAdvice controllerExceptionAdvice() {
+        return new ControllerExceptionAdvice();
     }
 
     @Override
