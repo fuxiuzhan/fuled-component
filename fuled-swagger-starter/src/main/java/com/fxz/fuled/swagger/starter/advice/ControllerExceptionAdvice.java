@@ -23,6 +23,6 @@ public class ControllerExceptionAdvice {
     public Result exceptionHandler(Throwable e) {
         log.error("UncaughtException  e->{}", e);
         String message = e.getMessage();
-        return Result.fail(ResultEnum.UNCAUGHT_EXCEPTION);
+        return Result.fail(ResultEnum.UNCAUGHT_EXCEPTION.getCode(), message);
     }
 }
