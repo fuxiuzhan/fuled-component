@@ -1,9 +1,10 @@
 package com.fxz.fuled.common.utils;
 
 public enum ResultEnum {
-    SUCCESS("0000", "", "成功"),
-    USER_NOT_SIGN_IN("10", "00", "用户未登录"),
-    BIZ_EXCEPTION("20", "00", "业务异常");
+    SUCCESS("0000", "", "success"),
+    USER_NOT_SIGN_IN("10", "00", "user not login"),
+    BIZ_EXCEPTION("20", "00", "bizException"),
+    UNCAUGHT_EXCEPTION("99", "99", "UncaughtException");
 
 
     private String code;
