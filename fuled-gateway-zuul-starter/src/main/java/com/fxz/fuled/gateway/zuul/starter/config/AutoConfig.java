@@ -1,9 +1,12 @@
 package com.fxz.fuled.gateway.zuul.starter.config;
 
 import com.fxz.fuled.common.version.ComponentVersion;
+import com.fxz.fuled.gateway.zuul.starter.auth.AuthService;
 import com.fxz.fuled.gateway.zuul.starter.filter.AccessFilter;
-import com.fxz.fuled.gateway.zuul.starter.filter.TokenFilter;
+import com.fxz.fuled.gateway.zuul.starter.filter.AccessTokenFilter;
+import com.fxz.fuled.gateway.zuul.starter.filter.BlackFilter;
 import com.fxz.fuled.gateway.zuul.starter.locator.RouteLocator;
+import com.fxz.fuled.gateway.zuul.starter.pojo.JwtInfo;
 import com.fxz.fuled.gateway.zuul.starter.properties.RoutesProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,12 +33,30 @@ public class AutoConfig {
     }
 
     @Bean
-    public TokenFilter tokenFilter() {
-        return new TokenFilter();
+    public AccessTokenFilter tokenFilter() {
+        return new AccessTokenFilter();
     }
 
     @Bean
     public AccessFilter accessFilter() {
         return new AccessFilter();
+    }
+
+    @Bean
+    public BlackFilter blackFilter() {
+        return new BlackFilter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AuthService authService() {
+        return (token, url) -> {
+            JwtInfo jwtInfo = new JwtInfo();
+            jwtInfo.setUserName("sample");
+            jwtInfo.setUserId("userId");
+            jwtInfo.setAlias("userAlias");
+            jwtInfo.setDept(url);
+            return jwtInfo;
+        };
     }
 }
