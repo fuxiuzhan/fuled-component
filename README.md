@@ -1,1 +1,0 @@
-# fuled-component
