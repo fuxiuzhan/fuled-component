@@ -16,13 +16,22 @@ public @interface Monitor {
 
     /**
      * 是否打印参数表
+     *
      * @return
      */
     boolean printParams() default true;
 
     /**
      * 是否打印返回值JSON
+     *
      * @return
      */
     boolean printResult() default true;
+
+    /**
+     * tags
+     *
+     * @return
+     */
+    String[] tags() default {};
 }
