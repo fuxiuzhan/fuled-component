@@ -76,5 +76,19 @@ public @interface Cache {
      * @return
      */
     String condition() default "";
+
+    /**
+     * 只使用本地缓存
+     *
+     * @return
+     */
+    boolean localCacheOnly() default false;
+
+    /**
+     * 清除本地缓存
+     *
+     * @return
+     */
+    boolean clearLocal() default false;
 }
 
