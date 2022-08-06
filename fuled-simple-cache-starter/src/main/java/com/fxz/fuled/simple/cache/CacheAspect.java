@@ -53,7 +53,7 @@ public class CacheAspect {
 
     Map<String, Class> classMap = new ConcurrentHashMap<>();
 
-    LruCache lruCache = new LruCache(1024);
+    LruCache lruCache = new LruCache(4096);
 
     @Around("@annotation(com.fxz.fuled.simple.cache.BatchCache) || @annotation(com.fxz.fuled.simple.cache.Cache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
@@ -114,7 +114,7 @@ public class CacheAspect {
                 }
                 if (evaluateCondition(proceedingJoinPoint, cache)) {
                     String key = evaluateKey(proceedingJoinPoint, cache);
-                    if (cache.localTurbo()) {
+                    if (cache.localTurbo() || cache.localCacheOnly()) {
                         Object o = lruCache.get(key);
                         if (o != null && o instanceof CacheValue) {
                             CacheValue localCacheValue = (CacheValue) o;
@@ -156,7 +156,7 @@ public class CacheAspect {
                             classMap.put(cacheValue.getClassName(), result.getClass());
                         }
                     }
-                    if (cache.localTurbo()) {
+                    if (cache.localTurbo() || cache.localCacheOnly()) {
                         if (Objects.nonNull(result) || cache.includeNullResult()) {
                             lruCache.put(key, cacheValue);
                         }
