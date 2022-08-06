@@ -81,7 +81,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     };
 
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
-            new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor"));
+            new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor", Boolean.TRUE));
 
 
     /**
@@ -198,15 +198,19 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
                 }
                 if (!CollectionUtils.isEmpty(tempList)) {
                     if (Objects.nonNull(applicationContext)) {
-                        Map<String, Reporter> beansOfType = applicationContext.getBeansOfType(Reporter.class);
-                        if (!CollectionUtils.isEmpty(beansOfType)) {
-                            beansOfType.forEach((k, v) -> {
-                                try {
-                                    v.report(tempList);
-                                } catch (Exception e) {
-                                    log.error("report error ,name->{},error->{}", k, e);
-                                }
-                            });
+                        try {
+                            Map<String, Reporter> beansOfType = applicationContext.getBeansOfType(Reporter.class);
+                            if (!CollectionUtils.isEmpty(beansOfType)) {
+                                beansOfType.forEach((k, v) -> {
+                                    try {
+                                        v.report(tempList);
+                                    } catch (Exception e) {
+                                        log.error("report error ,name->{},error->{}", k, e);
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            log.error("get beans from applicationContext error ,applicationContext is not refreshed or closed ,please check ,error->{}", e);
                         }
                     }
                 }

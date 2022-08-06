@@ -1,4 +1,4 @@
-package com.fxz.fuled.simple.cache;//package com.fxz.dnscore.aspect;
+package com.fxz.fuled.simple.cache;
 
 
 import com.alibaba.fastjson.JSON;
@@ -53,7 +53,7 @@ public class CacheAspect {
 
     Map<String, Class> classMap = new ConcurrentHashMap<>();
 
-    LruCache lruCache = new LruCache(1024);
+    LruCache lruCache = new LruCache(4096);
 
     @Around("@annotation(com.fxz.fuled.simple.cache.BatchCache) || @annotation(com.fxz.fuled.simple.cache.Cache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
@@ -108,9 +108,13 @@ public class CacheAspect {
     private CacheValue getCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList) {
         if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             for (Cache cache : cacheList) {
+                if (cache.clearLocal()) {
+                    lruCache.clear();
+                    return null;
+                }
                 if (evaluateCondition(proceedingJoinPoint, cache)) {
                     String key = evaluateKey(proceedingJoinPoint, cache);
-                    if (cache.localTurbo()) {
+                    if (cache.localTurbo() || cache.localCacheOnly()) {
                         Object o = lruCache.get(key);
                         if (o != null && o instanceof CacheValue) {
                             CacheValue localCacheValue = (CacheValue) o;
@@ -125,7 +129,7 @@ public class CacheAspect {
                             }
                         }
                     }
-                    if (Objects.nonNull(redisTemplate)) {
+                    if (Objects.nonNull(redisTemplate) && !cache.localCacheOnly()) {
                         Object o = redisTemplate.opsForValue().get(key);
                         if (Objects.nonNull(o) && o instanceof String) {
                             return JSON.parseObject(o + "", CacheValue.class);
@@ -140,7 +144,7 @@ public class CacheAspect {
     private void setCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList, Object result) {
         if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             for (Cache cache : cacheList) {
-                if (evaluateCondition(proceedingJoinPoint, cache)) {
+                if (!cache.clearLocal() && evaluateCondition(proceedingJoinPoint, cache)) {
                     String key = evaluateKey(proceedingJoinPoint, cache);
                     CacheValue cacheValue = new CacheValue();
                     cacheValue.setLastAccessTime(System.currentTimeMillis());
@@ -152,12 +156,12 @@ public class CacheAspect {
                             classMap.put(cacheValue.getClassName(), result.getClass());
                         }
                     }
-                    if (cache.localTurbo()) {
+                    if (cache.localTurbo() || cache.localCacheOnly()) {
                         if (Objects.nonNull(result) || cache.includeNullResult()) {
                             lruCache.put(key, cacheValue);
                         }
                     }
-                    if (Objects.nonNull(redisTemplate) && (Objects.nonNull(result) || cache.includeNullResult())) {
+                    if (Objects.nonNull(redisTemplate) && !cache.localCacheOnly() && (Objects.nonNull(result) || cache.includeNullResult())) {
                         redisTemplate.opsForValue().set(key, JSON.toJSONString(cacheValue), cache.expr(), cache.unit());
                     }
                 }

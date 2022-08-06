@@ -43,10 +43,12 @@ public class MethodMonitorAspect {
             MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
             boolean printParams = true;
             boolean printRtns = true;
+            String[] tags = {};
             if (isAnno) {
                 Monitor monitor = methodSignature.getMethod().getAnnotation(Monitor.class);
                 printParams = monitor.printParams();
                 printRtns = monitor.printResult();
+                tags = monitor.tags();
             }
             String methodName = methodSignature.getName();
             String returnType = methodSignature.getReturnType().getTypeName();
@@ -78,7 +80,7 @@ public class MethodMonitorAspect {
                 throw t;
             } finally {
                 stopWatch.stop();
-                log.info("Monitor: class->{},method->{},params->{},result->{},resultType->{},timeElapsed->{} ms,isSecc->{},errorMsg->{}", className, methodName, params, resultJson, returnType, stopWatch.getTotalTimeMillis(), resultFlag, errorMsg);
+                log.info("Monitor: class->{},method->{},tags->{},params->{},result->{},resultType->{},timeElapsed->{} ms,isSecc->{},errorMsg->{}", className, methodName, tags, params, resultJson, returnType, stopWatch.getTotalTimeMillis(), resultFlag, errorMsg);
             }
         } else {
             return proceedingJoinPoint.proceed();
