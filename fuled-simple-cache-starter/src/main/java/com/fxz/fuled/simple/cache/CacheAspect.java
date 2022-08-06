@@ -1,4 +1,4 @@
-package com.fxz.fuled.simple.cache;//package com.fxz.dnscore.aspect;
+package com.fxz.fuled.simple.cache;
 
 
 import com.alibaba.fastjson.JSON;
@@ -108,6 +108,10 @@ public class CacheAspect {
     private CacheValue getCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList) {
         if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             for (Cache cache : cacheList) {
+                if (cache.clearLocal()) {
+                    lruCache.clear();
+                    return null;
+                }
                 if (evaluateCondition(proceedingJoinPoint, cache)) {
                     String key = evaluateKey(proceedingJoinPoint, cache);
                     if (cache.localTurbo()) {
@@ -125,7 +129,7 @@ public class CacheAspect {
                             }
                         }
                     }
-                    if (Objects.nonNull(redisTemplate)) {
+                    if (Objects.nonNull(redisTemplate) && !cache.localCacheOnly()) {
                         Object o = redisTemplate.opsForValue().get(key);
                         if (Objects.nonNull(o) && o instanceof String) {
                             return JSON.parseObject(o + "", CacheValue.class);
@@ -140,7 +144,7 @@ public class CacheAspect {
     private void setCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList, Object result) {
         if (Objects.nonNull(cacheList) && cacheList.size() > 0) {
             for (Cache cache : cacheList) {
-                if (evaluateCondition(proceedingJoinPoint, cache)) {
+                if (!cache.clearLocal() && evaluateCondition(proceedingJoinPoint, cache)) {
                     String key = evaluateKey(proceedingJoinPoint, cache);
                     CacheValue cacheValue = new CacheValue();
                     cacheValue.setLastAccessTime(System.currentTimeMillis());
@@ -157,7 +161,7 @@ public class CacheAspect {
                             lruCache.put(key, cacheValue);
                         }
                     }
-                    if (Objects.nonNull(redisTemplate) && (Objects.nonNull(result) || cache.includeNullResult())) {
+                    if (Objects.nonNull(redisTemplate) && !cache.localCacheOnly() && (Objects.nonNull(result) || cache.includeNullResult())) {
                         redisTemplate.opsForValue().set(key, JSON.toJSONString(cacheValue), cache.expr(), cache.unit());
                     }
                 }
