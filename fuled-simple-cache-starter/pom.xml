@@ -34,10 +34,6 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.fxz.component</groupId>
             <artifactId>fuled-common</artifactId>
             <version>1.0.0.WaterDrop</version>
