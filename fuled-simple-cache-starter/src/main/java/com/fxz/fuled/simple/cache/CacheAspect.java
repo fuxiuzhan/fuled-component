@@ -47,8 +47,8 @@ public class CacheAspect {
      * 使用RedisTemplate则不需要，使用RedisTemplate提供的converter
      * <p>
      * 还是妥协一下，使用Redis自带的序列化工具，
-     * 自己实现的话需要处理太多东西，相当于Redis序列化中的各种类型的Convert
-     * 都要重写一遍，没必要了。
+     * 自行实现的话一方面会麻烦些，另一方面还是需要增加配置
+     * 直接使用redisTemplate相关的配置更灵活,也更符合使用习惯
      */
     @Autowired(required = false)
     @Qualifier("redisTemplate")
