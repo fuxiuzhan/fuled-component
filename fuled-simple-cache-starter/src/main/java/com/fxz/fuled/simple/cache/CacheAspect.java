@@ -58,42 +58,58 @@ public class CacheAspect {
     @Around("@annotation(com.fxz.fuled.simple.cache.BatchCache) || @annotation(com.fxz.fuled.simple.cache.Cache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         if (cacheEnabled) {
-            MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-            List<Cache> saveList = new ArrayList<>();
-            List<Cache> delList = new ArrayList<>();
-            List<Cache> rawList = new ArrayList<>();
-            Cache cache = methodSignature.getMethod().getAnnotation(Cache.class);
-            BatchCache batchCache = methodSignature.getMethod().getAnnotation(BatchCache.class);
+            OpTypeList opTypeList = assembleOpTypeList(proceedingJoinPoint);
             try {
-                if (Objects.nonNull(cache)) {
-                    rawList.add(cache);
-                }
-                if (Objects.nonNull(batchCache)) {
-                    if (batchCache.caches().length > 0) {
-                        for (Cache c : batchCache.caches()) {
-                            rawList.add(c);
-                        }
-                    }
-                }
-                rawList.forEach(r -> {
-                    if (r.opType().equals(CacheOpTypeEnum.SAVE)) {
-                        saveList.add(r);
-                    } else {
-                        delList.add(r);
-                    }
-                });
-                CacheValue result = getCache(proceedingJoinPoint, saveList);
+                CacheValue result = getCache(proceedingJoinPoint, opTypeList.getSaveList());
                 if (Objects.nonNull(result)) {
                     return result.getObject();
                 }
                 Object proceedResult = proceedingJoinPoint.proceed();
-                setCache(proceedingJoinPoint, saveList, proceedResult);
+                setCache(proceedingJoinPoint, opTypeList.getSaveList(), proceedResult);
                 return proceedResult;
             } finally {
-                delCache(proceedingJoinPoint, delList);
+                delCache(proceedingJoinPoint, opTypeList.getDelList());
             }
         }
         return proceedingJoinPoint.proceed();
+    }
+
+
+    /**
+     * 组装处理类型的list
+     *
+     * @param proceedingJoinPoint
+     * @return
+     */
+    private OpTypeList assembleOpTypeList(ProceedingJoinPoint proceedingJoinPoint) {
+        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
+        List<Cache> saveList = new ArrayList<>();
+        List<Cache> delList = new ArrayList<>();
+        List<Cache> rawList = new ArrayList<>();
+        Cache cache = methodSignature.getMethod().getAnnotation(Cache.class);
+        BatchCache batchCache = methodSignature.getMethod().getAnnotation(BatchCache.class);
+        if (Objects.nonNull(cache)) {
+            rawList.add(cache);
+        }
+        if (Objects.nonNull(batchCache)) {
+            if (batchCache.caches().length > 0) {
+                for (Cache c : batchCache.caches()) {
+                    rawList.add(c);
+                }
+            }
+        }
+        rawList.forEach(r -> {
+            if (r.opType().equals(CacheOpTypeEnum.SAVE)) {
+                saveList.add(r);
+            } else {
+                delList.add(r);
+            }
+        });
+        OpTypeList opTypeList = new OpTypeList();
+        opTypeList.setDelList(delList);
+        opTypeList.setSaveList(saveList);
+        opTypeList.setRawList(rawList);
+        return opTypeList;
     }
 
     private CacheValue getCache(ProceedingJoinPoint proceedingJoinPoint, List<Cache> cacheList) {
@@ -218,6 +234,13 @@ public class CacheAspect {
         String value = METHOD_CACHE_PREFIX + "_" + className + "_" + methodSignature.getName() + "_" + methodSignature.getMethod().getReturnType().getSimpleName() + "_" + proceedingJoinPoint.getArgs().length + "_" + Arrays.deepHashCode(proceedingJoinPoint.getArgs());
         return value;
     }
+}
+
+@Data
+class OpTypeList {
+    List<Cache> saveList;
+    List<Cache> delList;
+    List<Cache> rawList;
 }
 
 @Data
