@@ -42,7 +42,7 @@ public class ScheduledThreadPoolExecutorWrapper extends Manageable {
             scheduledThreadPoolExecutor.setCorePoolSize(coreSize);
             scheduledThreadPoolExecutor.setMaximumPoolSize(coreSize);
         }
-        log.info("update threadPool oldCoreSize->{},currentCoreSize->{}", old, coreSize);
+        log.info("update threadPool name->{} oldCoreSize->{},currentCoreSize->{}", threadPoolName, old, coreSize);
     }
 
     @Override
