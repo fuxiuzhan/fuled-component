@@ -34,6 +34,7 @@
         <module>fuled-swagger-starter</module>
         <module>fuled-sentinel-starter</module>
         <module>fuled-oauth-server-starter</module>
+        <module>fuled-component-tools</module>
     </modules>
     <dependencies>
         <dependency>
