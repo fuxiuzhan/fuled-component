@@ -7,7 +7,7 @@
         <artifactId>fuled-component-tools</artifactId>
         <version>1.0.0.WaterDrop</version>
     </parent>
-    <groupId>com.fuled.component.tools</groupId>
+    <groupId>com.fxz.component</groupId>
     <artifactId>fuled-dynamic-compile</artifactId>
     <version>1.0.0.WaterDrop</version>
     <name>fuled-dynamic-compile</name>
