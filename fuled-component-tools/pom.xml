@@ -10,7 +10,7 @@
     <groupId>com.fxz.component</groupId>
     <artifactId>fuled-component-tools</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0.WaterDrop</version>
     <name>fuled-component-tools</name>
     <description>fuled-component-tools</description>
     <properties>
@@ -24,8 +24,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
