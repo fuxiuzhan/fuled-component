@@ -2,15 +2,17 @@ package com.fxz.fuled.dynamic.threadpool.reporter.prometheus;
 
 import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import sun.net.util.IPAddressUtil;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class PrometheusReporter implements Reporter {
@@ -45,6 +47,8 @@ public class PrometheusReporter implements Reporter {
     private static final String CORE_SIZE = "core.size";
     private static final String MAX_CORE_SIZE = "max.core.size";
 
+    private Map<String, ReporterDto> threadPoolMap = new ConcurrentHashMap<>();
+
     /**
      * appName
      *
@@ -53,18 +57,70 @@ public class PrometheusReporter implements Reporter {
     @Override
     public void report(List<ReporterDto> records) {
         if (!CollectionUtils.isEmpty(records) && Objects.nonNull(meterRegistry)) {
-            records.forEach(r -> {
-                meterRegistry.gauge(GAUGE + "." + TIMESTAMP, buildTags(r), r.getTimeStamp());
-                meterRegistry.gauge(GAUGE + "." + CURRENT_CORE_SIZE, buildTags(r), r.getCurrentPoolSize());
-                meterRegistry.gauge(GAUGE + "." + REJECT_CNT, buildTags(r), r.getRejectCnt());
-                meterRegistry.gauge(GAUGE + "." + EXEC_COUNT, buildTags(r), r.getExecCount());
-                meterRegistry.gauge(GAUGE + "." + MAX_QUEUE_SIZE, buildTags(r), r.getQueueMaxSize());
-                meterRegistry.gauge(GAUGE + "." + QUEUE_CAPACITY, buildTags(r), r.getQueueMaxSize());
-                meterRegistry.gauge(GAUGE + "." + CURRENT_QUEUE_SIZE, buildTags(r), r.getCurrentQueueSize());
-                meterRegistry.gauge(GAUGE + "." + CORE_SIZE, buildTags(r), r.getCorePoolSize());
-                meterRegistry.gauge(GAUGE + "." + MAX_CORE_SIZE, buildTags(r), r.getMaximumPoolSize());
+            Set<String> threadPools = records.stream().map(ReporterDto::getThreadPoolName).collect(Collectors.toSet());
+            threadPools.forEach(t -> {
+                ReporterDto r = records.stream().filter(e -> e.getThreadPoolName().equals(t)).max(Comparator.comparing(e -> e.getTimeStamp())).get();
+                if (!threadPoolMap.containsKey(t)) {
+                    ReporterDto reporterDto = new ReporterDto();
+                    BeanUtils.copyProperties(r, reporterDto);
+                    buildGauge(reporterDto);
+                    threadPoolMap.put(t, reporterDto);
+                } else {
+                    ReporterDto reporterDto = threadPoolMap.get(t);
+                    BeanUtils.copyProperties(r, reporterDto);
+                }
             });
         }
+    }
+
+    public void buildGauge(ReporterDto reporterDto) {
+        Gauge.builder(GAUGE + "." + TIMESTAMP, reporterDto, ReporterDto::getTimeStamp)
+                .tags(buildTags(reporterDto))
+                .description("Last Execute TimeStamp")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + CURRENT_CORE_SIZE, reporterDto, ReporterDto::getCurrentPoolSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolCoreSize")
+                .register(meterRegistry);
+
+
+        Gauge.builder(GAUGE + "." + REJECT_CNT, reporterDto, ReporterDto::getRejectCnt)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolRejectCount")
+                .register(meterRegistry);
+
+
+        Gauge.builder(GAUGE + "." + EXEC_COUNT, reporterDto, ReporterDto::getExecCount)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolExecCount")
+                .register(meterRegistry);
+
+
+        Gauge.builder(GAUGE + "." + MAX_QUEUE_SIZE, reporterDto, ReporterDto::getQueueMaxSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolMaxQueueSize")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + QUEUE_CAPACITY, reporterDto, ReporterDto::getQueueMaxSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolQueueCapacity")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + CURRENT_QUEUE_SIZE, reporterDto, ReporterDto::getCurrentQueueSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolCurrentQueueSize")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + CORE_SIZE, reporterDto, ReporterDto::getCorePoolSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolCoreSize")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + MAX_CORE_SIZE, reporterDto, ReporterDto::getMaximumPoolSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolMaxCoreSize")
+                .register(meterRegistry);
     }
 
     /**
