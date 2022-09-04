@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.fxz.component.plugin.dynamic.threadpool</groupId>
-        <artifactId>reporter</artifactId>
+        <artifactId>dynamic-threadpool-reporter</artifactId>
         <version>1.0.0.WaterDrop</version>
     </parent>
     <groupId>com.fxz.component.plugin.dynamic.threadpool.reporter</groupId>

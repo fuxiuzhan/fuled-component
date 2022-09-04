@@ -6,17 +6,16 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import sun.net.util.IPAddressUtil;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Component
 public class PrometheusReporter implements Reporter {
 
-    @Autowired
+    @Autowired(required = false)
     MeterRegistry meterRegistry;
 
     private static final String GAUGE = "fuled.dynamic.thread.pool";
@@ -26,10 +25,10 @@ public class PrometheusReporter implements Reporter {
      */
     private static final String PREFIX = "thread.pool.";
     private static final String APP_NAME = PREFIX + "app.name";
-    private static final String THREAD_POOL_NAME = PREFIX + "thread.pool.name";
+    private static final String THREAD_POOL_NAME = PREFIX + "name";
     private static final String IPV4 = PREFIX + "ipv4";
     private static final String IPV6 = PREFIX + "ipv6";
-    private static final String THREAD_POOL_TYPE = "thread.pool.type";
+    private static final String THREAD_POOL_TYPE = "type";
     private static final String QUEUE_TYPE = "queue.type";
     private static final String REJECT_TYPE = "reject.handler.type";
 
@@ -53,17 +52,17 @@ public class PrometheusReporter implements Reporter {
      */
     @Override
     public void report(List<ReporterDto> records) {
-        if (!CollectionUtils.isEmpty(records)) {
+        if (!CollectionUtils.isEmpty(records) && Objects.nonNull(meterRegistry)) {
             records.forEach(r -> {
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), TIMESTAMP), r.getTimeStamp());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), CURRENT_CORE_SIZE), r.getCurrentPoolSize());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), REJECT_CNT), r.getRejectCnt());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), EXEC_COUNT), r.getExecCount());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), MAX_QUEUE_SIZE), r.getQueueMaxSize());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), QUEUE_CAPACITY), r.getQueueMaxSize());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), CURRENT_QUEUE_SIZE), r.getCurrentQueueSize());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), CORE_SIZE), r.getCorePoolSize());
-                meterRegistry.gauge(GAUGE, Tags.concat(buildTags(r), MAX_CORE_SIZE), r.getMaximumPoolSize());
+                meterRegistry.gauge(GAUGE + "." + TIMESTAMP, buildTags(r), r.getTimeStamp());
+                meterRegistry.gauge(GAUGE + "." + CURRENT_CORE_SIZE, buildTags(r), r.getCurrentPoolSize());
+                meterRegistry.gauge(GAUGE + "." + REJECT_CNT, buildTags(r), r.getRejectCnt());
+                meterRegistry.gauge(GAUGE + "." + EXEC_COUNT, buildTags(r), r.getExecCount());
+                meterRegistry.gauge(GAUGE + "." + MAX_QUEUE_SIZE, buildTags(r), r.getQueueMaxSize());
+                meterRegistry.gauge(GAUGE + "." + QUEUE_CAPACITY, buildTags(r), r.getQueueMaxSize());
+                meterRegistry.gauge(GAUGE + "." + CURRENT_QUEUE_SIZE, buildTags(r), r.getCurrentQueueSize());
+                meterRegistry.gauge(GAUGE + "." + CORE_SIZE, buildTags(r), r.getCorePoolSize());
+                meterRegistry.gauge(GAUGE + "." + MAX_CORE_SIZE, buildTags(r), r.getMaximumPoolSize());
             });
         }
     }

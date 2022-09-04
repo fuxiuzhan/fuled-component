@@ -1,11 +1,11 @@
 package com.fxz.fuled.dynamic.threadpool.starter;
 
 
+import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
 import com.fxz.fuled.dynamic.threadpool.reporter.DefaultReporter;
-import com.fxz.fuled.dynamic.threadpool.reporter.Reporter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
