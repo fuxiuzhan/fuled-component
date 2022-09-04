@@ -35,6 +35,7 @@
         <module>fuled-sentinel-starter</module>
         <module>fuled-oauth-server-starter</module>
         <module>fuled-component-tools</module>
+        <module>fuled-component-plugin</module>
     </modules>
     <dependencies>
         <dependency>

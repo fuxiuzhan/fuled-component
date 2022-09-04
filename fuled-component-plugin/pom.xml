@@ -3,33 +3,41 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.fxz.component</groupId>
-        <artifactId>fuled-component-tools</artifactId>
+        <artifactId>fuled-component</artifactId>
+        <groupId>com.fxz</groupId>
         <version>1.0.0.WaterDrop</version>
     </parent>
-    <groupId>com.fxz.component</groupId>
-    <artifactId>fuled-dynamic-compile</artifactId>
+    <groupId>com.fxz.component.plugin</groupId>
+    <artifactId>fuled-component-plugin</artifactId>
     <version>1.0.0.WaterDrop</version>
-    <name>fuled-dynamic-compile</name>
-    <packaging>jar</packaging>
-    <description>fuled-dynamic-compile</description>
+    <name>fuled-component-plugin</name>
+    <description>fuled-component-pluin</description>
+    <packaging>pom</packaging>
     <properties>
         <java.version>1.8</java.version>
     </properties>
+    <modules>
+        <module>fuled-plugin-dynamic-threadpool-reporter</module>
+    </modules>
     <dependencies>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-common</artifactId>
+            <version>1.0.0.WaterDrop</version>
+        </dependency>
     </dependencies>
-
+    <dependencyManagement>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

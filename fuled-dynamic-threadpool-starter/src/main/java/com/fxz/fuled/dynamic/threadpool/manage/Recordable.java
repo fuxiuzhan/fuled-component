@@ -1,6 +1,7 @@
 package com.fxz.fuled.dynamic.threadpool.manage;
 
-import com.fxz.fuled.dynamic.threadpool.pojo.ReporterDto;
+
+import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 
 /**
  * 负责执行统计
