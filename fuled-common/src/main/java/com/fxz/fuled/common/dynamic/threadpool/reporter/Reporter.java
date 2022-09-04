@@ -1,4 +1,4 @@
-package com.fxz.fuled.dynamic.threadpool.reporter;
+package com.fxz.fuled.common.dynamic.threadpool.reporter;
 
 
 import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;

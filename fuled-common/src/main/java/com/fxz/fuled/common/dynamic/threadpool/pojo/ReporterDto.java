@@ -1,4 +1,4 @@
-package com.fxz.fuled.dynamic.threadpool.pojo;
+package com.fxz.fuled.common.dynamic.threadpool.pojo;
 
 import lombok.Data;
 
