@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author fxz
@@ -87,7 +88,9 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
             //直接使用此locator将system变量的优先级提升，不再重新定义其他locator或者
             //其他提升system变量的类，简化处理
             PropertySource<?> systemProperties = ((ConfigurableEnvironment) env).getPropertySources().get(SYSTEM_PROPERTY);
-            composite.addFirstPropertySource(systemProperties);
+            if (Objects.nonNull(systemProperties)) {
+                composite.addFirstPropertySource(systemProperties);
+            }
         }
         return composite;
     }
