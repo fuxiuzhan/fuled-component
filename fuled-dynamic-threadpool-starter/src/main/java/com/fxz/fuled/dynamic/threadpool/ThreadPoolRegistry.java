@@ -43,7 +43,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     /**
      * 上报间隔
      */
-    private static int reportInternalInSeconds = 30;
+    private static int reportInternalInSeconds = 10;
     /**
      * 收集间隔
      */
