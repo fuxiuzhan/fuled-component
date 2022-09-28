@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.fxz.fuled.dynamic.datasource.starter.config.AutoConfig
+ com.fxz.fuled.dynamic.datasource.starter.config.DynamicDataSourceAutoConfig
