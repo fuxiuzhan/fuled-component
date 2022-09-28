@@ -15,7 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-public class AutoConfig implements InitializingBean {
+public class DynamicDataSourceAutoConfig implements InitializingBean {
 
     @Autowired(required = false)
     private List<SqlSessionFactory> sessionFactoryList;

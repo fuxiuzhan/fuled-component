@@ -49,11 +49,17 @@ public class CacheAspect {
      * 还是妥协一下，使用Redis自带的序列化工具，
      * 自行实现的话一方面会麻烦些，另一方面还是需要增加配置
      * 直接使用redisTemplate相关的配置更灵活,也更符合使用习惯
+     * <p>
+     * WARNING 需要注意的是，使用jdk代理的接口在使用缓存注解时是不能通过形参名称
+     * 来组装key的el的表达式的，原因在于因为接口的参数编译后后只会记录参数类型，
+     * 不会记录参数名称，如果使用表达式的话可以使用arg0表示一个参数，arg1表示第二个参数
      */
     @Autowired(required = false)
     @Qualifier("redisTemplate")
     private RedisTemplate redisTemplate;
-    LruCache lruCache = new LruCache(4096);
+    private LruCache lruCache = new LruCache(4096);
+
+    private EvaluationContext context = new StandardEvaluationContext();
 
     @Around("@annotation(com.fxz.fuled.simple.cache.BatchCache) || @annotation(com.fxz.fuled.simple.cache.Cache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
@@ -216,13 +222,12 @@ public class CacheAspect {
     }
 
     private <T> T evaluate(ProceedingJoinPoint proceedingJoinPoint, String expression, Class clazz) {
-        EvaluationContext context = new StandardEvaluationContext();
         ExpressionParser parser = new SpelExpressionParser();
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-        Parameter[] ps = methodSignature.getMethod().getParameters();
-        if (ps != null) {
-            for (int j = 0, l = ps.length; j < l; ++j) {
-                context.setVariable(ps[j].getName(), proceedingJoinPoint.getArgs()[j]);
+        String[] parameterNames = methodSignature.getParameterNames();
+        if (Objects.nonNull(parameterNames)) {
+            for (int i = 0; i < parameterNames.length; i++) {
+                context.setVariable(parameterNames[i], proceedingJoinPoint.getArgs()[i]);
             }
         }
         return (T) parser.parseExpression(expression).getValue(context, clazz);
