@@ -53,6 +53,8 @@ public class CacheAspect {
      * WARNING 需要注意的是，使用jdk代理的接口在使用缓存注解时是不能通过形参名称
      * 来组装key的el的表达式的，原因在于因为接口的参数编译后后只会记录参数类型，
      * 不会记录参数名称，如果使用表达式的话可以使用arg0表示一个参数，arg1表示第二个参数
+     * 其实这里也说明了为什么像mybatis，feign这类依赖jdk代理实现的框架为什么需要在参数
+     * 上增加注解的原因，因为接口代理运行时是不会保存参数名称的，根据参数名称无法映射变量
      */
     @Autowired(required = false)
     @Qualifier("redisTemplate")
@@ -228,6 +230,12 @@ public class CacheAspect {
         if (Objects.nonNull(parameterNames)) {
             for (int i = 0; i < parameterNames.length; i++) {
                 context.setVariable(parameterNames[i], proceedingJoinPoint.getArgs()[i]);
+            }
+        }
+        Parameter[] parameters = methodSignature.getMethod().getParameters();
+        if (Objects.nonNull(parameters)) {
+            for (int i = 0; i < parameters.length; i++) {
+                context.setVariable(parameters[i].getName(), proceedingJoinPoint.getArgs()[i]);
             }
         }
         return (T) parser.parseExpression(expression).getValue(context, clazz);
