@@ -61,7 +61,7 @@ public class CacheAspect {
     private RedisTemplate redisTemplate;
     private LruCache lruCache = new LruCache(4096);
 
-    private EvaluationContext context = new StandardEvaluationContext();
+    private ExpressionParser parser = new SpelExpressionParser();
 
     @Around("@annotation(com.fxz.fuled.simple.cache.BatchCache) || @annotation(com.fxz.fuled.simple.cache.Cache)")
     public Object processCache(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
@@ -224,7 +224,7 @@ public class CacheAspect {
     }
 
     private <T> T evaluate(ProceedingJoinPoint proceedingJoinPoint, String expression, Class clazz) {
-        ExpressionParser parser = new SpelExpressionParser();
+        EvaluationContext context = new StandardEvaluationContext();
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
         String[] parameterNames = methodSignature.getParameterNames();
         if (Objects.nonNull(parameterNames)) {
