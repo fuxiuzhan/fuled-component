@@ -273,8 +273,18 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     public void eventListener(ApplicationEvent event) {
         //环境变更或者注册中心变更事件
         if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
-            //MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
-            //这个与具体使用了那种动态配置方式是有关系的。
+            /**
+             * MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
+             * 这个与具体使用了那种动态配置方式是有关系的。
+             * 也可以使用如下方式，在收到EnvironmentChangeEvent env变量已经准备好，直接销毁重建即可
+             * 这样就完全与使用了什么配置中心没有关系了，也无需担心使用的时候变量还未赋值
+             * Object bean=ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
+             * ((ThreadPoolProperties)bean).setConfig(new HashMap<>());
+             * applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
+             * applicationContext.getAutowireCapableBeanFactory().initializeBean(bean,"ThreadPoolProperties");
+             * applicationContext.getBean(ThreadPoolProperties.class);
+             *
+             */
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
             if (Objects.nonNull(bean)) {
                 if (!CollectionUtils.isEmpty(bean.getConfig())) {
