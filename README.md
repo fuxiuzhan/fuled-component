@@ -57,8 +57,9 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
 <groupId>com.fxz.component.plugin.dynamic.threadpool.reporter</groupId>
 <artifactId>reporter-prometheus</artifactId>
 结合prometheus组件，可以实现对线程池的监控
-
 ```
+<img height="600" src="images/threadpool-monitor.png" width="400"/>
+
 #### fuled-env-encryptor-starter
  - 配置中心加密组件。与fuled-config-starter完全解耦，也可单独与任何一款配置中心使用。实现应用按appId及环境隔离加密配置。
  - 不同应用或者环境秘钥不同，不能互换配置。
