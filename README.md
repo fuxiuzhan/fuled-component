@@ -53,7 +53,12 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
  - 动态线程池组件，可动态配置线程参数，实时生效，自动管理线程池的生命周期。最多只需一行代码即可完美管理
  - 也可以接入监控告警中心，实现对接入应用内的注册线程池实时监控。而且对ThreadLocal的传递支持较好，不需要
  - 额外使用TTL，实现方式另辟蹊径，吊打当前市面上主流的动态线程池管理工具。
+```html
+<groupId>com.fxz.component.plugin.dynamic.threadpool.reporter</groupId>
+<artifactId>reporter-prometheus</artifactId>
+结合prometheus组件，可以实现对线程池的监控
 
+```
 #### fuled-env-encryptor-starter
  - 配置中心加密组件。与fuled-config-starter完全解耦，也可单独与任何一款配置中心使用。实现应用按appId及环境隔离加密配置。
  - 不同应用或者环境秘钥不同，不能互换配置。
@@ -77,7 +82,17 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
 #### fuled-simple-cache-starter
  - cache组件，切面实现，用于与spring-cache基本一致，且支持单个key的任意过期时间
  - 且对接口代理的key生成进行优化，解决spring-cache key generator的接口代理可能错误的问题
+```java
+public interface IProcess {
 
+    @BatchCache(caches = {
+            @Cache(key = "'key_prefix_'+#arg0+'~'+#arg1"),
+            @Cache(key = "'key_prefix_'+#userName+'~'+#age"),
+            @Cache(expr = 1,unit = TimeUnit.DAYS)
+    })
+    String process(@CacheParam("userName") String userName, @CacheParam("age") Integer age);
+}
+```
 #### fuled-skywalking-starter
  - skywalking组件，skywalking使用agent接入，此处是增加通过web输出traceId的方式。
 
