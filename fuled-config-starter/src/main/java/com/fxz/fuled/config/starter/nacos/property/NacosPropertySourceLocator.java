@@ -10,15 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author fxz
@@ -30,6 +28,8 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
             .getLogger(NacosPropertySourceLocator.class);
 
     private static final String NACOS_PROPERTY_SOURCE_NAME = "NACOS";
+
+    private static final String SYSTEM_PROPERTY = "systemProperties";
 
     private static final String SEP1 = "-";
 
@@ -83,6 +83,15 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
         MapPropertySource mapPropertySource = new MapPropertySource(NacosPropertySourceRepository.WRITEABLE_PROPERTIES, hashMap);
         SpringInjector.envMap = hashMap;
         composite.addFirstPropertySource(mapPropertySource);
+        if (env instanceof ConfigurableEnvironment) {
+            //将systemProperties的优先级提升
+            //直接使用此locator将system变量的优先级提升，不再重新定义其他locator或者
+            //其他提升system变量的类，简化处理
+            PropertySource<?> systemProperties = ((ConfigurableEnvironment) env).getPropertySources().get(SYSTEM_PROPERTY);
+            if (Objects.nonNull(systemProperties)) {
+                composite.addFirstPropertySource(systemProperties);
+            }
+        }
         return composite;
     }
 

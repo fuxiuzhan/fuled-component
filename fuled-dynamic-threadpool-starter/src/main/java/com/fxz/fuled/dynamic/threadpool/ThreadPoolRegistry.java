@@ -1,11 +1,11 @@
 package com.fxz.fuled.dynamic.threadpool;
 
+import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
+import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
-import com.fxz.fuled.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
-import com.fxz.fuled.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadPoolExecutorWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.QueueWrapper;
@@ -43,7 +43,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     /**
      * 上报间隔
      */
-    private static int reportInternalInSeconds = 30;
+    private static int reportInternalInSeconds = 10;
     /**
      * 收集间隔
      */
@@ -273,8 +273,18 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     public void eventListener(ApplicationEvent event) {
         //环境变更或者注册中心变更事件
         if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
-            //MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
-            //这个与具体使用了那种动态配置方式是有关系的。
+            /**
+             * MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
+             * 这个与具体使用了那种动态配置方式是有关系的。
+             * 也可以使用如下方式，在收到EnvironmentChangeEvent env变量已经准备好，直接销毁重建即可
+             * 这样就完全与使用了什么配置中心没有关系了，也无需担心使用的时候变量还未赋值
+             * Object bean=ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
+             * ((ThreadPoolProperties)bean).setConfig(new HashMap<>());
+             * applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
+             * applicationContext.getAutowireCapableBeanFactory().initializeBean(bean,"ThreadPoolProperties");
+             * applicationContext.getBean(ThreadPoolProperties.class);
+             *
+             */
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
             if (Objects.nonNull(bean)) {
                 if (!CollectionUtils.isEmpty(bean.getConfig())) {

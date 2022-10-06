@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AutoConfigureBefore(ZuulServerAutoConfiguration.class)
 @EnableConfigurationProperties(RoutesProperties.class)
-public class AutoConfig {
+public class ZuulAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public RouteLocator customRouteLocator(ServerProperties serverProperties, ZuulProperties zuulProperties, RoutesProperties routesProperties) {
@@ -31,7 +31,6 @@ public class AutoConfig {
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-gateway-zuul.version", "1.0.0.waterdrop", "fuled-gateway-zuul-component");
     }
-
     @Bean
     public AccessTokenFilter tokenFilter() {
         return new AccessTokenFilter();

@@ -1,4 +1,4 @@
-package com.fxz.fuled.dynamic.threadpool.pojo;
+package com.fxz.fuled.common.dynamic.threadpool.pojo;
 
 import lombok.Data;
 
@@ -33,23 +33,23 @@ public class ReporterDto {
     /**
      * 核心线程数
      */
-    private Integer corePoolSize;
+    private int corePoolSize;
     /**
      * 最大线程数
      */
-    private Integer maximumPoolSize;
+    private int maximumPoolSize;
     /**
      * 当前线程数
      */
-    private Integer currentPoolSize;
+    private int currentPoolSize;
     /**
      * 拒绝线程数
      */
-    private Long rejectCnt;
+    private long rejectCnt;
     /**
      * 执行线程数
      */
-    private Long execCount;
+    private long execCount;
     /**
      * 队列类型
      */
@@ -57,11 +57,11 @@ public class ReporterDto {
     /**
      * 队列最大长度
      */
-    private Integer queueMaxSize;
+    private int queueMaxSize;
     /**
      * 当前队列长度
      */
-    private Integer currentQueueSize;
+    private int currentQueueSize;
     /**
      * 拒绝策略
      */
@@ -69,5 +69,5 @@ public class ReporterDto {
     /**
      * 最近线程执行时间
      */
-    private Long recentExecTimeStamp;
+    private long recentExecTimeStamp;
 }

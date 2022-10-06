@@ -1,8 +1,8 @@
 package com.fxz.fuled.dynamic.threadpool.wrapper;
 
+import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.pojo.ChangePair;
-import com.fxz.fuled.dynamic.threadpool.pojo.ReporterDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

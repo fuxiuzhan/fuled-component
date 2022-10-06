@@ -25,7 +25,11 @@ public @interface Cache {
      */
     String key() default "";
 
-    @AliasFor("key")
+    /**
+     * 不使用
+     *
+     * @return
+     */
     String value() default "";
 
     /**
