@@ -236,6 +236,10 @@ public class CacheAspect {
         if (Objects.nonNull(parameters)) {
             for (int i = 0; i < parameters.length; i++) {
                 context.setVariable(parameters[i].getName(), proceedingJoinPoint.getArgs()[i]);
+                CacheParam cacheParam = parameters[i].getAnnotation(CacheParam.class);
+                if (Objects.nonNull(cacheParam) && StringUtils.hasText(cacheParam.value())) {
+                    context.setVariable(cacheParam.value(), proceedingJoinPoint.getArgs()[i]);
+                }
             }
         }
         return (T) parser.parseExpression(expression).getValue(context, clazz);
