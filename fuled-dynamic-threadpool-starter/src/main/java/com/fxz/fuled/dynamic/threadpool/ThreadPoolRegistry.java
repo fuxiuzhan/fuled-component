@@ -273,9 +273,13 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     public void eventListener(EnvironmentChangeEvent event) {
         /**
          * 在收到EnvironmentChangeEvent会重新刷新属性
-         * 但是如果直接从容器去除可能还未刷新完成，
+         * 但是如果直接从容器取可能还未刷新完成，
          * 所以就主动刷新一次，ConfigurationPropertiesRebinder
-         * 也是相同的操作
+         * 也是相同的操作，其实所有的@ConfigurationProperties
+         * 配置变量都需要spring容器处理，所以无论从什么地方发起的配置
+         * 如，nacos，apollo，spring-config,zk,file
+         * 都需要更新到容器的Environment中，然后走属性刷新
+         * 无需关心配置是从何而来，只需要取到的是最新的配置即可
          */
         ThreadPoolProperties bean = ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
         applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
