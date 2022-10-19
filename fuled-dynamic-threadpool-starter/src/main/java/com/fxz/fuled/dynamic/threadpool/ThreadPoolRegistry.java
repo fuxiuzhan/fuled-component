@@ -18,6 +18,7 @@ import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.util.ProxyUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -270,7 +271,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      * @param event
      */
     @EventListener
-    public void eventListener(EnvironmentChangeEvent event) {
+    public void eventListener(ApplicationEvent event) {
         /**
          * 在收到EnvironmentChangeEvent会重新刷新属性
          * 但是如果直接从容器取可能还未刷新完成，
@@ -281,13 +282,16 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
          * 都需要更新到容器的Environment中，然后走属性刷新
          * 无需关心配置是从何而来，只需要取到的是最新的配置即可
          */
-        ThreadPoolProperties bean = ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
-        applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
-        applicationContext.getAutowireCapableBeanFactory().initializeBean(bean, "threadPoolProperties");
-        if (!CollectionUtils.isEmpty(bean.getConfig())) {
-            bean.getConfig().forEach((k, v) -> {
-                updateCoreSize(k, v.getCoreSize());
-            });
+//        ThreadPoolProperties bean = ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
+//        applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
+//        applicationContext.getAutowireCapableBeanFactory().initializeBean(bean, "threadPoolProperties");
+        if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
+            ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+            if (!CollectionUtils.isEmpty(bean.getConfig())) {
+                bean.getConfig().forEach((k, v) -> {
+                    updateCoreSize(k, v.getCoreSize());
+                });
+            }
         }
     }
 
