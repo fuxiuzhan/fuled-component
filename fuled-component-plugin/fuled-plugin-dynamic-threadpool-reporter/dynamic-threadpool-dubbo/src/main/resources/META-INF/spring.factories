@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ com.fxz.componet.plugin.dynamic.threadpool.dubbo.DubboExecutorsWrapper
