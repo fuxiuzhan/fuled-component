@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.util.ProxyUtils;
 import org.springframework.context.ApplicationContext;
@@ -281,10 +283,14 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
          * 如，nacos，apollo，spring-config,zk,file
          * 都需要更新到容器的Environment中，然后走属性刷新
          * 无需关心配置是从何而来，只需要取到的是最新的配置即可
+
+         ThreadPoolProperties bean = ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
+         applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
+         applicationContext.getAutowireCapableBeanFactory().initializeBean(bean, "threadPoolProperties");
+         或者采用如下方式获取当前最新的配置即可
+         ThreadPoolProperties threadPoolProperties=new ThreadPoolProperties();
+         Binder.get(applicationContext.getEnvironment()).bind("fuled.dynamic.threadpool", Bindable.ofInstance(threadPoolProperties));
          */
-//        ThreadPoolProperties bean = ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
-//        applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
-//        applicationContext.getAutowireCapableBeanFactory().initializeBean(bean, "threadPoolProperties");
         if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
             if (!CollectionUtils.isEmpty(bean.getConfig())) {
