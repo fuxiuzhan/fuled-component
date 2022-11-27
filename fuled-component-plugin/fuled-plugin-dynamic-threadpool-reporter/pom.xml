@@ -18,6 +18,7 @@
     </properties>
     <modules>
         <module>reporter-prometheus</module>
+        <module>dynamic-threadpool-dubbo</module>
     </modules>
     <dependencies>
 

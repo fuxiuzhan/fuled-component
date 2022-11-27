@@ -6,10 +6,10 @@ import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
-import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapper;
-import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadPoolExecutorWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.QueueWrapper;
+import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadFactoryWrapper;
+import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
@@ -271,27 +271,29 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      */
     @EventListener
     public void eventListener(ApplicationEvent event) {
-        //环境变更或者注册中心变更事件
+        /**
+         * 在收到EnvironmentChangeEvent会重新刷新属性
+         * 但是如果直接从容器取可能还未刷新完成，
+         * 所以就主动刷新一次，ConfigurationPropertiesRebinder
+         * 也是相同的操作，其实所有的@ConfigurationProperties
+         * 配置变量都需要spring容器处理，所以无论从什么地方发起的配置
+         * 如，nacos，apollo，spring-config,zk,file
+         * 都需要更新到容器的Environment中，然后走属性刷新
+         * 无需关心配置是从何而来，只需要取到的是最新的配置即可
+
+         ThreadPoolProperties bean = ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
+         applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
+         applicationContext.getAutowireCapableBeanFactory().initializeBean(bean, "threadPoolProperties");
+         或者采用如下方式获取当前最新的配置即可
+         ThreadPoolProperties threadPoolProperties=new ThreadPoolProperties();
+         Binder.get(applicationContext.getEnvironment()).bind("fuled.dynamic.threadpool", Bindable.ofInstance(threadPoolProperties));
+         */
         if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
-            /**
-             * MEMO EnvironmentChangeEvent 在接收到此事件的时候，属性其实并没有重新绑定好，重点在后边的逻辑
-             * 这个与具体使用了那种动态配置方式是有关系的。
-             * 也可以使用如下方式，在收到EnvironmentChangeEvent env变量已经准备好，直接销毁重建即可
-             * 这样就完全与使用了什么配置中心没有关系了，也无需担心使用的时候变量还未赋值
-             * Object bean=ProxyUtils.getTargetObject(applicationContext.getBean(ThreadPoolProperties.class));
-             * ((ThreadPoolProperties)bean).setConfig(new HashMap<>());
-             * applicationContext.getAutowireCapableBeanFactory().destroyBean(bean);
-             * applicationContext.getAutowireCapableBeanFactory().initializeBean(bean,"ThreadPoolProperties");
-             * applicationContext.getBean(ThreadPoolProperties.class);
-             *
-             */
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
-            if (Objects.nonNull(bean)) {
-                if (!CollectionUtils.isEmpty(bean.getConfig())) {
-                    bean.getConfig().forEach((k, v) -> {
-                        updateCoreSize(k, v.getCoreSize());
-                    });
-                }
+            if (!CollectionUtils.isEmpty(bean.getConfig())) {
+                bean.getConfig().forEach((k, v) -> {
+                    updateCoreSize(k, v.getCoreSize());
+                });
             }
         }
     }

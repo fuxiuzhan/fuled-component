@@ -63,16 +63,18 @@ public class NacosListener extends AbstractConfigChangeListener {
         });
         Config config = ConfigService.getConfig(ConfigUtil.getAppId());
         /**
-         * 处理$value注解的单例bean
-         */
-        config.fireConfigChange(ConfigUtil.getAppId(), changeMap);
-        /**
          * 发出环境变更事件，重新绑定非单例bean，如@ConfigurationProperties的bean和其他工厂bean
          * 不适用refreshEvent，操作过于笨重
          */
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(new EnvironmentChangeEvent(changeSet));
+
+        /**
+         * 处理listener
+         */
+        config.fireConfigChange(ConfigUtil.getAppId(), changeMap);
         /**
          * 发出变更事件
+         * 处理$value注解的单例bean
          */
         com.fxz.fuled.config.starter.model.ConfigChangeEvent event = new com.fxz.fuled.config.starter.model.ConfigChangeEvent(group, changeMap);
         ApplicationContextUtil.getConfigurableApplicationContext().publishEvent(event);
