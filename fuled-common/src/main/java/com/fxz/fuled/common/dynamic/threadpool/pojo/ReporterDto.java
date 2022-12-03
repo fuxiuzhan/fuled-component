@@ -50,6 +50,16 @@ public class ReporterDto {
      * 执行线程数
      */
     private long execCount;
+
+    /**
+     * 执行任务数
+     */
+    private long taskCount;
+
+    /**
+     * 活跃线程数
+     */
+    private long activeCount;
     /**
      * 队列类型
      */
