@@ -40,6 +40,8 @@ public abstract class Manageable implements ChangeListener, Recordable {
         reporterDto.setAppName(ConfigUtil.getAppId());
         reporterDto.setIps(IPUtil.getIpAddress());
         reporterDto.setCorePoolSize(threadPoolExecutor.getCorePoolSize());
+        reporterDto.setActiveCount(threadPoolExecutor.getActiveCount());
+        reporterDto.setTaskCount(threadPoolExecutor.getTaskCount());
         reporterDto.setMaximumPoolSize(threadPoolExecutor.getMaximumPoolSize());
         reporterDto.setCurrentPoolSize(threadPoolExecutor.getPoolSize());
         reporterDto.setThreadPoolName(poolName);

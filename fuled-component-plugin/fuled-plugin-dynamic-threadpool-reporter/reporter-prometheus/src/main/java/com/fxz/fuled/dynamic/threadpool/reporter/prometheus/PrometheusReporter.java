@@ -33,7 +33,6 @@ public class PrometheusReporter implements Reporter {
     private static final String THREAD_POOL_TYPE = "type";
     private static final String QUEUE_TYPE = "queue.type";
     private static final String REJECT_TYPE = "reject.handler.type";
-
     /**
      * gauge
      */
@@ -41,12 +40,13 @@ public class PrometheusReporter implements Reporter {
     private static final String CURRENT_CORE_SIZE = "current.core.size";
     private static final String REJECT_CNT = "reject.count";
     private static final String EXEC_COUNT = "exec.count";
+    private static final String TASK_COUNT = "task.count";
+    private static final String ACTIVE_COUNT = "active.count";
     private static final String MAX_QUEUE_SIZE = "max.queue.size";
     private static final String QUEUE_CAPACITY = "queue.capacity";
     private static final String CURRENT_QUEUE_SIZE = "current.queue.size";
     private static final String CORE_SIZE = "core.size";
     private static final String MAX_CORE_SIZE = "max.core.size";
-
     private Map<String, ReporterDto> threadPoolMap = new ConcurrentHashMap<>();
 
     /**
@@ -96,6 +96,15 @@ public class PrometheusReporter implements Reporter {
                 .description("ThreadPoolExecCount")
                 .register(meterRegistry);
 
+        Gauge.builder(GAUGE + "." + TASK_COUNT, reporterDto, ReporterDto::getTaskCount)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolTaskCount")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + ACTIVE_COUNT, reporterDto, ReporterDto::getActiveCount)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolActiveCount")
+                .register(meterRegistry);
 
         Gauge.builder(GAUGE + "." + MAX_QUEUE_SIZE, reporterDto, ReporterDto::getQueueMaxSize)
                 .tags(buildTags(reporterDto))
