@@ -9,6 +9,7 @@ import com.fxz.fuled.config.starter.spring.util.SpringInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.*;
 import org.springframework.util.CollectionUtils;
@@ -29,7 +30,7 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 
     private static final String NACOS_PROPERTY_SOURCE_NAME = "NACOS";
 
-    private static final String SYSTEM_PROPERTY = "systemProperties";
+    private static final String SYSTEM_PROPERTY = ConfigurableApplicationContext.SYSTEM_PROPERTIES_BEAN_NAME;
 
     private static final String SEP1 = "-";
 
