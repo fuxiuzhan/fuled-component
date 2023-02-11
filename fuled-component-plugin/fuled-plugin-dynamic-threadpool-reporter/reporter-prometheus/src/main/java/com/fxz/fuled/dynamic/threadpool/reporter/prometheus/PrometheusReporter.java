@@ -6,6 +6,8 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.Summary;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -13,15 +15,15 @@ import sun.net.util.IPAddressUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class PrometheusReporter implements Reporter {
-
     @Autowired(required = false)
-    MeterRegistry meterRegistry;
-
+    private MeterRegistry meterRegistry;
+    @Autowired(required = false)
+    private CollectorRegistry collectorRegistry;
     private static final String GAUGE = "fuled.dynamic.thread.pool";
-
     /**
      * tags
      */
@@ -47,7 +49,18 @@ public class PrometheusReporter implements Reporter {
     private static final String CURRENT_QUEUE_SIZE = "current.queue.size";
     private static final String CORE_SIZE = "core.size";
     private static final String MAX_CORE_SIZE = "max.core.size";
+    private static final String WAIT_TS = "wait.ts";
+    private static final String RUNNING_TS = "run.ts";
     private Map<String, ReporterDto> threadPoolMap = new ConcurrentHashMap<>();
+    private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
+    /**
+     * waitTime
+     */
+    private Summary waitSummary;
+    /**
+     * runningTime
+     */
+    private Summary runningSummary;
 
     /**
      * appName
@@ -56,7 +69,7 @@ public class PrometheusReporter implements Reporter {
      */
     @Override
     public void report(List<ReporterDto> records) {
-        if (!CollectionUtils.isEmpty(records) && Objects.nonNull(meterRegistry)) {
+        if (!CollectionUtils.isEmpty(records) && Objects.nonNull(meterRegistry) && Objects.nonNull(collectorRegistry)) {
             Set<String> threadPools = records.stream().map(ReporterDto::getThreadPoolName).collect(Collectors.toSet());
             threadPools.forEach(t -> {
                 ReporterDto r = records.stream().filter(e -> e.getThreadPoolName().equals(t)).max(Comparator.comparing(e -> e.getTimeStamp())).get();
@@ -68,10 +81,32 @@ public class PrometheusReporter implements Reporter {
                 } else {
                     ReporterDto reporterDto = threadPoolMap.get(t);
                     BeanUtils.copyProperties(r, reporterDto);
+                    refreshSummary(reporterDto);
                 }
             });
         }
     }
+
+    /**
+     * summary
+     *
+     * @param reporterDto
+     */
+    public void refreshSummary(ReporterDto reporterDto) {
+        if (INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
+            waitSummary = Summary.build(GAUGE + "." + WAIT_TS, "Thread wait time in queue")
+                    .quantile(0.99, 0.001).quantile(0.95, 0.005)
+                    .labelNames(buildLabels(reporterDto))
+                    .register(collectorRegistry);
+            runningSummary = Summary.build(GAUGE + "." + RUNNING_TS, "Thread run time")
+                    .quantile(0.99, 0.001).quantile(0.95, 0.005)
+                    .labelNames(buildLabels(reporterDto))
+                    .register(collectorRegistry);
+        }
+        waitSummary.labels(buildLabelValues(reporterDto)).observe(reporterDto.getWaitTime());
+        runningSummary.labels(buildLabelValues(reporterDto)).observe(reporterDto.getRunningTime());
+    }
+
 
     public void buildGauge(ReporterDto reporterDto) {
         Gauge.builder(GAUGE + "." + TIMESTAMP, reporterDto, ReporterDto::getTimeStamp)
@@ -146,6 +181,27 @@ public class PrometheusReporter implements Reporter {
     }
 
     /**
+     * 组装lables
+     *
+     * @param reporterDto
+     * @return
+     */
+    private String[] buildLabels(ReporterDto reporterDto) {
+        return new String[]{APP_NAME, THREAD_POOL_NAME, IPV4, IPV6, THREAD_POOL_TYPE, QUEUE_TYPE, REJECT_TYPE};
+    }
+
+    /**
+     * 组装labelValues
+     *
+     * @param reporterDto
+     * @return
+     */
+    private String[] buildLabelValues(ReporterDto reporterDto) {
+        return new String[]{reporterDto.getAppName(), reporterDto.getThreadPoolName(), buildIpString(reporterDto.getIps(), Boolean.TRUE)
+                , buildIpString(reporterDto.getIps(), Boolean.FALSE), reporterDto.getThreadPoolType(), reporterDto.getQueueType(), reporterDto.getRejectHandlerType()};
+    }
+
+    /**
      * 构建ip地址列表
      *
      * @param ips
@@ -159,4 +215,5 @@ public class PrometheusReporter implements Reporter {
         }
         return String.join(",", result);
     }
+
 }
