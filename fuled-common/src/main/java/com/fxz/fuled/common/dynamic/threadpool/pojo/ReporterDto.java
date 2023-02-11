@@ -80,4 +80,26 @@ public class ReporterDto {
      * 最近线程执行时间
      */
     private long recentExecTimeStamp;
+
+    /**
+     * 队列最大等待
+     */
+    private int largestPoolSize;
+
+    /**
+     * 线程等待时间（瞬时）
+     */
+    private long waitTime;
+    /**
+     * 线程执行时间（瞬时）
+     */
+    private long runningTime;
+    /**
+     * 最大等待时间
+     */
+    private long maxWaitTime;
+    /**
+     * 最大执行时间
+     */
+    private long maxRunningTime;
 }
