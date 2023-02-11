@@ -51,13 +51,20 @@ public class RunnableWrapper implements Runnable {
     private long waitTime;
 
     private long runningTime;
+    /**
+     * 统计运行及等待时间需要排除worker的情况
+     * 不然指标会体现出部分线程等待时间短，但
+     * 运行时间极长
+     */
+    private boolean isWorker;
 
 
-    public RunnableWrapper(Runnable runnable, Object meta, ThreadExecuteHook threadExecuteHook, String threadPoolName) {
+    public RunnableWrapper(Runnable runnable, Object meta, ThreadExecuteHook threadExecuteHook, String threadPoolName, boolean isWroker) {
         this.meta = meta;
         this.runnable = runnable;
         this.threadExecuteHook = threadExecuteHook;
         this.threadPoolName = threadPoolName;
+        this.isWorker = isWroker;
         storeThreadLocal();
     }
 
@@ -65,6 +72,7 @@ public class RunnableWrapper implements Runnable {
     public void run() {
         try {
             startTs = System.currentTimeMillis();
+            waitTime = System.currentTimeMillis() - createTs;
             //将threadLocal设置在hook可见范围内
             //backup线程池内线程的tl & itl
             backUpAndClearThreadLocal();
@@ -82,10 +90,14 @@ public class RunnableWrapper implements Runnable {
             RpcContext.remove();
             //恢复线程池原始的tl & itl
             clearAndRecoverBackupThreadLocal();
-            waitTime = System.currentTimeMillis() - createTs;
-            runningTime = System.currentTimeMillis() - startTs;
-            RunState runState = new RunState(threadPoolName, waitTime, runningTime);
-            ThreadPoolRegistry.updateRunState(runState);
+            /**
+             * 排除worker的干扰
+             */
+            if (!isWorker) {
+                runningTime = System.currentTimeMillis() - startTs;
+                RunState runState = new RunState(threadPoolName, waitTime, runningTime);
+                ThreadPoolRegistry.updateRunState(runState);
+            }
             //afterExecute
         }
     }

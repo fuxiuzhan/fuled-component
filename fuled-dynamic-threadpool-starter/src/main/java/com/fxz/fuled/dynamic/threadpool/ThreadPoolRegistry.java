@@ -108,7 +108,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
             target = runState;
         }
         target.setMaxRunningTime(Math.max(target.getMaxRunningTime(), runState.getRunningTime()));
-        target.setMaxWaitTime(Math.max(target.getMaxWaitTime(), runState.getMaxWaitTime()));
+        target.setMaxWaitTime(Math.max(target.getMaxWaitTime(), runState.getWaitTime()));
         runStateMap.put(runState.getThreadPoolName(), target);
     }
 

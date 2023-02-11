@@ -36,6 +36,6 @@ public class ThreadFactoryWrapper implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get(), threadExecuteHook, threadPoolName));
+        return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get(), threadExecuteHook, threadPoolName, Boolean.TRUE));
     }
 }

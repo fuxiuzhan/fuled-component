@@ -92,6 +92,7 @@ public class ReporterDto {
     private long waitTime;
     /**
      * 线程执行时间（瞬时）
+     * (排除worker)
      */
     private long runningTime;
     /**
@@ -100,6 +101,7 @@ public class ReporterDto {
     private long maxWaitTime;
     /**
      * 最大执行时间
+     * (排除worker)
      */
     private long maxRunningTime;
 }
