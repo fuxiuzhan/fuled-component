@@ -94,11 +94,11 @@ public class PrometheusReporter implements Reporter {
      */
     public void refreshSummary(ReporterDto reporterDto) {
         if (INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
-            waitSummary = Summary.build(GAUGE + "." + WAIT_TS, "Thread wait time in queue")
+            waitSummary = Summary.build((GAUGE + "." + WAIT_TS).replace(".", "_"), "Thread wait time in queue")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005)
                     .labelNames(buildLabels(reporterDto))
                     .register(collectorRegistry);
-            runningSummary = Summary.build(GAUGE + "." + RUNNING_TS, "Thread run time")
+            runningSummary = Summary.build((GAUGE + "." + RUNNING_TS).replace(".", "_"), "Thread run time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005)
                     .labelNames(buildLabels(reporterDto))
                     .register(collectorRegistry);
@@ -187,7 +187,9 @@ public class PrometheusReporter implements Reporter {
      * @return
      */
     private String[] buildLabels(ReporterDto reporterDto) {
-        return new String[]{APP_NAME, THREAD_POOL_NAME, IPV4, IPV6, THREAD_POOL_TYPE, QUEUE_TYPE, REJECT_TYPE};
+        return new String[]{APP_NAME.replace(".", "_"), THREAD_POOL_NAME.replace(".", "_"), IPV4.replace(".", "_")
+                , IPV6.replace(".", "_"), THREAD_POOL_TYPE.replace(".", "_")
+                , QUEUE_TYPE.replace(".", "_"), REJECT_TYPE.replace(".", "_")};
     }
 
     /**
