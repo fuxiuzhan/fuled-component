@@ -87,6 +87,13 @@ public class ReporterDto {
     private int largestPoolSize;
 
     /**
+     * 时间统计是大概统计
+     * <p>
+     * 因为采样率的问题不可能精确
+     * <p>
+     * 如果想要精确可以在具体的方法
+     * 上使用@Timed 注解
+     * <p>
      * 线程等待时间（瞬时）
      */
     private long waitTime;
