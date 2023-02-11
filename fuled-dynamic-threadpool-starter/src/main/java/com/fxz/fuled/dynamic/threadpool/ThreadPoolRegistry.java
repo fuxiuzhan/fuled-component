@@ -5,6 +5,7 @@ import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
+import com.fxz.fuled.dynamic.threadpool.pojo.RunState;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
 import com.fxz.fuled.dynamic.threadpool.wrapper.QueueWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapper;
@@ -72,6 +73,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      */
     private static Map<String, Manageable> manageableMap = new ConcurrentHashMap();
 
+    private static Map<String, RunState> runStateMap = new ConcurrentHashMap<>();
+
     /**
      * 状态标志
      */
@@ -92,6 +95,31 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      */
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor) {
         registerThreadPool(threadPoolName, threadPoolExecutor, defaultExecuteHook);
+    }
+
+    /**
+     * 更新执行时间等
+     *
+     * @param runState
+     */
+    public static void updateRunState(RunState runState) {
+        RunState target = runStateMap.get(runState.getThreadPoolName());
+        if (Objects.isNull(target)) {
+            target = runState;
+        }
+        target.setMaxRunningTime(Math.max(target.getMaxRunningTime(), runState.getRunningTime()));
+        target.setMaxWaitTime(Math.max(target.getMaxWaitTime(), runState.getWaitTime()));
+        runStateMap.put(runState.getThreadPoolName(), target);
+    }
+
+    /**
+     * 获取对应的执行状态统计
+     *
+     * @param threadPoolName
+     * @return
+     */
+    public static RunState getRunState(String threadPoolName) {
+        return runStateMap.get(threadPoolName);
     }
 
     /**
@@ -118,14 +146,14 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
                 //线程池内创建线程的来源只有一个，那就是增加worker的时候，而worker的增加需要ThreadFactory的包装
                 //入队的线程，包括runnable和callable就是简单的入队操作，callable会包装成runnable入队
                 //所以要实现threadLocal的传递只需要包装ThreadFactory和queue入队，塞入要传递的threadLocal就可以了。
-                BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook);
+                BlockingQueue wrapperQueue = QueueWrapper.wrapper(threadPoolExecutor.getQueue(), threadExecuteHook, threadPoolName);
                 try {
                     modifyFinal(threadPoolExecutor, "workQueue", wrapperQueue);
                 } catch (Exception e) {
                     log.warn("warn: inject queue error ->{}, threadLocal transmit invalid", e.getMessage());
                 }
             }
-            threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory(), threadExecuteHook));
+            threadPoolExecutor.setThreadFactory(new ThreadFactoryWrapper(threadPoolExecutor.getThreadFactory(), threadExecuteHook, threadPoolName));
             manageableMap.put(threadPoolName, manageable);
             start();
             log.info("threadPoolName->{} registered", threadPoolName);

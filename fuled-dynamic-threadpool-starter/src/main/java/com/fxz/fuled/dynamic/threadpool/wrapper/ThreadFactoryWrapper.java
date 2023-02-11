@@ -26,13 +26,16 @@ public class ThreadFactoryWrapper implements ThreadFactory {
     private ThreadFactory threadFactory;
     private ThreadExecuteHook threadExecuteHook;
 
-    public ThreadFactoryWrapper(ThreadFactory threadFactory, ThreadExecuteHook threadExecuteHook) {
+    private String threadPoolName;
+
+    public ThreadFactoryWrapper(ThreadFactory threadFactory, ThreadExecuteHook threadExecuteHook, String threadPoolName) {
         this.threadFactory = threadFactory;
         this.threadExecuteHook = threadExecuteHook;
+        this.threadPoolName = threadPoolName;
     }
 
     @Override
     public Thread newThread(Runnable r) {
-        return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get(),threadExecuteHook));
+        return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get(), threadExecuteHook, threadPoolName, Boolean.TRUE));
     }
 }

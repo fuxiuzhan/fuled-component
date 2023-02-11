@@ -1,7 +1,9 @@
 package com.fxz.fuled.dynamic.threadpool.wrapper;
 
 import com.fxz.fuled.dynamic.threadpool.RpcContext;
+import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
+import com.fxz.fuled.dynamic.threadpool.pojo.RunState;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
 
@@ -42,16 +44,35 @@ public class RunnableWrapper implements Runnable {
      */
     private Object backIThreadLocalMap;
 
-    public RunnableWrapper(Runnable runnable, Object meta, ThreadExecuteHook threadExecuteHook) {
+    private String threadPoolName;
+    private long createTs = System.currentTimeMillis();
+
+    private long startTs = createTs;
+    private long waitTime;
+
+    private long runningTime;
+    /**
+     * 统计运行及等待时间需要排除worker的情况
+     * 不然指标会体现出部分线程等待时间短，但
+     * 运行时间极长
+     */
+    private boolean isWorker;
+
+
+    public RunnableWrapper(Runnable runnable, Object meta, ThreadExecuteHook threadExecuteHook, String threadPoolName, boolean isWroker) {
         this.meta = meta;
         this.runnable = runnable;
         this.threadExecuteHook = threadExecuteHook;
+        this.threadPoolName = threadPoolName;
+        this.isWorker = isWroker;
         storeThreadLocal();
     }
 
     @Override
     public void run() {
         try {
+            startTs = System.currentTimeMillis();
+            waitTime = System.currentTimeMillis() - createTs;
             //将threadLocal设置在hook可见范围内
             //backup线程池内线程的tl & itl
             backUpAndClearThreadLocal();
@@ -69,6 +90,14 @@ public class RunnableWrapper implements Runnable {
             RpcContext.remove();
             //恢复线程池原始的tl & itl
             clearAndRecoverBackupThreadLocal();
+            /**
+             * 排除worker的干扰
+             */
+            if (!isWorker) {
+                runningTime = System.currentTimeMillis() - startTs;
+                RunState runState = new RunState(threadPoolName, waitTime, runningTime);
+                ThreadPoolRegistry.updateRunState(runState);
+            }
             //afterExecute
         }
     }

@@ -13,14 +13,14 @@ import java.util.concurrent.Callable;
  * 包装queue
  */
 public class QueueWrapper {
-    public static BlockingQueue wrapper(BlockingQueue blockingQueue, ThreadExecuteHook threadExecuteHook) {
+    public static BlockingQueue wrapper(BlockingQueue blockingQueue, ThreadExecuteHook threadExecuteHook, String thredPoolName) {
         return (BlockingQueue) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{BlockingQueue.class, Raw.class},
                 (proxy, method, args) -> {
                     if ("offer".equals(method.getName()) || "add".equals(method.getName())) {
                         //包装runnable
                         Object[] newArgs = args;
                         if (args[0] instanceof Runnable) {
-                            newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get(), threadExecuteHook)};
+                            newArgs = new Object[]{new RunnableWrapper((Runnable) args[0], RpcContext.get(), threadExecuteHook, thredPoolName, Boolean.FALSE)};
                         } else if (args[0] instanceof Callable) {
                             //callable其实线程池也是包装成runnable进行运行的，所以这条逻辑不会执行到，
                             //如果是拦截入口的话就需要了
