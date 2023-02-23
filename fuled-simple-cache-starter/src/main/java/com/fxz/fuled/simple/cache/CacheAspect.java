@@ -41,7 +41,6 @@ public class CacheAspect {
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-simple-cache.version", "1.0.0.waterdrop", "fuled-simple-cache-component");
     }
-
     private static final String METHOD_CACHE_PREFIX = ConfigUtil.getAppId();
     /**
      * 使用StringRedisTemplate 需要实现自己的typeConverter
@@ -292,6 +291,16 @@ class LruCache extends LinkedHashMap {
         reentrantLock.lock();
         try {
             return super.remove(key);
+        } finally {
+            reentrantLock.unlock();
+        }
+    }
+
+    @Override
+    public void clear() {
+        reentrantLock.lock();
+        try {
+            super.clear();
         } finally {
             reentrantLock.unlock();
         }
