@@ -76,39 +76,10 @@ public class ReporterDto {
      * 拒绝策略
      */
     private String rejectHandlerType;
-    /**
-     * 最近线程执行时间
-     */
-    private long recentExecTimeStamp;
 
     /**
-     * 队列最大等待
+     * 曾经最大
      */
     private int largestPoolSize;
 
-    /**
-     * 时间统计是大概统计
-     * <p>
-     * 因为采样率的问题不可能精确
-     * <p>
-     * 如果想要精确可以在具体的方法
-     * 上使用@Timed 注解
-     * <p>
-     * 线程等待时间（瞬时）
-     */
-    private long waitTime;
-    /**
-     * 线程执行时间（瞬时）
-     * (排除worker)
-     */
-    private long runningTime;
-    /**
-     * 最大等待时间
-     */
-    private long maxWaitTime;
-    /**
-     * 最大执行时间
-     * (排除worker)
-     */
-    private long maxRunningTime;
 }

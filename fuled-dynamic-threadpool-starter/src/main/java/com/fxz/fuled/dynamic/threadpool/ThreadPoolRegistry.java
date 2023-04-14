@@ -5,7 +5,6 @@ import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
-import com.fxz.fuled.dynamic.threadpool.pojo.RunState;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
 import com.fxz.fuled.dynamic.threadpool.wrapper.QueueWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapper;
@@ -72,9 +71,6 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      * 先处理ThreadPoolExecutor 以后处理TaskExecutor
      */
     private static Map<String, Manageable> manageableMap = new ConcurrentHashMap();
-
-    private static Map<String, RunState> runStateMap = new ConcurrentHashMap<>();
-
     /**
      * 状态标志
      */
@@ -95,31 +91,6 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      */
     public static void registerThreadPool(String threadPoolName, ThreadPoolExecutor threadPoolExecutor) {
         registerThreadPool(threadPoolName, threadPoolExecutor, defaultExecuteHook);
-    }
-
-    /**
-     * 更新执行时间等
-     *
-     * @param runState
-     */
-    public static void updateRunState(RunState runState) {
-        RunState target = runStateMap.get(runState.getThreadPoolName());
-        if (Objects.isNull(target)) {
-            target = runState;
-        }
-        target.setMaxRunningTime(Math.max(target.getMaxRunningTime(), runState.getRunningTime()));
-        target.setMaxWaitTime(Math.max(target.getMaxWaitTime(), runState.getWaitTime()));
-        runStateMap.put(runState.getThreadPoolName(), target);
-    }
-
-    /**
-     * 获取对应的执行状态统计
-     *
-     * @param threadPoolName
-     * @return
-     */
-    public static RunState getRunState(String threadPoolName) {
-        return runStateMap.get(threadPoolName);
     }
 
     /**
@@ -271,6 +242,10 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ThreadPoolRegistry.applicationContext = applicationContext;
+        ThreadExecuteHook bean = applicationContext.getBean(ThreadExecuteHook.class);
+        if (Objects.nonNull(bean)) {
+            ThreadPoolRegistry.defaultExecuteHook = bean;
+        }
     }
 
     /**
