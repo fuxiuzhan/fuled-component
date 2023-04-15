@@ -5,11 +5,10 @@ import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.utils.ThreadFactoryNamed;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
+import com.fxz.fuled.dynamic.threadpool.manage.impl.DefaultThreadExecuteHook;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
-import com.fxz.fuled.dynamic.threadpool.wrapper.QueueWrapper;
-import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapper;
-import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadFactoryWrapper;
-import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadPoolExecutorWrapper;
+import com.fxz.fuled.dynamic.threadpool.wrapper.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
@@ -76,8 +75,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
      */
     private static AtomicBoolean started = new AtomicBoolean(Boolean.FALSE);
 
-    private static ThreadExecuteHook defaultExecuteHook = new ThreadExecuteHook() {
-    };
+    private static DefaultThreadExecuteHook defaultExecuteHook = new DefaultThreadExecuteHook();
 
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor =
             new ScheduledThreadPoolExecutor(Math.max(Runtime.getRuntime().availableProcessors(), 4), ThreadFactoryNamed.named("thread-monitor", Boolean.TRUE));
@@ -244,7 +242,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
         ThreadPoolRegistry.applicationContext = applicationContext;
         ThreadExecuteHook bean = applicationContext.getBean(ThreadExecuteHook.class);
         if (Objects.nonNull(bean)) {
-            ThreadPoolRegistry.defaultExecuteHook = bean;
+            ThreadPoolRegistry.defaultExecuteHook.setThreadExecuteHook(bean);
         }
     }
 
