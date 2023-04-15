@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 
+/**
+ * @author fuled
+ */
 public class ThreadExecuteHookReporter implements ThreadExecuteHook {
     @Autowired(required = false)
     private FastStatReporter fastStatReporter;
@@ -15,7 +18,9 @@ public class ThreadExecuteHookReporter implements ThreadExecuteHook {
     @Override
     public void afterExecute(RunnableWrapper runnableWrapper) {
         if (Objects.nonNull(fastStatReporter) && !runnableWrapper.isWorker()) {
-            fastStatReporter.updateStat(runnableWrapper.getThreadPoolName(), runnableWrapper.getQueuedDuration(), runnableWrapper.getExecuteDuration());
+            fastStatReporter.updateStat(runnableWrapper.getThreadPoolName()
+                    , runnableWrapper.getQueuedDuration()
+                    , runnableWrapper.getExecuteDuration());
         }
     }
 }
