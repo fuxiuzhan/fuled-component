@@ -8,6 +8,7 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
+import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -15,7 +16,6 @@ import sun.net.util.IPAddressUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class PrometheusReporter implements Reporter {
@@ -40,6 +40,8 @@ public class PrometheusReporter implements Reporter {
      */
     private static final String TIMESTAMP = PREFIX + "timestamp";
     private static final String CURRENT_CORE_SIZE = "current.core.size";
+
+    private static final String LARGEST_CORE_SIZE = "largest.pool.size";
     private static final String REJECT_CNT = "reject.count";
     private static final String EXEC_COUNT = "exec.count";
     private static final String TASK_COUNT = "task.count";
@@ -49,18 +51,18 @@ public class PrometheusReporter implements Reporter {
     private static final String CURRENT_QUEUE_SIZE = "current.queue.size";
     private static final String CORE_SIZE = "core.size";
     private static final String MAX_CORE_SIZE = "max.core.size";
-    private static final String WAIT_TS = "wait.ts";
-    private static final String RUNNING_TS = "run.ts";
-    private Map<String, ReporterDto> threadPoolMap = new ConcurrentHashMap<>();
-    private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
+    private static final String QUEUED_DURATION = "queued.duration";
+    private static final String EXECUTED_DURATION = "executed.duration";
+    private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
+    private Map<String, Pair<Summary, Summary>> pairMap = new ConcurrentHashMap<>();
     /**
      * waitTime
      */
-    private Summary waitSummary;
+    private Summary queuedSummary;
     /**
      * runningTime
      */
-    private Summary runningSummary;
+    private Summary executedSummary;
 
     /**
      * appName
@@ -73,15 +75,14 @@ public class PrometheusReporter implements Reporter {
             Set<String> threadPools = records.stream().map(ReporterDto::getThreadPoolName).collect(Collectors.toSet());
             threadPools.forEach(t -> {
                 ReporterDto r = records.stream().filter(e -> e.getThreadPoolName().equals(t)).max(Comparator.comparing(e -> e.getTimeStamp())).get();
-                if (!threadPoolMap.containsKey(t)) {
+                if (!reporterMap.containsKey(t)) {
                     ReporterDto reporterDto = new ReporterDto();
                     BeanUtils.copyProperties(r, reporterDto);
                     buildGauge(reporterDto);
-                    threadPoolMap.put(t, reporterDto);
+                    reporterMap.put(t, reporterDto);
                 } else {
-                    ReporterDto reporterDto = threadPoolMap.get(t);
+                    ReporterDto reporterDto = reporterMap.get(t);
                     BeanUtils.copyProperties(r, reporterDto);
-                    refreshSummary(reporterDto);
                 }
             });
         }
@@ -90,21 +91,30 @@ public class PrometheusReporter implements Reporter {
     /**
      * summary
      *
-     * @param reporterDto
+     * @param
      */
-    public void refreshSummary(ReporterDto reporterDto) {
-        if (INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
-            waitSummary = Summary.build((GAUGE + "." + WAIT_TS).replace(".", "_"), "Thread wait time in queue")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005)
-                    .labelNames(buildLabels(reporterDto))
-                    .register(collectorRegistry);
-            runningSummary = Summary.build((GAUGE + "." + RUNNING_TS).replace(".", "_"), "Thread run time")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005)
-                    .labelNames(buildLabels(reporterDto))
-                    .register(collectorRegistry);
+    public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration) {
+        if (!pairMap.containsKey(threadPoolName)) {
+            if (reporterMap.containsKey(threadPoolName)) {
+                ReporterDto reporterDto = reporterMap.get(threadPoolName);
+                queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto))
+                        .register(collectorRegistry);
+                executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto))
+                        .register(collectorRegistry);
+                Pair<Summary, Summary> pair = new Pair<>();
+                pair.setA(queuedSummary);
+                pair.setB(executedSummary);
+                pairMap.put(threadPoolName, pair);
+            }
         }
-        waitSummary.labels(buildLabelValues(reporterDto)).observe(reporterDto.getWaitTime());
-        runningSummary.labels(buildLabelValues(reporterDto)).observe(reporterDto.getRunningTime());
+        if (pairMap.containsKey(threadPoolName)) {
+            pairMap.get(threadPoolName).getA().labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
+            pairMap.get(threadPoolName).getB().labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
+        }
     }
 
 
@@ -117,6 +127,11 @@ public class PrometheusReporter implements Reporter {
         Gauge.builder(GAUGE + "." + CURRENT_CORE_SIZE, reporterDto, ReporterDto::getCurrentPoolSize)
                 .tags(buildTags(reporterDto))
                 .description("ThreadPoolCoreSize")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + LARGEST_CORE_SIZE, reporterDto, ReporterDto::getLargestPoolSize)
+                .tags(buildTags(reporterDto))
+                .description("ThreadLargestPoolSize")
                 .register(meterRegistry);
 
 
@@ -218,4 +233,9 @@ public class PrometheusReporter implements Reporter {
         return String.join(",", result);
     }
 
+    @Data
+    public static class Pair<A, B> {
+        private A a;
+        private B b;
+    }
 }

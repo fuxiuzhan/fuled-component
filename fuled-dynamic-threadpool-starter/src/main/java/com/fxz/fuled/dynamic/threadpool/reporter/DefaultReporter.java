@@ -13,9 +13,7 @@ public class DefaultReporter implements Reporter {
     @Override
     public void report(List<ReporterDto> records) {
         if (!CollectionUtils.isEmpty(records)) {
-            records.forEach(r -> {
-                log.info("reporter->{}", JSON.toJSONString(r));
-            });
+            records.forEach(r -> log.info("reporter->{}", JSON.toJSONString(r)));
         }
     }
 }

@@ -62,13 +62,6 @@ public abstract class Manageable implements ChangeListener, Recordable {
         if (threadPoolExecutor.getRejectedExecutionHandler() instanceof RejectHandlerWrapper) {
             reporterDto.setRejectHandlerType(((RejectHandlerWrapper) threadPoolExecutor.getRejectedExecutionHandler()).getRejectedExecutionHandler().getClass().getName());
         }
-        RunState runState = ThreadPoolRegistry.getRunState(poolName);
-        if (Objects.nonNull(runState)) {
-            reporterDto.setRunningTime(runState.getRunningTime());
-            reporterDto.setMaxRunningTime(runState.getMaxRunningTime());
-            reporterDto.setWaitTime(runState.getWaitTime());
-            reporterDto.setMaxWaitTime(runState.getMaxWaitTime());
-        }
         return reporterDto;
     }
 

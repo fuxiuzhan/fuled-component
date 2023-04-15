@@ -4,6 +4,8 @@ package com.fxz.fuled.dynamic.threadpool.starter;
 import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
+import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
+import com.fxz.fuled.dynamic.threadpool.manage.impl.ThreadExecuteHookReporter;
 import com.fxz.fuled.dynamic.threadpool.pojo.ThreadPoolProperties;
 import com.fxz.fuled.dynamic.threadpool.reporter.DefaultReporter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,5 +29,11 @@ public class AutoConfiguration {
     @ConditionalOnMissingBean
     public Reporter defaultReporter() {
         return new DefaultReporter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ThreadExecuteHook threadExecuteHook() {
+        return new ThreadExecuteHookReporter();
     }
 }

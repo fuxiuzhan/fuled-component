@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.fxz.fuled.dynamic.threadpool.reporter.prometheus.PrometheusReporter
+ com.fxz.fuled.dynamic.threadpool.reporter.prometheus.PrometheusReporter,\
+ com.fxz.fuled.dynamic.threadpool.reporter.prometheus.PrometheusDurationReporter
