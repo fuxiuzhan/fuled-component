@@ -8,7 +8,6 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
-import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -16,6 +15,7 @@ import sun.net.util.IPAddressUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class PrometheusReporter implements Reporter {
@@ -54,7 +54,7 @@ public class PrometheusReporter implements Reporter {
     private static final String QUEUED_DURATION = "queued.duration";
     private static final String EXECUTED_DURATION = "executed.duration";
     private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
-    private Map<String, Pair<Summary, Summary>> pairMap = new ConcurrentHashMap<>();
+    private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
     /**
      * waitTime
      */
@@ -94,26 +94,20 @@ public class PrometheusReporter implements Reporter {
      * @param
      */
     public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration) {
-        if (!pairMap.containsKey(threadPoolName)) {
-            if (reporterMap.containsKey(threadPoolName)) {
-                ReporterDto reporterDto = reporterMap.get(threadPoolName);
-                queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
-                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                        .labelNames(buildLabels(reporterDto))
-                        .register(collectorRegistry);
-                executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
-                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                        .labelNames(buildLabels(reporterDto))
-                        .register(collectorRegistry);
-                Pair<Summary, Summary> pair = new Pair<>();
-                pair.setA(queuedSummary);
-                pair.setB(executedSummary);
-                pairMap.put(threadPoolName, pair);
-            }
+        if (reporterMap.containsKey(threadPoolName) && INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
+            ReporterDto reporterDto = reporterMap.get(threadPoolName);
+            queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
+                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                    .labelNames(buildLabels(reporterDto))
+                    .register(collectorRegistry);
+            executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
+                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                    .labelNames(buildLabels(reporterDto))
+                    .register(collectorRegistry);
         }
-        if (pairMap.containsKey(threadPoolName)) {
-            pairMap.get(threadPoolName).getA().labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
-            pairMap.get(threadPoolName).getB().labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
+        if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary)) {
+            queuedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
+            executedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
         }
     }
 
@@ -231,11 +225,5 @@ public class PrometheusReporter implements Reporter {
             return "";
         }
         return String.join(",", result);
-    }
-
-    @Data
-    public static class Pair<A, B> {
-        private A a;
-        private B b;
     }
 }
