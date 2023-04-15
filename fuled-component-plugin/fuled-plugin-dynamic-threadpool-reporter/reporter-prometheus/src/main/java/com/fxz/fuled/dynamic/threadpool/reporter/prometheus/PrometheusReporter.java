@@ -15,6 +15,7 @@ import sun.net.util.IPAddressUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -98,11 +99,11 @@ public class PrometheusReporter implements Reporter {
             ReporterDto reporterDto = reporterMap.get(threadPoolName);
             queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto))
+                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(60L))
                     .register(collectorRegistry);
             executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto))
+                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(60L))
                     .register(collectorRegistry);
         }
         if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary)) {
