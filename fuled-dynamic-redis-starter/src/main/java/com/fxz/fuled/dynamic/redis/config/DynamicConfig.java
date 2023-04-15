@@ -53,6 +53,10 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     /**
      * 在此处初始化的原因是
      * 1.可以拿到自动注入的properties
+     * <p>
+     * memo:其实可以注入的方式有很多
+     * 只要是介于Environment准备好和AutowiredAnnotationBeanPostProcessor之间都可以
+     * 使用Binder得到想要的properties执行注入即可
      *
      * @param pvs      the property values that the factory is about to apply (never {@code null})
      * @param bean     the bean instance created, but whose properties have not yet been set

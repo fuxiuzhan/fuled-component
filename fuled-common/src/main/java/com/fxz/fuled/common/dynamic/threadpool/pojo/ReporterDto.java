@@ -76,8 +76,10 @@ public class ReporterDto {
      * 拒绝策略
      */
     private String rejectHandlerType;
+
     /**
-     * 最近线程执行时间
+     * 曾经最大
      */
-    private long recentExecTimeStamp;
+    private int largestPoolSize;
+
 }

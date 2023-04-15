@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author fxz
@@ -40,7 +41,6 @@ public class CacheAspect {
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-simple-cache.version", "1.0.0.waterdrop", "fuled-simple-cache-component");
     }
-
     private static final String METHOD_CACHE_PREFIX = ConfigUtil.getAppId();
     /**
      * 使用StringRedisTemplate 需要实现自己的typeConverter
@@ -59,8 +59,8 @@ public class CacheAspect {
     @Autowired(required = false)
     @Qualifier("redisTemplate")
     private RedisTemplate redisTemplate;
-    private LruCache lruCache = new LruCache(4096);
 
+    private LruCache lruCache = new LruCache(4096);
     private ExpressionParser parser = new SpelExpressionParser();
 
     @Around("@annotation(com.fxz.fuled.simple.cache.BatchCache) || @annotation(com.fxz.fuled.simple.cache.Cache)")
@@ -268,11 +268,42 @@ class CacheValue implements Serializable {
 }
 
 class LruCache extends LinkedHashMap {
+    private ReentrantLock reentrantLock = new ReentrantLock();
     int size;
 
     LruCache(int size) {
         super(size);
         this.size = size;
+    }
+
+    @Override
+    public Object put(Object key, Object value) {
+        reentrantLock.lock();
+        try {
+            return super.put(key, value);
+        } finally {
+            reentrantLock.unlock();
+        }
+    }
+
+    @Override
+    public Object remove(Object key) {
+        reentrantLock.lock();
+        try {
+            return super.remove(key);
+        } finally {
+            reentrantLock.unlock();
+        }
+    }
+
+    @Override
+    public void clear() {
+        reentrantLock.lock();
+        try {
+            super.clear();
+        } finally {
+            reentrantLock.unlock();
+        }
     }
 
     @Override

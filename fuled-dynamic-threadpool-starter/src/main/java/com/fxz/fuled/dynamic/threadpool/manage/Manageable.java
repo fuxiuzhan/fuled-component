@@ -3,11 +3,14 @@ package com.fxz.fuled.dynamic.threadpool.manage;
 import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.utils.IPUtil;
+import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
+import com.fxz.fuled.dynamic.threadpool.pojo.RunState;
 import com.fxz.fuled.dynamic.threadpool.wrapper.RejectHandlerWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -50,6 +53,7 @@ public abstract class Manageable implements ChangeListener, Recordable {
         reporterDto.setCurrentQueueSize(threadPoolExecutor.getQueue().size());
         reporterDto.setQueueMaxSize(threadPoolExecutor.getQueue().remainingCapacity() + threadPoolExecutor.getQueue().size());
         reporterDto.setRejectCnt(0L);
+        reporterDto.setLargestPoolSize(threadPoolExecutor.getLargestPoolSize());
         if (threadPoolExecutor.getRejectedExecutionHandler() instanceof RejectHandlerWrapper) {
             reporterDto.setRejectCnt(((RejectHandlerWrapper) threadPoolExecutor.getRejectedExecutionHandler()).getCounter());
         }

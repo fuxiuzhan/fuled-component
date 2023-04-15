@@ -2,6 +2,7 @@ package com.fxz.fuled.dynamic.threadpool.wrapper;
 
 import com.fxz.fuled.dynamic.threadpool.RpcContext;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;
 
@@ -42,16 +43,43 @@ public class RunnableWrapper implements Runnable {
      */
     private Object backIThreadLocalMap;
 
-    public RunnableWrapper(Runnable runnable, Object meta, ThreadExecuteHook threadExecuteHook) {
+    @Getter
+    private String threadPoolName;
+    /*
+     * 统计运行及等待时间需要排除worker的情况
+     * 不然指标会体现出部分线程等待时间短，但
+     * 运行时间极长
+     */
+    @Getter
+    private long bornTs;
+    @Getter
+    private long executeTs;
+    @Getter
+    private long queuedDuration;
+    @Getter
+    private long executeDuration;
+    @Getter
+    private long completeTs;
+    @Getter
+    private boolean isWorker;
+
+
+    public RunnableWrapper(Runnable runnable, Object meta, ThreadExecuteHook threadExecuteHook, String threadPoolName, boolean isWroker) {
         this.meta = meta;
         this.runnable = runnable;
         this.threadExecuteHook = threadExecuteHook;
+        this.threadPoolName = threadPoolName;
+        this.isWorker = isWroker;
+        this.bornTs = System.currentTimeMillis();
         storeThreadLocal();
+        threadExecuteHook.enqueue(this);
     }
 
     @Override
     public void run() {
         try {
+            executeTs = System.currentTimeMillis();
+            queuedDuration = executeTs - bornTs;
             //将threadLocal设置在hook可见范围内
             //backup线程池内线程的tl & itl
             backUpAndClearThreadLocal();
@@ -60,12 +88,19 @@ public class RunnableWrapper implements Runnable {
             RpcContext.set(meta);
             //此处增加方法即可实现如下两个只有继承线程池才能实现的方法
             //beforeExecute
-            threadExecuteHook.beforeExecute(runnable);
+            threadExecuteHook.beforeExecute(this);
             runnable.run();
         } catch (Throwable throwable) {
-            threadExecuteHook.onException(runnable, throwable);
+            threadExecuteHook.onException(this, throwable);
         } finally {
-            threadExecuteHook.afterExecute(runnable);
+            /**
+             * 排除worker的干扰
+             */
+            if (!isWorker) {
+                completeTs = System.currentTimeMillis();
+                executeDuration = completeTs - executeTs;
+            }
+            threadExecuteHook.afterExecute(this);
             RpcContext.remove();
             //恢复线程池原始的tl & itl
             clearAndRecoverBackupThreadLocal();
