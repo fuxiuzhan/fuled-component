@@ -1,7 +1,7 @@
 package com.fxz.fuled.dynamic.threadpool.manage.impl;
 
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
-import com.fxz.fuled.dynamic.threadpool.wrapper.RunnableWrapper;
+import com.fxz.fuled.dynamic.threadpool.wrapper.TaskWrapper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,10 +17,10 @@ public class DefaultThreadExecuteHook implements ThreadExecuteHook {
     private ThreadExecuteHook threadExecuteHook;
 
     @Override
-    public void afterExecute(RunnableWrapper runnableWrapper) {
+    public void afterExecute(TaskWrapper taskWrapper) {
         if (Objects.nonNull(threadExecuteHook)) {
-            threadExecuteHook.afterExecute(runnableWrapper);
+            threadExecuteHook.afterExecute(taskWrapper);
         }
-        ThreadExecuteHook.super.afterExecute(runnableWrapper);
+        ThreadExecuteHook.super.afterExecute(taskWrapper);
     }
 }

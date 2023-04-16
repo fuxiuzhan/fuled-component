@@ -18,7 +18,7 @@ import java.util.Optional;
  * @author fxz
  */
 @Slf4j
-public class RunnableWrapper implements Runnable {
+public class RunnableWrapper implements Runnable, TaskWrapper {
     private Object meta;
     private Runnable runnable;
 
@@ -301,5 +301,15 @@ public class RunnableWrapper implements Runnable {
      */
     private void cleanThreadLocal(boolean inheritable) {
         updateThreadLocal(null, inheritable);
+    }
+
+    @Override
+    public long queuedDuration() {
+        return queuedDuration;
+    }
+
+    @Override
+    public long executedDuration() {
+        return executeDuration;
     }
 }
