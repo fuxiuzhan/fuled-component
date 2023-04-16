@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import java.util.Objects;
 
+/**
+ * @author fuled
+ */
 public class DefaultThreadExecuteHook implements ThreadExecuteHook {
 
     @Getter
