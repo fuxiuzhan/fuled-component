@@ -90,8 +90,9 @@ public class RunnableWrapper implements Runnable, TaskWrapper {
             //beforeExecute
             threadExecuteHook.beforeExecute(this);
             runnable.run();
-        } catch (Throwable throwable) {
-            threadExecuteHook.onException(this, throwable);
+        } catch (Throwable t) {
+            threadExecuteHook.onException(this, t);
+            throw t;
         } finally {
             /**
              * 排除worker的干扰
