@@ -59,7 +59,7 @@ public class PrometheusReporter implements Reporter {
     private static final String QUEUED_DURATION = "queued.duration";
     private static final String EXECUTED_DURATION = "executed.duration";
 
-    private static final String ALIVED_DURATION = "alived.duration";
+    private static final String ALIVE_DURATION = "alive.duration";
     private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
     private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
     /**
@@ -112,7 +112,7 @@ public class PrometheusReporter implements Reporter {
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
                     .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
                     .register(collectorRegistry);
-            alivedSummary = Summary.build((GAUGE + "." + ALIVED_DURATION).replace(".", "_"), "Thread Alived Time")
+            alivedSummary = Summary.build((GAUGE + "." + ALIVE_DURATION).replace(".", "_"), "Thread Alived Time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
                     .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
                     .register(collectorRegistry);
