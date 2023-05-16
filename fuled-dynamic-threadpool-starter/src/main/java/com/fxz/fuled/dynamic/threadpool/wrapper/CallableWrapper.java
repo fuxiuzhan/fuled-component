@@ -26,6 +26,9 @@ public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
     private long queuedDuration;
     @Getter
     private long executeDuration;
+
+    @Getter
+    private long aliveDuration;
     @Getter
     private long completeTs;
 
@@ -52,6 +55,7 @@ public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
         } finally {
             completeTs = System.currentTimeMillis();
             executeDuration = completeTs - executeTs;
+            aliveDuration = completeTs - bornTs;
             threadExecuteHook.afterExecute(this);
             RpcContext.remove();
         }
@@ -70,5 +74,10 @@ public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
     @Override
     public long executedDuration() {
         return executeDuration;
+    }
+
+    @Override
+    public long aliveDuration() {
+        return aliveDuration;
     }
 }

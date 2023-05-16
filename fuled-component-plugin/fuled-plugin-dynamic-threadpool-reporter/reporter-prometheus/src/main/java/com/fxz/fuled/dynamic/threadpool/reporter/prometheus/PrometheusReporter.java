@@ -58,6 +58,8 @@ public class PrometheusReporter implements Reporter {
     private static final String MAX_CORE_SIZE = "max.core.size";
     private static final String QUEUED_DURATION = "queued.duration";
     private static final String EXECUTED_DURATION = "executed.duration";
+
+    private static final String ALIVED_DURATION = "alived.duration";
     private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
     private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
     /**
@@ -68,6 +70,7 @@ public class PrometheusReporter implements Reporter {
      * runningTime
      */
     private Summary executedSummary;
+    private Summary alivedSummary;
 
     /**
      * appName
@@ -98,7 +101,7 @@ public class PrometheusReporter implements Reporter {
      *
      * @param
      */
-    public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration) {
+    public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration, long aliveDuration) {
         if (reporterMap.containsKey(threadPoolName) && INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
             ReporterDto reporterDto = reporterMap.get(threadPoolName);
             queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
@@ -109,10 +112,16 @@ public class PrometheusReporter implements Reporter {
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
                     .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
                     .register(collectorRegistry);
+            alivedSummary = Summary.build((GAUGE + "." + ALIVED_DURATION).replace(".", "_"), "Thread Alived Time")
+                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
+                    .register(collectorRegistry);
         }
-        if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary)) {
+        if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary) && Objects.nonNull(alivedSummary)) {
             queuedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
             executedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
+            alivedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(aliveDuration);
+
         }
     }
 

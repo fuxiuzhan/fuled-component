@@ -32,7 +32,17 @@ public interface TaskWrapper {
     }
 
     /**
+     * 存活时间=队列时间+执行时间
+     *
+     * @return
+     */
+    default long aliveDuration() {
+        return 0;
+    }
+
+    /**
      * 是否worker
+     *
      * @return
      */
     default boolean isWorker() {
