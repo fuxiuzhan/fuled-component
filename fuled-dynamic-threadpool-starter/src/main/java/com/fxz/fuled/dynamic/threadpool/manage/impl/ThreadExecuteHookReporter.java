@@ -20,7 +20,7 @@ public class ThreadExecuteHookReporter implements ThreadExecuteHook {
         if (Objects.nonNull(fastStatReporter) && !taskWrapper.isWorker()) {
             fastStatReporter.updateStat(taskWrapper.getThreadPoolName()
                     , taskWrapper.queuedDuration()
-                    , taskWrapper.executedDuration());
+                    , taskWrapper.executedDuration(), taskWrapper.aliveDuration());
         }
     }
 }

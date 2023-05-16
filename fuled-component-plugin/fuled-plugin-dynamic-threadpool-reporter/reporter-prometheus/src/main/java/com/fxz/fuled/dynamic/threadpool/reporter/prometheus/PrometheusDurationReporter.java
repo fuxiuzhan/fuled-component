@@ -22,9 +22,9 @@ public class PrometheusDurationReporter implements FastStatReporter {
     }
 
     @Override
-    public void updateStat(String threadPoolName, long queuedDuration, long executeDuration) {
+    public void updateStat(String threadPoolName, long queuedDuration, long executeDuration,long aliveDuration) {
         if (Objects.nonNull(prometheusReporter)) {
-            prometheusReporter.updateDuration(threadPoolName, queuedDuration, executeDuration);
+            prometheusReporter.updateDuration(threadPoolName, queuedDuration, executeDuration,aliveDuration);
         }
     }
 }

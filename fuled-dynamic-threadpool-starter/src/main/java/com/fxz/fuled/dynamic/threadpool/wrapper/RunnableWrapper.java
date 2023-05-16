@@ -58,6 +58,9 @@ public class RunnableWrapper implements Runnable, TaskWrapper {
     private long queuedDuration;
     @Getter
     private long executeDuration;
+
+    @Getter
+    private long aliveDuration;
     @Getter
     private long completeTs;
     @Getter
@@ -100,6 +103,7 @@ public class RunnableWrapper implements Runnable, TaskWrapper {
             if (!isWorker) {
                 completeTs = System.currentTimeMillis();
                 executeDuration = completeTs - executeTs;
+                aliveDuration = completeTs - bornTs;
             }
             threadExecuteHook.afterExecute(this);
             RpcContext.remove();
@@ -307,6 +311,11 @@ public class RunnableWrapper implements Runnable, TaskWrapper {
     @Override
     public long queuedDuration() {
         return queuedDuration;
+    }
+
+    @Override
+    public long aliveDuration() {
+        return aliveDuration;
     }
 
     @Override
