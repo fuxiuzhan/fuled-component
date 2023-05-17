@@ -238,6 +238,7 @@ public class PrometheusReporter implements Reporter {
         if (CollectionUtils.isEmpty(result)) {
             return "";
         }
+        Collections.sort(result);
         return String.join(",", result);
     }
 }
