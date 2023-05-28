@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Map;
 
 @Data
-@ConfigurationProperties(prefix = "fuled.dynamic.threadpool")
+@ConfigurationProperties(prefix = ThreadPoolProperties.PREFIX)
 @Configuration(proxyBeanMethods = false)
 public class ThreadPoolProperties {
+    public static final String PREFIX = "fuled.dynamic.threadpool";
 
     /**
      * 是否包装容器内的线程池

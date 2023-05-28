@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -48,7 +50,6 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     /**
      * 收集间隔
      */
-
     private static int clollectInternalInSeconds = 10;
     /**
      * 本地队列大小
@@ -67,7 +68,6 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     private static List<ReporterDto> tempList = null;
 
     private static AtomicBoolean whileCondition = new AtomicBoolean(Boolean.TRUE);
-
     /**
      * 先处理ThreadPoolExecutor 以后处理TaskExecutor
      */
@@ -291,12 +291,11 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
          ThreadPoolProperties threadPoolProperties=new ThreadPoolProperties();
          Binder.get(applicationContext.getEnvironment()).bind("fuled.dynamic.threadpool", Bindable.ofInstance(threadPoolProperties));
          */
-        if (Objects.nonNull(event) && (event instanceof EnvironmentChangeEvent || "ConfigChangeEvent".equals(event.getClass().getSimpleName()))) {
+        if (event instanceof EnvironmentChangeEvent) {
             ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
+            Binder.get(applicationContext.getEnvironment()).bind(ThreadPoolProperties.PREFIX, Bindable.ofInstance(bean));
             if (!CollectionUtils.isEmpty(bean.getConfig())) {
-                bean.getConfig().forEach((k, v) -> {
-                    updateCoreSize(k, v.getCoreSize());
-                });
+                bean.getConfig().forEach((k, v) -> updateCoreSize(k, v.getCoreSize()));
             }
         }
     }
