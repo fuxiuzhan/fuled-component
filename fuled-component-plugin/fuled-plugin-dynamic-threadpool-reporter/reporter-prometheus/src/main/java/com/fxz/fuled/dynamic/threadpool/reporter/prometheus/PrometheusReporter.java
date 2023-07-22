@@ -26,6 +26,9 @@ public class PrometheusReporter implements Reporter {
 
     @Value("${fuled.dynamic.threadpool.monitor.age:300}")
     private int maxAge;
+
+    @Value("${fuled.dynamic.threadpool.summary.enabled:true}")
+    private boolean summaryEnabled;
     @Autowired(required = false)
     private CollectorRegistry collectorRegistry;
     private static final String GAUGE = "fuled.dynamic.thread.pool";
@@ -102,26 +105,27 @@ public class PrometheusReporter implements Reporter {
      * @param
      */
     public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration, long aliveDuration) {
-        if (reporterMap.containsKey(threadPoolName) && INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
-            ReporterDto reporterDto = reporterMap.get(threadPoolName);
-            queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
-                    .register(collectorRegistry);
-            executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
-                    .register(collectorRegistry);
-            alivedSummary = Summary.build((GAUGE + "." + ALIVE_DURATION).replace(".", "_"), "Thread Alived Time")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
-                    .register(collectorRegistry);
-        }
-        if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary) && Objects.nonNull(alivedSummary)) {
-            queuedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
-            executedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
-            alivedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(aliveDuration);
-
+        if (summaryEnabled) {
+            if (reporterMap.containsKey(threadPoolName) && INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
+                ReporterDto reporterDto = reporterMap.get(threadPoolName);
+                queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
+                        .register(collectorRegistry);
+                executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
+                        .register(collectorRegistry);
+                alivedSummary = Summary.build((GAUGE + "." + ALIVE_DURATION).replace(".", "_"), "Thread Alived Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
+                        .register(collectorRegistry);
+            }
+            if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary) && Objects.nonNull(alivedSummary)) {
+                queuedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
+                executedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
+                alivedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(aliveDuration);
+            }
         }
     }
 
