@@ -27,7 +27,7 @@ public class PrometheusReporter implements Reporter {
     @Value("${fuled.dynamic.threadpool.monitor.age:300}")
     private int maxAge;
 
-    @Value("${fuled.dynamic.threadpool.sunnmary.enabled:true}")
+    @Value("${fuled.dynamic.threadpool.summary.enabled:true}")
     private boolean summaryEnabled;
     @Autowired(required = false)
     private CollectorRegistry collectorRegistry;
