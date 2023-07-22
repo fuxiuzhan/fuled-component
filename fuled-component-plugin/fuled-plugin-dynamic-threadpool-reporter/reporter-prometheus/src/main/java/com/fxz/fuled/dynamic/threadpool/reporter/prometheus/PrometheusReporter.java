@@ -106,15 +106,15 @@ public class PrometheusReporter implements Reporter {
             ReporterDto reporterDto = reporterMap.get(threadPoolName);
             queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
+                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
                     .register(collectorRegistry);
             executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
+                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
                     .register(collectorRegistry);
             alivedSummary = Summary.build((GAUGE + "." + ALIVE_DURATION).replace(".", "_"), "Thread Alived Time")
                     .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.MINUTES.toSeconds(maxAge))
+                    .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
                     .register(collectorRegistry);
         }
         if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary) && Objects.nonNull(alivedSummary)) {
