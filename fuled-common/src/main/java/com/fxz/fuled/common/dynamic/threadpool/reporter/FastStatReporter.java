@@ -19,7 +19,7 @@ public interface FastStatReporter {
      * @param queuedDuration
      * @param executeDuration
      */
-    default void updateStat(String threadPoolName, long queuedDuration, long executeDuration) {
+    default void updateStat(String threadPoolName, long queuedDuration, long executeDuration, long aliveDuration) {
     }
 
 }

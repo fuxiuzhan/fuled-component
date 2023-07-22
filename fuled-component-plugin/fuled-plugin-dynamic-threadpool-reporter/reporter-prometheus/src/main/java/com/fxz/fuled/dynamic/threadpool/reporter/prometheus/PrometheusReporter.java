@@ -10,17 +10,25 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Summary;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import sun.net.util.IPAddressUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class PrometheusReporter implements Reporter {
     @Autowired(required = false)
     private MeterRegistry meterRegistry;
+
+    @Value("${fuled.dynamic.threadpool.monitor.age:300}")
+    private int maxAge;
+
+    @Value("${fuled.dynamic.threadpool.sunnmary.enabled:true}")
+    private boolean summaryEnabled;
     @Autowired(required = false)
     private CollectorRegistry collectorRegistry;
     private static final String GAUGE = "fuled.dynamic.thread.pool";
@@ -53,6 +61,8 @@ public class PrometheusReporter implements Reporter {
     private static final String MAX_CORE_SIZE = "max.core.size";
     private static final String QUEUED_DURATION = "queued.duration";
     private static final String EXECUTED_DURATION = "executed.duration";
+
+    private static final String ALIVE_DURATION = "alive.duration";
     private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
     private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
     /**
@@ -63,6 +73,7 @@ public class PrometheusReporter implements Reporter {
      * runningTime
      */
     private Summary executedSummary;
+    private Summary alivedSummary;
 
     /**
      * appName
@@ -93,21 +104,28 @@ public class PrometheusReporter implements Reporter {
      *
      * @param
      */
-    public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration) {
-        if (reporterMap.containsKey(threadPoolName) && INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
-            ReporterDto reporterDto = reporterMap.get(threadPoolName);
-            queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto))
-                    .register(collectorRegistry);
-            executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
-                    .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
-                    .labelNames(buildLabels(reporterDto))
-                    .register(collectorRegistry);
-        }
-        if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary)) {
-            queuedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
-            executedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
+    public void updateDuration(String threadPoolName, long queuedDuration, long executeDuration, long aliveDuration) {
+        if (summaryEnabled) {
+            if (reporterMap.containsKey(threadPoolName) && INIT.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
+                ReporterDto reporterDto = reporterMap.get(threadPoolName);
+                queuedSummary = Summary.build((GAUGE + "." + QUEUED_DURATION).replace(".", "_"), "Thread Queued Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
+                        .register(collectorRegistry);
+                executedSummary = Summary.build((GAUGE + "." + EXECUTED_DURATION).replace(".", "_"), "Thread Executed Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
+                        .register(collectorRegistry);
+                alivedSummary = Summary.build((GAUGE + "." + ALIVE_DURATION).replace(".", "_"), "Thread Alived Time")
+                        .quantile(0.99, 0.001).quantile(0.95, 0.005).quantile(0.90, 0.01)
+                        .labelNames(buildLabels(reporterDto)).maxAgeSeconds(TimeUnit.SECONDS.toSeconds(maxAge))
+                        .register(collectorRegistry);
+            }
+            if (Objects.nonNull(queuedSummary) && Objects.nonNull(executedSummary) && Objects.nonNull(alivedSummary)) {
+                queuedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(queuedDuration);
+                executedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(executeDuration);
+                alivedSummary.labels(buildLabelValues(reporterMap.get(threadPoolName))).observe(aliveDuration);
+            }
         }
     }
 
@@ -224,6 +242,7 @@ public class PrometheusReporter implements Reporter {
         if (CollectionUtils.isEmpty(result)) {
             return "";
         }
+        Collections.sort(result);
         return String.join(",", result);
     }
 }

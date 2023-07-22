@@ -18,7 +18,7 @@ import java.util.Optional;
  * @author fxz
  */
 @Slf4j
-public class RunnableWrapper implements Runnable {
+public class RunnableWrapper implements Runnable, TaskWrapper {
     private Object meta;
     private Runnable runnable;
 
@@ -58,6 +58,9 @@ public class RunnableWrapper implements Runnable {
     private long queuedDuration;
     @Getter
     private long executeDuration;
+
+    @Getter
+    private long aliveDuration;
     @Getter
     private long completeTs;
     @Getter
@@ -90,8 +93,9 @@ public class RunnableWrapper implements Runnable {
             //beforeExecute
             threadExecuteHook.beforeExecute(this);
             runnable.run();
-        } catch (Throwable throwable) {
-            threadExecuteHook.onException(this, throwable);
+        } catch (Throwable t) {
+            threadExecuteHook.onException(this, t);
+            throw t;
         } finally {
             /**
              * 排除worker的干扰
@@ -99,6 +103,7 @@ public class RunnableWrapper implements Runnable {
             if (!isWorker) {
                 completeTs = System.currentTimeMillis();
                 executeDuration = completeTs - executeTs;
+                aliveDuration = completeTs - bornTs;
             }
             threadExecuteHook.afterExecute(this);
             RpcContext.remove();
@@ -301,5 +306,20 @@ public class RunnableWrapper implements Runnable {
      */
     private void cleanThreadLocal(boolean inheritable) {
         updateThreadLocal(null, inheritable);
+    }
+
+    @Override
+    public long queuedDuration() {
+        return queuedDuration;
+    }
+
+    @Override
+    public long aliveDuration() {
+        return aliveDuration;
+    }
+
+    @Override
+    public long executedDuration() {
+        return executeDuration;
     }
 }

@@ -1,44 +1,46 @@
 package com.fxz.fuled.dynamic.threadpool.manage;
 
-import com.fxz.fuled.dynamic.threadpool.wrapper.RunnableWrapper;
+import com.fxz.fuled.dynamic.threadpool.wrapper.TaskWrapper;
 
 /**
  * @author fxz
- *
+ * <p>
  * 线程执行hook
  */
-public interface ThreadExecuteHook extends ThreadLocalTransmitSupport{
+public interface ThreadExecuteHook extends ThreadLocalTransmitSupport {
 
 
     /**
      * 入队
-     * @param runnableWrapper
+     *
+     * @param taskWrapper
      */
-    default void enqueue(RunnableWrapper runnableWrapper){
+    default void enqueue(TaskWrapper taskWrapper) {
 
     }
+
     /**
      * 线程执行前
      *
-     * @param runnableWrapper
+     * @param taskWrapper
      */
-    default void beforeExecute(RunnableWrapper runnableWrapper) {
+    default void beforeExecute(TaskWrapper taskWrapper) {
     }
 
     /**
      * 线程执行后,无论正常还是异常都会调用
      *
-     * @param runnableWrapper
+     * @param taskWrapper
      */
-    default void afterExecute(RunnableWrapper runnableWrapper) {
+    default void afterExecute(TaskWrapper taskWrapper) {
     }
 
     /**
      * 线程执行异常
      *
-     * @param runnableWrapper
+     * @param taskWrapper
      * @param throwable
      */
-    default void onException(RunnableWrapper runnableWrapper, Throwable throwable) {
+    default void onException(TaskWrapper taskWrapper, Throwable throwable) {
     }
 }
