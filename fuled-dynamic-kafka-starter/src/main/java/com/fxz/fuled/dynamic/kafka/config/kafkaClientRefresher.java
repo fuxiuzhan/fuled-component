@@ -42,7 +42,7 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
                     //add or changed
                     if (KafkaContainerRegistry.containerMap.containsKey(topic)) {
                         //changed
-                        if (KafkaClientProperties.STATUS_STOP.equalsIgnoreCase(kafkaClientProperties.getConfigs().get(topic).getStatus())) {
+                        if (KafkaClientProperties.STATUS_START.equalsIgnoreCase(kafkaClientProperties.getConfigs().get(topic).getStatus())) {
                             stopContainer(topic);
                             startContainer(topic);
                             log.info("restart Container->{}", topic);
