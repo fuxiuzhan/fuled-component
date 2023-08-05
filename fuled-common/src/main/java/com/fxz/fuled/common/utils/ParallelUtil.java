@@ -12,9 +12,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author xiuzhan.fu
- */
 public class ParallelUtil {
 
     static int CORES = Runtime.getRuntime().availableProcessors();
