@@ -9,7 +9,7 @@
     </parent>
     <groupId>com.fxz.component</groupId>
     <artifactId>fuled-dynamic-kafka-starter</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0.WaterDrop</version>
     <name>fuled-dynamic-kafka-starter</name>
     <description>fuled-dynamic-kafka-starter</description>
     <properties>
@@ -46,6 +46,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
