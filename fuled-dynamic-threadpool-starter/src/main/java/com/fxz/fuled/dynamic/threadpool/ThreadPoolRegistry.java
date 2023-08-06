@@ -168,16 +168,16 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
             log.info("wrapper Queue using unsafe");
             long offset = unsafe.objectFieldOffset(field);
             unsafe.putObject(object, offset, newFieldValue);
-        } else {
-            log.info("wrapper Queue using reflection");
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-            field.set(object, newFieldValue);
+            return;
         }
+        log.info("wrapper Queue using reflection");
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+        }
+        field.set(object, newFieldValue);
     }
 
     private static void start() {
