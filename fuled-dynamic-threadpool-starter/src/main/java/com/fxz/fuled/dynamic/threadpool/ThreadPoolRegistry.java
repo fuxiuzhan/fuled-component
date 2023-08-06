@@ -3,6 +3,7 @@ package com.fxz.fuled.dynamic.threadpool;
 import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
 import com.fxz.fuled.common.utils.ThreadFactoryNamed;
+import com.fxz.fuled.common.utils.UnsafeUtil;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
 import com.fxz.fuled.dynamic.threadpool.manage.impl.DefaultThreadExecuteHook;
@@ -26,6 +27,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -146,7 +148,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
         }
         Manageable manageable = manageableMap.get(threadPoolName);
         if (Objects.isNull(manageable)) {
-            log.error("threadPoolName not exits");
+            log.error("threadPoolName not exits name->{}", threadPoolName);
             return;
         }
         manageable.updateCoreSize(coreSize);
@@ -160,6 +162,15 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
             //获取父类
             field = object.getClass().getSuperclass().getDeclaredField(fieldName);
         }
+        //高版本的jdk会限制修改final类型，优先使用unsafe进行修改
+        Unsafe unsafe = UnsafeUtil.getUnsafe();
+        if (Objects.nonNull(unsafe)) {
+            log.info("wrapper Queue using unsafe");
+            long offset = unsafe.objectFieldOffset(field);
+            unsafe.putObject(object, offset, newFieldValue);
+            return;
+        }
+        log.info("wrapper Queue using reflection");
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);

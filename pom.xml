@@ -36,6 +36,7 @@
         <module>fuled-oauth-server-starter</module>
         <module>fuled-component-tools</module>
         <module>fuled-component-plugin</module>
+        <module>fuled-dynamic-kafka-starter</module>
     </modules>
     <dependencies>
         <dependency>

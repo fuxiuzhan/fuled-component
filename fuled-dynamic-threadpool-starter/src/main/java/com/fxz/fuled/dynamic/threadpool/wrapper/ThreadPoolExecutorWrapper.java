@@ -40,8 +40,14 @@ public class ThreadPoolExecutorWrapper extends Manageable {
     public void updateCoreSize(int coreSize) {
         int old = threadPoolExecutor.getCorePoolSize();
         if (old != coreSize) {
-            threadPoolExecutor.setCorePoolSize(coreSize);
-            threadPoolExecutor.setMaximumPoolSize(coreSize);
+            int max = threadPoolExecutor.getMaximumPoolSize();
+            if (max > coreSize) {
+                threadPoolExecutor.setCorePoolSize(coreSize);
+                threadPoolExecutor.setMaximumPoolSize(coreSize);
+            } else {
+                threadPoolExecutor.setMaximumPoolSize(coreSize);
+                threadPoolExecutor.setCorePoolSize(coreSize);
+            }
         }
         log.info("update threadPool name->{} oldCoreSize->{},currentCoreSize->{}", threadPoolName, old, coreSize);
     }
