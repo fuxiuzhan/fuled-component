@@ -2,6 +2,7 @@ package com.fxz.fuled.dynamic.threadpool.reporter.prometheus;
 
 import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.common.dynamic.threadpool.reporter.Reporter;
+import com.fxz.fuled.common.utils.IPUtil;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -238,7 +239,7 @@ public class PrometheusReporter implements Reporter {
      * @return
      */
     private String buildIpString(List<String> ips, boolean ipv4) {
-        List<String> result = ips.stream().filter(i -> IPAddressUtil.isIPv4LiteralAddress(i) == ipv4).collect(Collectors.toList());
+        List<String> result = ips.stream().filter(i -> IPUtil.isIpv4(i) == ipv4).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(result)) {
             return "";
         }
