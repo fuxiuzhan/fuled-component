@@ -82,4 +82,14 @@ public class ReporterDto {
      */
     private int largestPoolSize;
 
+    /**
+     *
+     */
+    private String version;
+
+    /**
+     *
+     */
+    private String jdkVersion;
+
 }
