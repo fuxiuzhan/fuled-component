@@ -1,6 +1,6 @@
 package com.fxz.fuled.dynamic.kafka.config;
 
-import com.fxz.fuled.dynamic.kafka.pojo.KafkaClientProperties;
+import com.fxz.fuled.dynamic.kafka.pojo.KafkaConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -29,20 +29,20 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
      * @param changedKeys
      */
     public void refresh(List<String> changedKeys) {
-        KafkaClientProperties kafkaClientProperties = applicationContext.getBean(KafkaClientProperties.class);
-        Binder.get(applicationContext.getEnvironment()).bind(KafkaClientProperties.PREFIX, Bindable.ofInstance(kafkaClientProperties));
+        KafkaConsumerProperties kafkaConsumerProperties = applicationContext.getBean(KafkaConsumerProperties.class);
+        Binder.get(applicationContext.getEnvironment()).bind(KafkaConsumerProperties.PREFIX, Bindable.ofInstance(kafkaConsumerProperties));
         if (CollectionUtils.isEmpty(changedKeys)) {
-            kafkaClientProperties.getConfigs().forEach((k, v) -> {
+            kafkaConsumerProperties.getConfigs().forEach((k, v) -> {
                 //init
-                buildContainer(k, v, kafkaClientProperties);
+                buildContainer(k, v, kafkaConsumerProperties);
             });
         } else {
             for (String topic : changedKeys) {
-                if (kafkaClientProperties.getConfigs().containsKey(topic)) {
+                if (kafkaConsumerProperties.getConfigs().containsKey(topic)) {
                     //add or changed
                     if (KafkaContainerRegistry.containerMap.containsKey(topic)) {
                         //changed
-                        if (KafkaClientProperties.STATUS_START.equalsIgnoreCase(kafkaClientProperties.getConfigs().get(topic).getStatus())) {
+                        if (KafkaConsumerProperties.STATUS_START.equalsIgnoreCase(kafkaConsumerProperties.getConfigs().get(topic).getStatus())) {
                             stopContainer(topic);
                             startContainer(topic);
                             log.info("restart Container->{}", topic);
@@ -51,7 +51,7 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
                             log.info("stop Container->{}", topic);
                         }
                     } else {
-                        buildContainer(topic, kafkaClientProperties.getConfigs().get(topic), kafkaClientProperties);
+                        buildContainer(topic, kafkaConsumerProperties.getConfigs().get(topic), kafkaConsumerProperties);
                     }
                 } else {
                     //remove
@@ -92,11 +92,11 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
     /**
      * @param topic
      * @param singleConfig
-     * @param kafkaClientProperties
+     * @param kafkaConsumerProperties
      */
-    private void buildContainer(String topic, KafkaClientProperties.SingleConfig singleConfig, KafkaClientProperties kafkaClientProperties) {
-        String beanName = StringUtils.isEmpty(singleConfig.getBeanName()) ? kafkaClientProperties.getDefaultBeanName() : singleConfig.getBeanName();
-        String methodName = StringUtils.isEmpty(singleConfig.getMethodName()) ? kafkaClientProperties.getDefaultMethod() : singleConfig.getMethodName();
+    private void buildContainer(String topic, KafkaConsumerProperties.SingleConfig singleConfig, KafkaConsumerProperties kafkaConsumerProperties) {
+        String beanName = StringUtils.isEmpty(singleConfig.getBeanName()) ? kafkaConsumerProperties.getDefaultBeanName() : singleConfig.getBeanName();
+        String methodName = StringUtils.isEmpty(singleConfig.getMethodName()) ? kafkaConsumerProperties.getDefaultMethod() : singleConfig.getMethodName();
         Object bean = applicationContext.getBean(beanName);
         Method method = Arrays.stream(bean.getClass().getDeclaredMethods()).filter(m -> m.getName().equalsIgnoreCase(methodName)).findFirst().get();
         MultiMethodKafkaListenerEndpoint endpoint =
@@ -115,7 +115,7 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
         KafkaListenerContainerFactory containerFactory = applicationContext.getBean(KafkaListenerContainerFactory.class);
 //        endpoint.setAutoStartup(singleConfig.getAutoStartup());
         MessageListenerContainer listenerContainer = containerFactory.createListenerContainer(endpoint);
-        if (KafkaClientProperties.STATUS_START.equalsIgnoreCase(singleConfig.getStatus())) {
+        if (KafkaConsumerProperties.STATUS_START.equalsIgnoreCase(singleConfig.getStatus())) {
             if (!listenerContainer.isRunning()) {
                 listenerContainer.start();
                 log.info("listenerContainer started->{}", topic);
@@ -136,8 +136,8 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
         if (source instanceof HashSet) {
             HashSet<String> kvs = (HashSet) source;
             List<String> topics = kvs.stream()
-                    .filter(s -> s.startsWith(KafkaClientProperties.PREFIX))
-                    .map(s -> s.replace(KafkaClientProperties.PREFIX + ".", "")
+                    .filter(s -> s.startsWith(KafkaConsumerProperties.PREFIX))
+                    .map(s -> s.replace(KafkaConsumerProperties.PREFIX + ".", "")
                             .split(",")[0])
                     .distinct().collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(topics)) {

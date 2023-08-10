@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Map;
 
 @Data
-@ConfigurationProperties(KafkaClientProperties.PREFIX)
+@ConfigurationProperties(KafkaConsumerProperties.PREFIX)
 @Configuration(proxyBeanMethods = false)
-public class KafkaClientProperties {
-    public static final String PREFIX = "fuled.dynamic.kafka";
+public class KafkaConsumerProperties {
+    public static final String PREFIX = "fuled.dynamic.kafka.consumer";
     public static final String STATUS_START = "Start";
     public static final String STATUS_STOP = "Stop";
     private String defaultBeanName;

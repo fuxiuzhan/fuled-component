@@ -1,4 +1,4 @@
-package com.fxz.fuled.common.common;
+package com.fxz.fuled.common.chain.annotation;
 
 import java.lang.annotation.*;
 

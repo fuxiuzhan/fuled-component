@@ -1,18 +1,21 @@
 package com.fxz.fuled.common.chain;
 
 
-import com.fxz.fuled.common.common.FilterProperty;
-import com.google.gson.Gson;
+import com.fxz.fuled.common.chain.annotation.FilterProperties;
+import com.fxz.fuled.common.chain.annotation.FilterProperty;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -21,53 +24,92 @@ import java.util.Map;
  * @author fxz
  */
 @Slf4j
-@Configuration
+@Component
 public class FilterConfig {
+    private Map<String, List<FilterWrapper>> filterMap = new ConcurrentHashMap<>();
 
     @Autowired(required = false)
-    List<Filter> allFilters;
-    Map<String, List<Filter>> filterGroup = new HashMap<>();
+    private List<Filter> filters;
 
     @PostConstruct
     public void init() {
-        if (allFilters != null && allFilters.size() > 0) {
-            for (int i = 0; i < allFilters.size(); i++) {
-                Filter filter = allFilters.get(i);
-                FilterProperty annotation = filter.getClass().getAnnotation(FilterProperty.class);
-                if (annotation != null && annotation.enabled() && StringUtils.hasText(annotation.filterGroup())) {
-                    log.info("Filter:name->{},group->{},order->{} added...", annotation.name(), annotation.filterGroup(), annotation.order());
-                    List<Filter> filterList = filterGroup.get(annotation.filterGroup());
-                    if (filterList == null) {
-                        filterList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(filters)) {
+            for (Filter filter : filters) {
+                FilterProperties annoProperties = filter.getClass().getAnnotation(FilterProperties.class);
+                if (Objects.nonNull(annoProperties) && annoProperties.properties().length > 0) {
+                    for (int i = 0; i < annoProperties.properties().length; i++) {
+                        addSingleProperty(annoProperties.properties()[i], filter);
                     }
-                    filterList.add(filter);
-                    filterGroup.put(annotation.filterGroup(), filterList);
-                } else {
-                    log.warn("filter->{},unknown filter type ,skipped....", new Gson().toJson(filter));
+                }
+                FilterProperty annoProperty = filter.getClass().getAnnotation(FilterProperty.class);
+                if (Objects.nonNull(annoProperty)) {
+                    addSingleProperty(annoProperty, filter);
                 }
             }
+            shakeFilterMap();
         }
     }
 
-    public List<Filter> getFiltersByName(String groupName) {
-        if (StringUtils.hasText(groupName)) {
-            return sort(filterGroup.get(groupName));
+    /**
+     * 处理单个filter
+     * 单个filter 可能隶属于多个group
+     *
+     * @param filterProperty
+     * @param filter
+     */
+    private void addSingleProperty(FilterProperty filterProperty, Filter filter) {
+        log.info("Filter->{} group->{} order->{} enabled->{} adding....", filterProperty.name(), filterProperty.filterGroup(), filterProperty.order(), filterProperty.enabled());
+        if (filterProperty.enabled()) {
+            String group = filterProperty.filterGroup();
+            List<FilterWrapper> orDefault = filterMap.getOrDefault(group, new ArrayList<>());
+            orDefault.add(new FilterWrapper(filter, filterProperty.order()));
+            filterMap.put(group, orDefault);
+            log.info("Filter->{} group->{} order->{} enabled->{} added", filterProperty.name(), filterProperty.filterGroup(), filterProperty.order(), filterProperty.enabled());
         }
-        return new ArrayList<>();
     }
 
-    private List<Filter> sort(List<Filter> filters) {
-        if (filters == null || filters.size() == 0) {
-            return new ArrayList<>();
+    /**
+     * 把filter容器摇匀
+     */
+    private void shakeFilterMap() {
+        if (!CollectionUtils.isEmpty(filterMap)) {
+            filterMap.forEach((k, v) -> v.sort((o1, o2) -> {
+                if (o1.getOrder() == o2.getOrder()) {
+                    return 0;
+                }
+                return o1.getOrder() - o2.getOrder();
+            }));
         }
-        filters.sort((o1, o2) -> {
-            if (o1.equals(o2)) {
-                return 0;
-            }
-            FilterProperty annotation1 = o1.getClass().getAnnotation(FilterProperty.class);
-            FilterProperty annotation2 = o2.getClass().getAnnotation(FilterProperty.class);
-            return annotation1.order() - annotation2.order();
-        });
-        return filters;
+    }
+
+    /**
+     * 根据group 获取对应的filter列表，已经排好序
+     *
+     * @param group
+     * @return
+     */
+    public List<Filter> getFiltersByGroup(String group) {
+        List<FilterWrapper> orDefault = filterMap.getOrDefault(group, new ArrayList<>());
+        return orDefault.stream().map(a -> a.filter).collect(Collectors.toList());
+    }
+
+    /**
+     * Filter 展平工具
+     */
+    @Data
+    public class FilterWrapper implements Filter {
+        private Filter filter;
+        private int order;
+
+        public FilterWrapper(Filter filter, int order) {
+            this.filter = filter;
+            this.order = order;
+        }
+
+        @Override
+        public Object filter(Object o, Invoker invoker) {
+            return filter.filter(o, invoker);
+        }
     }
 }
+
