@@ -1,6 +1,9 @@
 package com.fxz.fuled.common.chain;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+
 import java.util.List;
 
 /**
@@ -9,7 +12,12 @@ import java.util.List;
  *
  * @author fxz
  */
+@Import(FilterConfig.class)
 public class FilterChainManger implements FilterChain {
+
+    @Autowired
+    private FilterConfig filterConfig;
+
     @Override
     public Invoker buildInvokerChain(Invoker invoker, List<Filter> filters) {
         Invoker head = invoker;
@@ -22,4 +30,17 @@ public class FilterChainManger implements FilterChain {
         }
         return head;
     }
+
+    /**
+     * obtain head invoker
+     *
+     * @param group
+     * @param invoker
+     * @return
+     */
+    public Invoker getInvoker(String group, Invoker invoker) {
+        List<Filter> filtersByGroup = filterConfig.getFiltersByGroup(group);
+        return buildInvokerChain(invoker, filtersByGroup);
+    }
+
 }
