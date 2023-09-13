@@ -35,12 +35,12 @@ public class FilterChainManger implements FilterChain {
      * obtain head invoker
      *
      * @param group
-     * @param invoker
+     * @param tailInvoker
      * @return
      */
-    public Invoker getInvoker(String group, Invoker invoker) {
+    public Invoker getInvoker(String group, Invoker tailInvoker) {
         List<Filter> filtersByGroup = filterConfig.getFiltersByGroup(group);
-        return buildInvokerChain(invoker, filtersByGroup);
+        return buildInvokerChain(tailInvoker, filtersByGroup);
     }
 
 }
