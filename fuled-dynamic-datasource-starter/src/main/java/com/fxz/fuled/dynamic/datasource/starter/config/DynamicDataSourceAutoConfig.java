@@ -1,6 +1,8 @@
 package com.fxz.fuled.dynamic.datasource.starter.config;
 
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.fxz.fuled.common.converter.StringValueConveter;
 import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.dynamic.datasource.starter.convert.DefaultStringValueConverter;
@@ -41,5 +43,18 @@ public class DynamicDataSourceAutoConfig implements InitializingBean {
             //获取新的链接，然后通过dataSource的标记来选择特定的数据源
             sessionFactoryList.forEach(f -> f.getConfiguration().getTypeHandlerRegistry().register(EncryptColumn.class, EncryptColumnHandler.class));
         }
+    }
+
+    /**
+     * 在多数据源情况下，每个数据源会存在差异，如分页语句，可以通过mybatisplus自行判断dialect
+     *
+     * @return
+     */
+    @ConditionalOnMissingBean
+    public MybatisPlusInterceptor innerInterceptor() {
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        PaginationInnerInterceptor innerInterceptor = new PaginationInnerInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(innerInterceptor);
+        return mybatisPlusInterceptor;
     }
 }
