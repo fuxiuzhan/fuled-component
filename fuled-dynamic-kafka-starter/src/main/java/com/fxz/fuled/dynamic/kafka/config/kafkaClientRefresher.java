@@ -114,6 +114,17 @@ public class kafkaClientRefresher implements SmartInitializingSingleton, Applica
         endpoint.setMessageHandlerMethodFactory(defaultMessageHandlerMethodFactory);
         KafkaListenerContainerFactory containerFactory = applicationContext.getBean(KafkaListenerContainerFactory.class);
 //        endpoint.setAutoStartup(singleConfig.getAutoStartup());
+        /**
+         * BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(ConcurrentMessageListenerContainer.class);
+         * beanDefinitionBuilder.addConstructorArgValue(consumerFactory);
+         * beanDefinitionBuilder.addConstructorArgValue(properties);
+         * beanDefinitionBuilder.addPropertyValue("concurrency", kafkaProperties.getConcurrency());
+         * String beanName = String.format("%skafkaMessageListenerContainer", kafkaProperties.getName());
+         * beanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getBeanDefinition());
+         * ConcurrentMessageListenerContainer messageListenerContainer = (ConcurrentMessageListenerContainer) this.beanFactory.getBean(beanName);
+         * messageListenerContainer.start();
+         * currentSourceNames.add(kafkaProperties.getName());
+         */
         MessageListenerContainer listenerContainer = containerFactory.createListenerContainer(endpoint);
         if (KafkaConsumerProperties.STATUS_START.equalsIgnoreCase(singleConfig.getStatus())) {
             if (!listenerContainer.isRunning()) {
