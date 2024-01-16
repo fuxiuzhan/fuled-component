@@ -7,6 +7,7 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -14,12 +15,16 @@ import java.util.regex.Pattern;
  */
 public class IPUtil {
 
+    private static List<String> list;
     public static final Pattern IPV4_REGEX =
             Pattern.compile(
                     "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
 
     public static List<String> getIpAddress() {
-        List<String> list = new LinkedList<>();
+        if (Objects.nonNull(list)) {
+            return list;
+        }
+        list = new LinkedList<>();
         try {
             Enumeration enumeration = NetworkInterface.getNetworkInterfaces();
             while (enumeration.hasMoreElements()) {
@@ -44,7 +49,6 @@ public class IPUtil {
     }
 
     /**
-     *
      * @param ip
      * @return
      */

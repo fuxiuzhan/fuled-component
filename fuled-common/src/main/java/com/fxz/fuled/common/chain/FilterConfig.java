@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -43,6 +40,9 @@ public class FilterConfig {
                 if (Objects.nonNull(annoProperty)) {
                     addSingleProperty(annoProperty, filter);
                 }
+                if (filter instanceof PropertiesFilter) {
+                    addSingleProperty((PropertiesFilter) filter, filter);
+                }
             }
             shakeFilterMap();
         }
@@ -67,16 +67,26 @@ public class FilterConfig {
     }
 
     /**
+     * @param filterProperty
+     * @param filter
+     */
+    private void addSingleProperty(PropertiesFilter filterProperty, Filter filter) {
+        log.info("Filter->{} group->{} order->{} enabled->{} adding....", filterProperty.name(), filterProperty.filterGroup(), filterProperty.order(), filterProperty.enabled());
+        if (filterProperty.enabled()) {
+            String group = filterProperty.filterGroup();
+            List<FilterWrapper> orDefault = filterMap.getOrDefault(group, new ArrayList<>());
+            orDefault.add(new FilterWrapper(filter, filterProperty.order()));
+            filterMap.put(group, orDefault);
+            log.info("Filter->{} group->{} order->{} enabled->{} added", filterProperty.name(), filterProperty.filterGroup(), filterProperty.order(), filterProperty.enabled());
+        }
+    }
+
+    /**
      * 把filter容器摇匀
      */
     private void shakeFilterMap() {
         if (!CollectionUtils.isEmpty(filterMap)) {
-            filterMap.forEach((k, v) -> v.sort((o1, o2) -> {
-                if (o1.getOrder() == o2.getOrder()) {
-                    return 0;
-                }
-                return o1.getOrder() - o2.getOrder();
-            }));
+            filterMap.forEach((k, v) -> v.sort((o1, o2) -> 0 - Integer.compare(o1.order, o2.order)));
         }
     }
 
