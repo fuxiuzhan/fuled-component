@@ -35,7 +35,7 @@ public class LocalCacheFilter extends AbsCacheFilter {
 
     @Override
     public int order() {
-        return 0;
+        return Integer.MAX_VALUE>>2;
     }
 
     @Override

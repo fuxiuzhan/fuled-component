@@ -1,6 +1,7 @@
 package com.fxz.fuled.common.cache.filters.abs;
 
 
+import com.fxz.fuled.common.cache.config.Constant;
 import com.fxz.fuled.common.cache.container.CacheContainer;
 import com.fxz.fuled.common.cache.enums.CacheOpTypeEnum;
 import com.fxz.fuled.common.cache.objects.CacheIn;
@@ -13,6 +14,8 @@ import com.fxz.fuled.common.chain.PropertiesFilter;
 import java.util.Objects;
 
 public abstract class AbsCacheFilter extends PropertiesFilter implements Filter<CacheIn, CacheOut> {
+
+    private static final String NAME = "AbsCacheFilter";
     private CacheContainer cacheContainer;
 
     public AbsCacheFilter(CacheContainer cacheContainer) {
@@ -20,9 +23,29 @@ public abstract class AbsCacheFilter extends PropertiesFilter implements Filter<
     }
 
     @Override
+    public String name() {
+        return NAME;
+    }
+
+    @Override
+    public int order() {
+        return 0;
+    }
+
+    @Override
+    public String filterGroup() {
+        return Constant.CACHE_GROUP_NAME;
+    }
+
+    @Override
+    public boolean enabled() {
+        return Boolean.TRUE;
+    }
+
+    @Override
     public CacheOut filter(CacheIn cacheIn, Invoker<CacheIn, CacheOut> invoker) {
         //add
-        CacheOut invoke = null;
+        CacheOut invoke;
         try {
             for (CacheIn.SingleOp singleOp : cacheIn.getOpList()) {
                 if (CacheOpTypeEnum.SAVE.equals(singleOp.getOpTypeEnum())) {

@@ -36,6 +36,7 @@ public class ProceedCacheFilter extends AbsCacheFilter {
         try {
             Object proceed = cacheIn.getProceedingJoinPoint().proceed();
             cacheOut.setObject(proceed);
+            cacheOut.setLastAccessTime(System.currentTimeMillis());
             return cacheOut;
         } catch (Throwable e) {
             cacheOut.setThrowable(e);
