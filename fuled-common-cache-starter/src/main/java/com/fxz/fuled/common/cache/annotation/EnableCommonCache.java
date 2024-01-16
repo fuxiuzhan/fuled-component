@@ -13,5 +13,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(AutoConfig.class)
-public @interface EnableSimpleCache {
+public @interface EnableCommonCache {
 }
