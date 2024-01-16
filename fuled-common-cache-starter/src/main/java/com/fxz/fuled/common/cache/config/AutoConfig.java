@@ -9,6 +9,7 @@ import com.fxz.fuled.common.cache.filters.abs.PrepareCacheFilter;
 import com.fxz.fuled.common.cache.resolver.DefaultKeyResolver;
 import com.fxz.fuled.common.cache.resolver.KeyResolver;
 import com.fxz.fuled.common.chain.FilterChainManger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -20,8 +21,8 @@ public class AutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public CacheContainer defaultCacheContainer() {
-        return new LruCacheContainer();
+    public CacheContainer defaultCacheContainer(@Value("${fuled.common.cache.lru.max.size:4096}") Integer maxSize) {
+        return new LruCacheContainer(maxSize);
     }
 
     @Bean
