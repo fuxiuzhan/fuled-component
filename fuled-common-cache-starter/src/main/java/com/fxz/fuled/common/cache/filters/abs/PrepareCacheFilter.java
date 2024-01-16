@@ -57,6 +57,7 @@ public class PrepareCacheFilter extends AbsCacheFilter {
                 singleOp.setKey(keyResolver.resolve(cacheIn.getProceedingJoinPoint(), cache));
                 singleOp.setExpr(cache.expr());
                 singleOp.setUnit(cache.unit());
+                singleOp.setClearLocal(cache.clearLocal());
                 opList.add(singleOp);
             }
         }

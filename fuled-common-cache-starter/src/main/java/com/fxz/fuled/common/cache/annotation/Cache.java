@@ -18,15 +18,21 @@ import java.util.concurrent.TimeUnit;
 @Indexed
 public @interface Cache {
     String key() default "";
+
     String prefix() default "";
+
     int expr() default 10;
+
     TimeUnit unit() default TimeUnit.MINUTES;
+
     CacheOpTypeEnum opType() default CacheOpTypeEnum.SAVE;
+
     boolean includeNullResult() default false;
+
     String condition() default "";
 
     boolean localTurbo() default false;
-    boolean localCacheOnly() default false;
+
     boolean clearLocal() default false;
 
     //cacheAspect->cacheChain->LocalCache->ExtendCache->DefaultFianlCache
