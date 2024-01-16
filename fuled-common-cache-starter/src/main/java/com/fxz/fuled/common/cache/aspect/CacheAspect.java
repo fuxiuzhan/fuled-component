@@ -62,7 +62,7 @@ public class CacheAspect {
                 cacheList.add(cache);
             }
             if (Objects.nonNull(batchCache) && !CollectionUtils.isEmpty(Arrays.asList(batchCache.caches()))) {
-                cacheList.addAll(List.of(batchCache.caches()));
+                cacheList.addAll(Arrays.asList(batchCache.caches()));
             }
             CacheIn cacheIn = new CacheIn();
             cacheIn.setProceedingJoinPoint(proceedingJoinPoint);
