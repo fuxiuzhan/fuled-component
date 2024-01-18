@@ -35,7 +35,7 @@ public class CacheAspect {
 
     @Bean("simpleCacheVersion")
     public ComponentVersion configVersion() {
-        return new ComponentVersion("fuled-common-cache.version", "1.0.0.waterdrop", "fuled-simple-cache-component");
+        return new ComponentVersion("fuled-common-cache.version", "1.0.0.waterdrop", "fuled-common-cache-component");
     }
 
     @Autowired

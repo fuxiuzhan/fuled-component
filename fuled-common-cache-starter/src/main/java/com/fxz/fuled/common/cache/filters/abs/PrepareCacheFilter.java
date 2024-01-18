@@ -1,6 +1,5 @@
 package com.fxz.fuled.common.cache.filters.abs;
 
-import com.fxz.fuled.common.cache.annotation.BatchCache;
 import com.fxz.fuled.common.cache.annotation.Cache;
 import com.fxz.fuled.common.cache.config.Constant;
 import com.fxz.fuled.common.cache.expr.Evaluate;
