@@ -42,8 +42,6 @@ public class ConfigUtil {
     public static final String APP_ID_ENVIRONMENT_VARIABLES = "APP.ID";
     private static Properties m_appProperties = new Properties();
     private static String m_appId;
-    private String m_appLabel;
-    private String accessKeySecret;
     private static AtomicBoolean init = new AtomicBoolean(false);
 
     public static void initialize() {
@@ -77,8 +75,6 @@ public class ConfigUtil {
             }
 
             initAppId();
-//            initAppLabel();
-//            initAccessKey();
         } catch (Throwable ex) {
             logger.error("Initialize DefaultApplicationProvider failed.", ex);
         }
@@ -121,7 +117,7 @@ public class ConfigUtil {
     }
 
     public static Env getEnv() {
-        Env env = Env.TEST;
+        Env env = Env.CUS;
         for (Env value : Env.values()) {
             if (value.name().equalsIgnoreCase(System.getProperty("env", ""))) {
                 env = value;
@@ -130,25 +126,4 @@ public class ConfigUtil {
         }
         return env;
     }
-
-
-    /**
-     * Get the data center info for the current application.
-     *
-     * @return the current data center, null if there is no such info.
-     */
-    public String getDataCenter() {
-        return "dataCenter";
-    }
-
-
-    public boolean isOSWindows() {
-        String osName = System.getProperty("os.name");
-        if (Strings.isEmpty(osName)) {
-            return false;
-        }
-        return osName.startsWith("Windows");
-    }
-
-
 }

@@ -4,15 +4,17 @@ import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.dynamic.redis.properties.DynamicProperties;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -26,7 +28,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 处理多redis数据源，
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author fxz
  */
 
-public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implements BeanDefinitionRegistryPostProcessor {
+public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPostProcessor {
 
     private final String stringTemplateSuffix = "StringRedisTemplate";
 
@@ -48,28 +49,8 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
     private final String defaultRedisPropertiesBeanName = "redisProperties";
     private BeanDefinitionRegistry registry;
     private ConfigurableListableBeanFactory beanFactory;
-    private AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
+    private Environment environment;
 
-    /**
-     * 在此处初始化的原因是
-     * 1.可以拿到自动注入的properties
-     * <p>
-     * memo:其实可以注入的方式有很多
-     * 只要是介于Environment准备好和AutowiredAnnotationBeanPostProcessor之间都可以
-     * 使用Binder得到想要的properties执行注入即可
-     *
-     * @param pvs      the property values that the factory is about to apply (never {@code null})
-     * @param bean     the bean instance created, but whose properties have not yet been set
-     * @param beanName the name of the bean
-     * @return
-     */
-    @Override
-    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
-        if (initFlag.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
-            init(beanFactory.getBean(DynamicProperties.class));
-        }
-        return super.postProcessProperties(pvs, bean, beanName);
-    }
 
     /**
      * 注入
@@ -167,7 +148,7 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
 
     private RedisConnectionFactory createLettuceConnectionFactory(RedisProperties redisProperties) {
         GenericObjectPoolConfig genericObjectPoolConfig = createPoolConfig(redisProperties);
-        RedisConfiguration redisConfiguration = null;
+        RedisConfiguration redisConfiguration;
         //Cluster
         if (Objects.nonNull(redisProperties.getCluster()) && CollectionUtils.isEmpty(redisProperties.getCluster().getNodes())) {
             RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
@@ -208,9 +189,16 @@ public class DynamicConfig extends AutowiredAnnotationBeanPostProcessor implemen
         this.beanFactory = beanFactory;
     }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+        DynamicProperties dynamicProperties = new DynamicProperties();
+        Binder.get(environment).bind(DynamicProperties.PREFIX, Bindable.ofInstance(dynamicProperties));
+        init(dynamicProperties);
+    }
+
     @Bean("dynamicRedisVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-dynamic-redis.version", "1.0.0.waterdrop", "fuled-dynamic-redis-component");
     }
-
 }
