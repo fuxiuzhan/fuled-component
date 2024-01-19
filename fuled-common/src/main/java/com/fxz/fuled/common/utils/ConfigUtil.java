@@ -30,10 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * @author Jason Song(song_s@ctrip.com)
- */
-
 public class ConfigUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigUtil.class);

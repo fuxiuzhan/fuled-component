@@ -38,7 +38,7 @@ public class NameAutoConfig {
     public static void initEnv(NacosDiscoveryProperties discoveryProperties) {
         ConfigUtil.initialize();
         Env env = ConfigUtil.getEnv();
-        if (Env.CUS.equals(env)) {
+        if (!Env.CUS.equals(env)) {
             discoveryProperties.setServerAddr(env.getConfigServer());
             discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
             discoveryProperties.setService(ConfigUtil.getAppId());

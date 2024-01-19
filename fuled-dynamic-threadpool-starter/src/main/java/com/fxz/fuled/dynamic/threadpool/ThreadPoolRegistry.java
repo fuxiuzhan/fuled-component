@@ -221,6 +221,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
                             }
                         } catch (Exception e) {
                             log.error("get beans from applicationContext error ,applicationContext is not refreshed or closed ,please check ,error->{}", e);
+                            whileCondition.set(Boolean.FALSE);
+                            return;
                         }
                     }
                 }

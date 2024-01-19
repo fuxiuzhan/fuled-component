@@ -9,6 +9,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -36,6 +38,7 @@ import java.util.Objects;
  * @author fxz
  */
 
+@AutoConfigureBefore(RedisAutoConfiguration.class)
 public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPostProcessor {
 
     private final String stringTemplateSuffix = "StringRedisTemplate";
@@ -182,6 +185,9 @@ public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPo
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         this.registry = registry;
+        DynamicProperties dynamicProperties = new DynamicProperties();
+        Binder.get(environment).bind(DynamicProperties.PREFIX, Bindable.ofInstance(dynamicProperties));
+        init(dynamicProperties);
     }
 
     @Override
@@ -192,9 +198,6 @@ public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPo
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-        DynamicProperties dynamicProperties = new DynamicProperties();
-        Binder.get(environment).bind(DynamicProperties.PREFIX, Bindable.ofInstance(dynamicProperties));
-        init(dynamicProperties);
     }
 
     @Bean("dynamicRedisVersion")
