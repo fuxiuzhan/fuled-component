@@ -2,6 +2,7 @@ package com.fxz.fuled.env.encryptor.starter;
 
 import com.fxz.fuled.common.converter.ValueConverter;
 import com.fxz.fuled.common.version.ComponentVersion;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,8 +25,8 @@ public class EnvPropertiesAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public ValueConverter defaultValueConverter() {
-        return new DefaultValueConverter();
+    public ValueConverter defaultValueConverter(@Value("${fuled.env.encryptor.password:}") String password) {
+        return new DefaultValueConverter(password);
     }
 
     @Bean
