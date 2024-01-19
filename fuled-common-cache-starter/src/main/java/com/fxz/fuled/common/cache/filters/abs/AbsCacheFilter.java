@@ -63,11 +63,13 @@ public abstract class AbsCacheFilter extends PropertiesFilter implements Filter<
             invoke = invoker.invoke(cacheIn);
             for (CacheIn.SingleOp singleOp : cacheIn.getOpList()) {
                 if (CacheOpTypeEnum.UPDATE.equals(singleOp.getOpTypeEnum()) || CacheOpTypeEnum.SAVE.equals(singleOp.getOpTypeEnum())) {
-                    CacheValue cacheValue = new CacheValue();
-                    cacheValue.setObject(invoke.getObject());
-                    cacheValue.setLastAccessTime(System.currentTimeMillis());
-                    cacheValue.setExprInSeconds(singleOp.getUnit().toSeconds(singleOp.getExpr()));
-                    cacheContainer.set(singleOp.getKey(), cacheValue);
+                    if (singleOp.isIncludeNull() || Objects.nonNull(invoke.getObject())) {
+                        CacheValue cacheValue = new CacheValue();
+                        cacheValue.setObject(invoke.getObject());
+                        cacheValue.setLastAccessTime(System.currentTimeMillis());
+                        cacheValue.setExprInSeconds(singleOp.getUnit().toSeconds(singleOp.getExpr()));
+                        cacheContainer.set(singleOp.getKey(), cacheValue);
+                    }
                 }
             }
             return invoke;
