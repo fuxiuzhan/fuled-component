@@ -26,5 +26,6 @@
         <module>dynamic-redis</module>
         <module>dynamic-threadpool</module>
         <module>springcloud-app</module>
+        <module>env-encryptor</module>
     </modules>
 </project>
