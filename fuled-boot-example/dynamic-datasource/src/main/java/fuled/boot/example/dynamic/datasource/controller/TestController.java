@@ -18,7 +18,7 @@ public class TestController {
     @GetMapping("/find")
     public String findById(@RequestParam("id") Long id) {
         UserInfo byId = userRepository.findById(id, 0);
-        byId.getPhone().getValue();
+        //byId.getPhone().getValue();
         return JSON.toJSONString(byId);
     }
 }
