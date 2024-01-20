@@ -126,7 +126,7 @@ public interface IProcess {
 
 - skywalking组件，skywalking使用agent接入，此处是增加通过web输出traceId的方式。
 ![](images/skywalking.png)
-
+![](images/skywalking2.png)
 #### fuled-swagger-starter
 
 - swagger 自动配置
