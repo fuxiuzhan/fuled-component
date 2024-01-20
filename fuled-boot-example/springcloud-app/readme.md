@@ -56,7 +56,7 @@ app.id=fuled-example-springcloud-app
 
 ## 第三部 
 调试
-![](images/vmoption.png)
+![](src/main/resources/images/vmoption.png)
 - 根据要启动的环境配置启动参数，一般公司会固定一些最基本的环境信息，如
 DEV，TEST，PRE，PRD等，直接添加vm option 参数如 -Denv=CUS 即可启动
 如果需要指定自定义配置中心，注册中心，流控之类的可以配置-Denv=CUS，然后在
@@ -107,9 +107,9 @@ GitHub:  https://github.com/fuxiuzhan/fuled-framework.git
 2024-01-20 08:59:13.441  INFO 69183 --- [           main] b.c.PropertySourceBootstrapConfiguration : Located property source: [BootstrapPropertySource {name='bootstrapProperties-systemProperties'}, BootstrapPropertySource {name='bootstrapProperties-nacos-rewritable-properties'}, BootstrapPropertySource {name='bootstrapProperties-application.properties,FULED-EXAMPLE-SPRINGCLOUD-APP'}, BootstrapPropertySource {name='bootstrapProperties-application,FULED-EXAMPLE-SPRINGCLOUD-APP'}, BootstrapPropertySource {name='bootstrapProperties-fuled-example-springcloud-app.properties,FULED-EXAMPLE-SPRINGCLOUD-APP'}, BootstrapPropertySource {name='bootstrapProperties-fuled-example-springcloud-app,FULED-EXAMPLE-SPRINGCLOUD-APP'}]
 2024-01-20 08:59:13.444  INFO 69183 --- [           main] f.b.e.s.app.SpringcloudAppApplication    : No active profile set, falling back to default profiles: default
 ```
-![](images/nacos-config.png)
+![](src/main/resources/images/nacos-config.png)
 
 - 注册中心
-![](images/nacos-reg1.png)
-![](images/nacos-reg2.png)
+![](src/main/resources/images/nacos-reg1.png)
+![](src/main/resources/images/nacos-reg2.png)
 其中的meta信息可以用于公司级的应用信息统计，组件统计，负载策略，包括灰度，同机房等各种路由策略
