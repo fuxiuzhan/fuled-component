@@ -20,7 +20,9 @@
 3、https://github.com/fuxiuzhan/dns-server/tree/1.0.0.skywalking （框架通用且清晰使用fuled-framework构建的项目）
 如果需要阅读源码，需要添加私有maven仓库，组件所需依赖目前是使用私有仓库管理
 https://github.com/fuxiuzhan/feign-plus/blob/master/example/resources/settings.xml
+
 ```
+<b>已经增加了新的example[fuled-boot-example]模块，说明更加详细，手摸手教程</b>
 
 ### 包含模块说明
 
@@ -113,6 +115,10 @@ public interface IProcess {
     String process(@CacheParam("userName") String userName, @CacheParam("age") Integer age);
 }
 ```
+
+#### fuled-common-cache-starter
+- fuled-simple-cache-starter 升级版本，功能用法一致，内部使用新的
+责任链机制设计，内置本地lru和redis缓存，更加易于使用和扩展
 
 #### fuled-skywalking-starter
 
