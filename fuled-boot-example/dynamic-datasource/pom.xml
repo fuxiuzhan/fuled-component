@@ -8,10 +8,10 @@
         <version>1.0.0.WaterDrop</version>
     </parent>
     <groupId>fuled.boot.example</groupId>
-    <artifactId>dynamic-datasouce</artifactId>
+    <artifactId>dynamic-datasource</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>dynamic-datasouce</name>
-    <description>dynamic-datasouce</description>
+    <name>dynamic-datasource</name>
+    <description>dynamic-datasource</description>
     <properties>
         <java.version>8</java.version>
     </properties>
