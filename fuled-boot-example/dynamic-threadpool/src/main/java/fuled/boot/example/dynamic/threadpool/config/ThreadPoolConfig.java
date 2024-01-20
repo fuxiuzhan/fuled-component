@@ -1,8 +1,6 @@
 package fuled.boot.example.dynamic.threadpool.config;
 
-import com.fxz.fuled.dynamic.threadpool.RpcContext;
 import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
-import com.fxz.fuled.dynamic.threadpool.manage.impl.DefaultThreadExecuteHook;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
