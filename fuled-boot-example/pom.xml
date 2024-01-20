@@ -25,5 +25,6 @@
         <module>common-cache</module>
         <module>dynamic-redis</module>
         <module>dynamic-threadpool</module>
+        <module>springcloud-app</module>
     </modules>
 </project>
