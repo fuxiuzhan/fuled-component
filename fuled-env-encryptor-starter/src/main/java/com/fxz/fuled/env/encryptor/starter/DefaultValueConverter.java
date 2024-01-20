@@ -22,6 +22,12 @@ import java.util.Base64;
 public class DefaultValueConverter implements ValueConverter {
     private String encPrefix = "ENC_";
 
+    private static String password;
+
+    public DefaultValueConverter(String password) {
+        DefaultValueConverter.password = password;
+    }
+
     @Override
     public String convert(String value) {
         if (!StringUtils.isEmpty(value) && value.startsWith(encPrefix)) {
@@ -39,10 +45,13 @@ public class DefaultValueConverter implements ValueConverter {
 
 
     public static String getKey() {
-        ConfigUtil.initialize();
-        String appId = ConfigUtil.getAppId();
-        Env env = ConfigUtil.getEnv();
-        return appId + "-" + env.name();
+        if (StringUtils.isEmpty(password)) {
+            ConfigUtil.initialize();
+            String appId = ConfigUtil.getAppId();
+            Env env = ConfigUtil.getEnv();
+            return appId + "-" + env.name();
+        }
+        return password;
     }
 
     public static String encrypt(String context, String key) throws Exception {

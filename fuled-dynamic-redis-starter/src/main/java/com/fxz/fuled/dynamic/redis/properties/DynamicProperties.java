@@ -16,8 +16,10 @@ import java.util.Map;
  *
  * @author fxz
  */
-@ConfigurationProperties("fuled.dynamic.redis")
+@ConfigurationProperties(DynamicProperties.PREFIX)
 public class DynamicProperties {
+
+    public static final String PREFIX = "fuled.dynamic.redis";
     /**
      * set primary redis
      * 设置后默认注入指定的链接

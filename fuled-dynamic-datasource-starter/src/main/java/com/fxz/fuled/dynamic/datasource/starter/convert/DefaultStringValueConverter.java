@@ -15,6 +15,14 @@ import java.util.Base64;
 
 @Slf4j
 public class DefaultStringValueConverter implements StringValueConveter {
+
+
+    private static String password;
+
+    public DefaultStringValueConverter(String password) {
+        DefaultStringValueConverter.password = password;
+    }
+
     @Override
     public String encrypt(String value) throws Exception {
         if (!StringUtils.isEmpty(value)) {
@@ -32,10 +40,13 @@ public class DefaultStringValueConverter implements StringValueConveter {
     }
 
     public static String getKey() {
-        ConfigUtil.initialize();
-        String appId = ConfigUtil.getAppId();
-        Env env = ConfigUtil.getEnv();
-        return appId + "-" + env.name();
+        if (StringUtils.isEmpty(password)) {
+            ConfigUtil.initialize();
+            String appId = ConfigUtil.getAppId();
+            Env env = ConfigUtil.getEnv();
+            return appId + "-" + env.name();
+        }
+        return password;
     }
 
     public static String encrypt(String context, String key) throws Exception {

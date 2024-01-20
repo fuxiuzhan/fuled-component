@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Import({CacheAspect.class, FilterChainManger.class})
-public class AutoConfig {
+public class AutoCommonCacheConfig {
 
     @Bean
     @ConditionalOnMissingBean
@@ -36,14 +36,14 @@ public class AutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(RedisTemplate.class)
+    @ConditionalOnClass(name = "RedisTemplate")
     public RedisCacheContainer redisCacheContainer(RedisTemplate redisTemplate) {
         return new RedisCacheContainer(redisTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnClass(RedisTemplate.class)
+    @ConditionalOnClass(name = "RedisTemplate")
     public RedisCacheFilter redisCacheFilter(RedisCacheContainer redisCacheContainer) {
         return new RedisCacheFilter(redisCacheContainer);
     }

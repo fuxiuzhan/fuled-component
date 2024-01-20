@@ -4,6 +4,7 @@ import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
+import com.fxz.fuled.common.Env;
 import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,9 +37,12 @@ public class NameAutoConfig {
 
     public static void initEnv(NacosDiscoveryProperties discoveryProperties) {
         ConfigUtil.initialize();
-        discoveryProperties.setServerAddr(ConfigUtil.getEnv().getSchema() + "://" + ConfigUtil.getEnv().getConfigServer() + ":" + ConfigUtil.getEnv().getPort());
-        discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
-        discoveryProperties.setService(ConfigUtil.getAppId());
+        Env env = ConfigUtil.getEnv();
+        if (!Env.CUS.equals(env)) {
+            discoveryProperties.setServerAddr(env.getConfigServer());
+            discoveryProperties.setNamespace(ConfigUtil.getEnv().name().toUpperCase());
+            discoveryProperties.setService(ConfigUtil.getAppId());
+        }
     }
 
     @Bean("namingVersion")

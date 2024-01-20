@@ -34,9 +34,11 @@ public class NacosConfigBootstrapConfiguration {
          */
         ConfigUtil.initialize();
         Env envLocal = ConfigUtil.getEnv();
-        nacosConfigProperties.setServerAddr(envLocal.getSchema() + "://" + envLocal.getConfigServer() + ":" + envLocal.getPort());
-        nacosConfigProperties.setNamespace(envLocal.name());
-        nacosConfigProperties.setGroup(ConfigUtil.getAppId().toUpperCase());
+        if (!Env.CUS.equals(envLocal)) {
+            nacosConfigProperties.setServerAddr(envLocal.getConfigServer());
+            nacosConfigProperties.setNamespace(envLocal.name());
+            nacosConfigProperties.setGroup(ConfigUtil.getAppId().toUpperCase());
+        }
         return new NacosConfigManager(nacosConfigProperties);
     }
 

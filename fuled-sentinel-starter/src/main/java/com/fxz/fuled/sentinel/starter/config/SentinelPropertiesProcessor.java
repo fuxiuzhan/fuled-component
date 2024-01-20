@@ -1,6 +1,7 @@
 package com.fxz.fuled.sentinel.starter.config;
 
 import com.alibaba.cloud.sentinel.SentinelProperties;
+import com.fxz.fuled.common.Env;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,10 @@ public class SentinelPropertiesProcessor extends AutowiredAnnotationBeanPostProc
 
     private void wrapperSentinelProperties(SentinelProperties sentinelProperties) {
         if (Objects.nonNull(sentinelProperties)) {
-            sentinelProperties.getTransport().setDashboard(SentinelEnv.getEnv().getDashboard());
+            SentinelEnv env = SentinelEnv.getEnv();
+            if (Env.CUS.equals(env)) {
+                sentinelProperties.getTransport().setDashboard(env.getDashboard());
+            }
         }
     }
 

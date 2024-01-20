@@ -6,6 +6,8 @@ package com.fxz.fuled.sentinel.starter.config;
  * sentinel 控制台地址
  */
 public enum SentinelEnv {
+    CUS("Custom Config"),
+    LOCAL("127.0.0.1:8858"),
     DEV("192.168.10.201:8858"),
     TEST("test.sentinel.fuled.xyz:8858"),
     PRE("pre.sentinel.fuled.xyz:8858"),
@@ -22,7 +24,7 @@ public enum SentinelEnv {
     }
 
     public static SentinelEnv getEnv() {
-        SentinelEnv env = SentinelEnv.TEST;
+        SentinelEnv env = SentinelEnv.CUS;
         for (SentinelEnv value : SentinelEnv.values()) {
             if (value.name().equalsIgnoreCase(System.getProperty("env", ""))) {
                 env = value;

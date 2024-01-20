@@ -20,18 +20,21 @@
 3、https://github.com/fuxiuzhan/dns-server/tree/1.0.0.skywalking （框架通用且清晰使用fuled-framework构建的项目）
 如果需要阅读源码，需要添加私有maven仓库，组件所需依赖目前是使用私有仓库管理
 https://github.com/fuxiuzhan/feign-plus/blob/master/example/resources/settings.xml
-```
 
+```
+<b>已经增加了新的example[fuled-boot-example]模块，说明更加详细，手摸手教程</b>
+模块依赖的中间件比较多，大家可以自行搭建，建议使用容器，以我自己的环境为例
+![](images/docker.png)
 ### 包含模块说明
 
 #### fuled-banner
 
 - banner组件，用于显示框架logo
-
+![](images/logo.png)
 #### fuled-cat-starter
 
 - cat 监控组件。可以实现spring组件，redis，数据库，feign等的自动监控，引入即可实现应用性能监控
-
+![](images/cat.png)
 ```html
 apm是应用性能监控。目前的定义更偏向于trace，既微服务间的服务调用关系
 及耗时监控。但是apm其实应该分为两部分，一是传统的trace，另一个是单体应用的性能监控，
@@ -97,6 +100,7 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
 #### fuled-sentinel-starter
 
 - sentinel组件，定制了不同环境的服务地址
+![](images/sentinel.png)
 
 #### fuled-simple-cache-starter
 
@@ -114,10 +118,15 @@ public interface IProcess {
 }
 ```
 
+#### fuled-common-cache-starter
+- fuled-simple-cache-starter 升级版本，功能用法一致，内部使用新的
+责任链机制设计，内置本地lru和redis缓存，更加易于使用和扩展
+
 #### fuled-skywalking-starter
 
 - skywalking组件，skywalking使用agent接入，此处是增加通过web输出traceId的方式。
-
+![](images/skywalking.png)
+![](images/skywalking2.png)
 #### fuled-swagger-starter
 
 - swagger 自动配置

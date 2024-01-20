@@ -38,6 +38,7 @@
         <module>fuled-component-tools</module>
         <module>fuled-component-plugin</module>
         <module>fuled-dynamic-kafka-starter</module>
+        <module>fuled-boot-example</module>
     </modules>
     <dependencies>
         <dependency>

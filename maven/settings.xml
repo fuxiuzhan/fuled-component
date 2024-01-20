@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <mirrors>
+        <mirror>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>
+                http://maven.aliyun.com/nexus/content/groups/public/
+            </url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>releases</id>
+            <mirrorOf>*</mirrorOf>
+            <url>http://nexus.fuled.xyz:8081/repository/maven-public/</url>
+        </mirror>
+        <mirror>
+            <id>snapshots</id>
+            <mirrorOf>*</mirrorOf>
+            <url>http://nexus.fuled.xyz:8081/repository/maven-public/</url>
+        </mirror>
+    </mirrors>
+    <profiles>
+        <profile>
+            <id>fuled</id>
+            <repositories>
+                <repository>
+                    <id>fuled</id>
+                    <name>local private nexus</name>
+                    <url>http://nexus.fuled.xyz:8081/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>aliyun</id>
+                    <name>aliyun</name>
+                    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>aliyun</activeProfile>
+        <activeProfile>fuled</activeProfile>
+    </activeProfiles>
+</settings>

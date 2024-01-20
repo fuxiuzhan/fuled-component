@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.fxz</groupId>
+        <artifactId>fuled-boot</artifactId>
+        <version>1.1.0.WaterDrop</version>
+        <relativePath></relativePath>
+    </parent>
+    <groupId>com.fxz</groupId>
+    <artifactId>fuled-boot-example</artifactId>
+    <version>1.0.0.WaterDrop</version>
+    <name>fuled-boot-example</name>
+    <packaging>pom</packaging>
+    <description>fuled-boot-example</description>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+    <modules>
+        <module>common-cache</module>
+        <module>dynamic-redis</module>
+        <module>dynamic-threadpool</module>
+        <module>springcloud-app</module>
+        <module>env-encryptor</module>
+    </modules>
+</project>

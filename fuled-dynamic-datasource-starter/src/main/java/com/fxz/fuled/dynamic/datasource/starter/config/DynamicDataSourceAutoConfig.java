@@ -11,6 +11,7 @@ import com.fxz.fuled.dynamic.datasource.starter.handler.EncryptColumnHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.CollectionUtils;
@@ -29,8 +30,8 @@ public class DynamicDataSourceAutoConfig implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public StringValueConveter defaultStringValueConverter() {
-        return new DefaultStringValueConverter();
+    public StringValueConveter defaultStringValueConverter(@Value("${fuled.dynamic.datasource.encrypt.password:}") String password) {
+        return new DefaultStringValueConverter(password);
     }
 
     @Override
