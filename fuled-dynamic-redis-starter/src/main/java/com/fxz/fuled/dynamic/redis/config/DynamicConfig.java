@@ -2,6 +2,7 @@ package com.fxz.fuled.dynamic.redis.config;
 
 import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.dynamic.redis.properties.DynamicProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -39,6 +41,7 @@ import java.util.Objects;
  */
 
 @AutoConfigureBefore(RedisAutoConfiguration.class)
+@Slf4j
 public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPostProcessor {
 
     private final String stringTemplateSuffix = "StringRedisTemplate";
@@ -54,6 +57,17 @@ public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPo
     private ConfigurableListableBeanFactory beanFactory;
     private Environment environment;
 
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigConvert defaultConfigConvert() {
+        return new ConfigConvert() {
+            @Override
+            public DynamicProperties convert(DynamicProperties dynamicProperties) {
+                return ConfigConvert.super.convert(dynamicProperties);
+            }
+        };
+    }
 
     /**
      * 注入
@@ -187,6 +201,12 @@ public class DynamicConfig implements EnvironmentAware, BeanDefinitionRegistryPo
         this.registry = registry;
         DynamicProperties dynamicProperties = new DynamicProperties();
         Binder.get(environment).bind(DynamicProperties.PREFIX, Bindable.ofInstance(dynamicProperties));
+        try {
+            ConfigConvert bean = beanFactory.getBean(ConfigConvert.class);
+            dynamicProperties = bean.convert(dynamicProperties);
+        } catch (Exception e) {
+            log.warn("dynamicProperties convert not found using default");
+        }
         init(dynamicProperties);
     }
 
