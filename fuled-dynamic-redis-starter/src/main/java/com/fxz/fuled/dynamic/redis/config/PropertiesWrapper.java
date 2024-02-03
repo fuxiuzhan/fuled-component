@@ -20,8 +20,8 @@ import java.util.Objects;
 public class PropertiesWrapper implements ApplicationContextAware {
 
     @Autowired(required = false)
-    ConfigurationPropertiesBeans configurationPropertiesBeans;
-    ApplicationContext applicationContext;
+    private ConfigurationPropertiesBeans configurationPropertiesBeans;
+    private ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
