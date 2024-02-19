@@ -53,6 +53,7 @@ public abstract class Manageable implements ChangeListener, Recordable {
         reporterDto.setCurrentQueueSize(threadPoolExecutor.getQueue().size());
         reporterDto.setQueueMaxSize(threadPoolExecutor.getQueue().remainingCapacity() + threadPoolExecutor.getQueue().size());
         reporterDto.setRejectCnt(0L);
+        reporterDto.setVersion(ThreadPoolRegistry.class.getPackage().getImplementationVersion());
         reporterDto.setLargestPoolSize(threadPoolExecutor.getLargestPoolSize());
         if (threadPoolExecutor.getRejectedExecutionHandler() instanceof RejectHandlerWrapper) {
             reporterDto.setRejectCnt(((RejectHandlerWrapper) threadPoolExecutor.getRejectedExecutionHandler()).getCounter());

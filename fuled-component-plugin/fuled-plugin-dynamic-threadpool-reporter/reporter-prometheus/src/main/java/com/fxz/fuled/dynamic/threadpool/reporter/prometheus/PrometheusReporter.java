@@ -63,6 +63,8 @@ public class PrometheusReporter implements Reporter {
     private static final String EXECUTED_DURATION = "executed.duration";
 
     private static final String ALIVE_DURATION = "alive.duration";
+
+    private static final String COMPONENT_VERSION = "component.version";
     private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
     private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
     /**
@@ -204,7 +206,7 @@ public class PrometheusReporter implements Reporter {
         return Tags.concat(Tags.empty(), APP_NAME, reporterDto.getAppName(), THREAD_POOL_NAME, reporterDto.getThreadPoolName(),
                 IPV4, buildIpString(reporterDto.getIps(), Boolean.TRUE), IPV6, buildIpString(reporterDto.getIps(), Boolean.FALSE),
                 THREAD_POOL_TYPE, reporterDto.getThreadPoolType(), QUEUE_TYPE, reporterDto.getQueueType(),
-                REJECT_TYPE, reporterDto.getRejectHandlerType());
+                REJECT_TYPE, reporterDto.getRejectHandlerType(), COMPONENT_VERSION, reporterDto.getVersion());
     }
 
     /**
@@ -216,7 +218,7 @@ public class PrometheusReporter implements Reporter {
     private String[] buildLabels(ReporterDto reporterDto) {
         return new String[]{APP_NAME.replace(".", "_"), THREAD_POOL_NAME.replace(".", "_"), IPV4.replace(".", "_")
                 , IPV6.replace(".", "_"), THREAD_POOL_TYPE.replace(".", "_")
-                , QUEUE_TYPE.replace(".", "_"), REJECT_TYPE.replace(".", "_")};
+                , QUEUE_TYPE.replace(".", "_"), REJECT_TYPE.replace(".", "_"), COMPONENT_VERSION.replace(".", "_")};
     }
 
     /**
@@ -227,7 +229,7 @@ public class PrometheusReporter implements Reporter {
      */
     private String[] buildLabelValues(ReporterDto reporterDto) {
         return new String[]{reporterDto.getAppName(), reporterDto.getThreadPoolName(), buildIpString(reporterDto.getIps(), Boolean.TRUE)
-                , buildIpString(reporterDto.getIps(), Boolean.FALSE), reporterDto.getThreadPoolType(), reporterDto.getQueueType(), reporterDto.getRejectHandlerType()};
+                , buildIpString(reporterDto.getIps(), Boolean.FALSE), reporterDto.getThreadPoolType(), reporterDto.getQueueType(), reporterDto.getRejectHandlerType(), reporterDto.getVersion()};
     }
 
     /**
