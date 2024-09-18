@@ -36,7 +36,9 @@ Q&A
 
 ## springboot 动态配置基础 springboot 容器启动过程
 ![1725839693204.jpg](../images/config/1725839693204.jpg)
-springboot 的事件机制 springboot 常⻅事件解析 与动态配置直接相关的事件:
+
+**springboot 的事件机制** 
+springboot 常⻅事件解析 与动态配置直接相关的事件:
 - org.springframework.cloud.endpoint.event.RefreshEvent -> org.springframework.cloud.endpoint.event.RefreshEventListener(容器 刷新事件，主要是容器刷新，会重新创建一个新容器，新容器启动还是会发布 相关事件。)
 -  org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent -> org.springframework.boot.context.config.ConfigFileApplicationListener(主要是加载配置文件)
 - org.springframework.cloud.context.environment.EnvironmentChangeEvent->org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder(环境变更事件，主要是重新绑定 @ConfigurationProperties 相关的 bean 的属性)
