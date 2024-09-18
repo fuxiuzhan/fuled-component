@@ -1,4 +1,6 @@
 # 配置中心深度解析
+[**⭐️⭐️⭐️⭐配置中心深度解析(图加载慢可使用备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/pei-zhi-zhong-xin-shen-du-jie-xi)
+
 Q&A
 - 1、springboot中的配置是怎么存储的?
 - 2、springboot配置文件加载顺序是怎么确定的?
