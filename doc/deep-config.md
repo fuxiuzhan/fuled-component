@@ -13,28 +13,31 @@ Q&A
 配置中心的位置(整个系统框架的位置)
 ![1725839692070.jpg](../images/config/1725839692070.jpg)
 目前主流的配置中心
-● nacos
+- nacos
 2.x(1.x 去掉 gRpc):
 ![1725839692674.jpg](../images/config/1725839692674.jpg)
-● apollo
+- apollo
 ![1725839692717.jpg](../images/config/1725839692717.jpg)
 - 1、 用户在Portal操作配置发布
 - 2、 Portal 调用 Admin Service 的接口操作发布
 - 3、 Admin Service 发布配置后，发送 ReleaseMessage 给各个 Config Service
 - 4、 Config Service 收到 ReleaseMessage 后，通知对应的客户端
+
 ![1725839693164.jpg](../images/config/1725839693164.jpg)
+
 **上图简要描述了Apollo客户端的实现原理：**
 - 1、客户端和服务端保持了一个长连接，从而能第一时间获得配置更新的推送（通过Http Long Polling实现）
-- 2、 客户端还会定时从Apollo配置中心服务端拉取应用的最新配置
+- 2、客户端还会定时从Apollo配置中心服务端拉取应用的最新配置
 这是一个fallback机制，为了防止推送机制失效导致配置不更新
 客户端定时拉取会上报本地版本，所以一般情况下，对于定时拉取的操作，服务端都会返回304 - Not Modified
 定时频率默认为每5分钟拉取一次，客户端也可以通过在运行时指定System Property：apollo.refreshInterval来覆盖，单位为分钟
-- 3、  客户端从Apollo配置中心服务端获取到应用的最新配置后，会保存在内存中
+- 3、客户端从Apollo配置中心服务端获取到应用的最新配置后，会保存在内存中
 - 4、客户端会把从服务端获取到的配置在本地文件系统缓存一份
 在遇到服务不可用，或网络不通的时候，依然能从本地恢复配置
 - 5、应用程序可以从Apollo客户端获取最新的配置、订阅配置更新通知
 
 ## springboot 动态配置基础 springboot 容器启动过程
+
 ![1725839693204.jpg](../images/config/1725839693204.jpg)
 
 **springboot 的事件机制** 
