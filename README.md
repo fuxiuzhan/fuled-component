@@ -50,7 +50,7 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
 
 - 配置中心。使用nacos，结合Nacos-config和Apollo的优点。
 - 实现更加优雅，不采用变更刷新容器的笨重方式，变更只重新绑定env变量即可，轻量且高效。
-- [**⭐️⭐️⭐️⭐配置中心深度解析⭐️⭐⭐️⭐**](doc/deep-config.md)
+- [**⭐️⭐️⭐️⭐配置中心深度解析（多图加载慢）⭐️⭐⭐️⭐**](doc/deep-config.md)
 - [**⭐️⭐️⭐️⭐配置中心深度解析(加载慢可使用备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/pei-zhi-zhong-xin-shen-du-jie-xi)
 #### fuled-dynamic-datasource-starter
 
