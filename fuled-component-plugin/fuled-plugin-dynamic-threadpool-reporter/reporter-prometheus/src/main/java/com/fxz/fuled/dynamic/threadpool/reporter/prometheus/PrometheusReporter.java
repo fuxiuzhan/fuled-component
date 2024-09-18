@@ -229,7 +229,7 @@ public class PrometheusReporter implements Reporter {
      */
     private String[] buildLabelValues(ReporterDto reporterDto) {
         return new String[]{reporterDto.getAppName(), reporterDto.getThreadPoolName(), buildIpString(reporterDto.getIps(), Boolean.TRUE)
-                , buildIpString(reporterDto.getIps(), Boolean.FALSE), reporterDto.getThreadPoolType(), reporterDto.getQueueType(), reporterDto.getRejectHandlerType(), reporterDto.getVersion()};
+                , buildIpString(reporterDto.getIps(), Boolean.FALSE), reporterDto.getThreadPoolType(), reporterDto.getQueueType(), reporterDto.getRejectHandlerType(), Objects.nonNull(reporterDto.getVersion()) ? reporterDto.getVersion() : ""};
     }
 
     /**
