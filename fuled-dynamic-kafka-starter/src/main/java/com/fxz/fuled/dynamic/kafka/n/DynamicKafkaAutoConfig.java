@@ -49,10 +49,6 @@ public class DynamicKafkaAutoConfig implements ApplicationContextAware, SmartIni
     @EventListener
     public void configChangeListener(ApplicationEvent event) {
         if (event instanceof EnvironmentChangeEvent) {
-            //原始properties
-            DynamicKafkaProperties riskKafkaContainerProperties = applicationContext.getBean(DynamicKafkaProperties.class);
-            Binder.get(applicationContext.getEnvironment()).bind(DynamicKafkaProperties.PREFIX, Bindable.ofInstance(riskKafkaContainerProperties));
-            //新properties
             DynamicKafkaProperties dynamicKafkaProperties = applicationContext.getBean(DynamicKafkaProperties.class);
             dynamicKafkaProperties.getConfig().clear();
             dynamicKafkaProperties.getGlobalConfig().clear();
