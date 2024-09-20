@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,6 @@ public class DynamicKafkaProperties {
         private Integer concurrency = 1;
         private KafkaProperties properties = new KafkaProperties();
         private String kafkaListenerBeanName;
-
     }
 
 }
