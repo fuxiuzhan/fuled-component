@@ -4,13 +4,11 @@ import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.utils.IPUtil;
 import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
-import com.fxz.fuled.dynamic.threadpool.pojo.RunState;
 import com.fxz.fuled.dynamic.threadpool.wrapper.RejectHandlerWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -18,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author fxz
  */
 @Slf4j
-public abstract class Manageable implements ChangeListener, Recordable {
+public abstract class Manageable implements Recordable {
 
     public abstract void updateCoreSize(int coreSize);
 

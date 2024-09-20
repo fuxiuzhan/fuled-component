@@ -2,10 +2,8 @@ package com.fxz.fuled.dynamic.threadpool.wrapper;
 
 import com.fxz.fuled.common.dynamic.threadpool.pojo.ReporterDto;
 import com.fxz.fuled.dynamic.threadpool.manage.Manageable;
-import com.fxz.fuled.dynamic.threadpool.pojo.ChangePair;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -29,11 +27,6 @@ public class ThreadPoolExecutorWrapper extends Manageable {
     @Override
     public ReporterDto getRecord() {
         return build(threadPoolName, threadPoolExecutor);
-    }
-
-    @Override
-    public void onChange(String threadPoolName, List<ChangePair> types) {
-
     }
 
     @Override
