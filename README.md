@@ -71,7 +71,7 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
 
 [**⭐️⭐️⭐️⭐动态线程池原理解析⭐️⭐⭐️⭐**](doc/dynamic-threadpool.md)
 
-[**⭐️⭐️⭐️⭐动态线程池原理解(备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/dong-tai-xian-cheng-chi-shen-du-jie-xi)
+[**⭐️⭐️⭐️⭐动态线程池原理解析(备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/dong-tai-xian-cheng-chi-shen-du-jie-xi)
 
 
 ```html
