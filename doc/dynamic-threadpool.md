@@ -379,10 +379,12 @@ threadPoolExecutor.execute(() -> execBiz(record));
         ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE_THREADS, CORE_THREADS * 2, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000), ThreadFactoryNamed.named(THREAD_POOL_PREFIX));
         executor.allowCoreThreadTimeOut(true);
         //注册线程池，只增加一行代码即可，当然也可以自动注册，需要把线程池注册到容器中，但是不建议。
+        //配置：fuled.dynamic.threadpool.config.poolName.coreSize=100
         ThreadPoolRegistry.registerThreadPool(poolName, executor);
         return executor;
     }
 ```
+具体案例请参考 [dynamic-threadpool-example](https://github.com/fuxiuzhan/fuled-component/tree/master/fuled-boot-example/dynamic-threadpool)
 
 ThreadPoolRegistry.registerThreadPool 入口：
 
