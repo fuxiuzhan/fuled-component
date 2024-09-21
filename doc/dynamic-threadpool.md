@@ -70,73 +70,89 @@
 #include <sys/socket.h>
 #include <pthread.h>
 #include <string.h>
-void *serverThread(void *param)
+void *serverthread(void *param)
 {
-        printf("thread value:%d started....\n",*(int*)param);
-        char buf[256]="\0";
-        int len=0;
-        while(1)
-        {
-                len=recv(*(int*)param,buf,sizeof(buf),0);
-                //printf("get len:%d \n",len);
-                *(buf+len)='\0';
-                if(len>0)
-                {
-                        printf("\nRecvLen:%d   RecvMsg:%s \n",len,buf);
-                }
-                else
-                {
-                        *(int*)param=-1;
-                        printf("disconnect from server \n");
-                        break;
-                }
-        }
+	printf("thread value:%d started....\n",*(int*)param);
+	char buf[256]="\0";
+	int len=0;
+	char ss[]="get it ~";
+	while(1)
+	{
+		len=recv(*(int*)param,buf,sizeof(buf),0);
+		*(buf+len)='\0';
+		if(len>0)
+		{
+			printf("MesLen:%d Message from client:%s \n",len,buf);
+			send(*(int*)param,ss,strlen(ss),0);
+		}
+		else
+		{
+			*(int*)param=-1;
+			printf("disconnect from client \n");
+			break;
+		}
+	}
 }
 
-int main(int argc ,char *argv[])
-{       
-	if(argc!=3)
+int main(int argc,char *argv[])
+{
+	if(argc!=2)
 	{
-	printf("usage:client ip port\n");
-	return 1;
+		printf("Usage:server port\n");
+		return 1;
 	}
-        printf("Host:%s  port:%s\n",argv[1],argv[2]);
-        int clientSocket;
-        struct sockaddr_in serverAddr;
-        char recvbuf[200];
-        int iDataNum;
-        if((clientSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        {
-                printf("socket create error\n");
-                return 1;
-        }
-        serverAddr.sin_family = AF_INET;
-        serverAddr.sin_port = htons(atoi(argv[2]));
-        serverAddr.sin_addr.s_addr = inet_addr(argv[1]);
-        if(connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
-        {
-                printf("can not connect to server!\n");
-                return 1;
-        }
-        printf("connect with destination host...\n");
-        pthread_t thread_t;
-        pthread_create(&thread_t,NULL,serverthread,(void*)&clientSocket);
-        while(1)
-        {	
-		char sendbuf[100]={0};
-                printf("input msg send:");
-                gets(sendbuf);
-		sendbuf[strlen(sendbuf)]='\n';
-		if(strlen(sendbuf)!=0)
+	printf("Listen at port:%s\n",argv[1]);
+	int sock;
+	sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
+	if(sock==-1)
+	{
+		printf("init socket error \r\n");
+		getchar();
+	}
+	struct sockaddr_in addrin;
+	addrin.sin_addr.s_addr=htonl(INADDR_ANY);
+	addrin.sin_family=AF_INET;
+	addrin.sin_port=htons(atoi(argv[1]));
+	if(bind(sock,(struct sockaddr *)&addrin,sizeof(addrin))==-1)
+	{
+		printf("bind error \r\n");
+		getchar();
+	}
+	listen(sock,10);
+	printf("starting listen.....\r\n");
+	int client[10]={0};
+	char sends[]="welcome connect !";
+	printf("starting multithread listen\n");
+	while(1)
+	{
+		struct sockaddr_in clientin;
+		int addrsize;
+		addrsize=sizeof(clientin);
+		int flag=1;
+		int i=0;
+		while(flag>0 & i<10)
 		{
-               int sendl= send(clientSocket,sendbuf,strlen(sendbuf), 0);
-               printf("send msg lenth %d secc!\n",sendl);
-                if(strcmp(sendbuf, "quit") == 0)
-                        break;
+			if(client[i]>0)
+			{
+				i++;
+			}
+			else
+			{
+				flag=-1;
+			}
 		}
-        }
-        close(clientSocket);
-        return 0;
+		client[i]=accept(sock,(struct sockaddr*)&clientin,&addrsize);
+		printf("get a connect  Port:%d  \n",htons(clientin.sin_port));
+		send(client[i],sends,sizeof(sends),0);
+		pthread_t thread_t;
+		pthread_create(&thread_t,NULL,serverthread,(void*)&client[i]);
+		int j=0;
+		for(j;j<10;j++)
+		{
+			printf("sock[%d] value : %d \n",j,client[j]);
+		}
+	}
+	return 0;
 }
 
 ```
