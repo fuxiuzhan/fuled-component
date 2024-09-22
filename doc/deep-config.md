@@ -1,7 +1,7 @@
 # 配置中心深度解析
 [**⭐️⭐️⭐️⭐配置中心深度解析(图加载慢可使用备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/pei-zhi-zhong-xin-shen-du-jie-xi)
 
-[**⭐️⭐️⭐️⭐动态线程池原理解析⭐️⭐⭐️⭐**](doc/dynamic-threadpool.md)
+[**⭐️⭐️⭐️⭐动态线程池深度解析⭐️⭐⭐️⭐**](dynamic-threadpool.md)
 
 
 Q&A
