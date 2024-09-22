@@ -69,9 +69,9 @@ apm是应用性能监控。目前的定义更偏向于trace，既微服务间的
 - 额外使用TTL，实现方式另辟蹊径，吊打当前市面上主流的动态线程池管理工具。
 - 可以兼容jdk8+的基本所有版本。
 
-[**⭐️⭐️⭐️⭐动态线程池原理解析⭐️⭐⭐️⭐**](doc/dynamic-threadpool.md)
+[**⭐️⭐️⭐️⭐动态线程池深度解析⭐️⭐⭐️⭐**](doc/dynamic-threadpool.md)
 
-[**⭐️⭐️⭐️⭐动态线程池原理解析(备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/dong-tai-xian-cheng-chi-shen-du-jie-xi)
+[**⭐️⭐️⭐️⭐动态线程池深度解析(备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/dong-tai-xian-cheng-chi-shen-du-jie-xi)
 
 
 ```html

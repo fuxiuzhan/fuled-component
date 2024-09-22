@@ -1,7 +1,7 @@
 
-[**⭐️⭐️⭐️⭐配置中心深度解析（多图加载慢）⭐️⭐⭐️⭐**](doc/deep-config.md)
+[**⭐️⭐️⭐️⭐配置中心深度解析（多图加载慢）⭐️⭐⭐️⭐**](deep-config.md)
 
-[**⭐️⭐️⭐️⭐动态线程池原理解析(备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/dong-tai-xian-cheng-chi-shen-du-jie-xi)
+[**⭐️⭐️⭐️⭐动态线程池深度解析(备用链接)⭐️⭐⭐️⭐**](https://md.fuled.xyz:1234/archives/dong-tai-xian-cheng-chi-shen-du-jie-xi)
 
 **&emsp;&emsp;本文的重点不在于着重阐述线程池的基本概念，但有些知识点会高于基本概念，或者有些东西看似简单，
 但实际上又说不清楚。最终的目的还是讲明白如何构建低侵入性（无侵入性），具有动态调整，ThreadLocal无感传递
