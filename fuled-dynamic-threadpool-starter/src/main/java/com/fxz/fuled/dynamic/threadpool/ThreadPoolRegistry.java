@@ -32,7 +32,6 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -270,14 +269,22 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
         ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
         if (Objects.nonNull(bean)) {
             //代理对象只代理方法，无属性，获取属性会为null
-            if (bean.isWrapper() && !(AopUtils.isAopProxy(bean))) {
+            if (bean.isWrapper()) {
                 Map<String, ThreadPoolExecutor> threadPools = applicationContext.getBeansOfType(ThreadPoolExecutor.class);
                 if (!CollectionUtils.isEmpty(threadPools)) {
-                    threadPools.forEach((k, v) -> registerThreadPool(k, v));
+                    threadPools.forEach(((k, v) -> {
+                        if (!AopUtils.isAopProxy(v)) {
+                            registerThreadPool(k, v);
+                        }
+                    }));
                 }
                 Map<String, ScheduledThreadPoolExecutor> scheduledPools = applicationContext.getBeansOfType(ScheduledThreadPoolExecutor.class);
                 if (!CollectionUtils.isEmpty(scheduledPools)) {
-                    scheduledPools.forEach((k, v) -> registerThreadPool(k, v));
+                    scheduledPools.forEach(((k, v) -> {
+                        if (!AopUtils.isAopProxy(v)) {
+                            registerThreadPool(k, v);
+                        }
+                    }));
                 }
             }
         }
