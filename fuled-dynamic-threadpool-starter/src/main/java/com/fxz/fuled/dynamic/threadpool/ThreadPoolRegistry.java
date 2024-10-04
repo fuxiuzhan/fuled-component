@@ -13,6 +13,7 @@ import com.fxz.fuled.dynamic.threadpool.wrapper.ScheduledThreadPoolExecutorWrapp
 import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadFactoryWrapper;
 import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadPoolExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -31,6 +32,7 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -267,7 +269,8 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     private void wrapperContext() {
         ThreadPoolProperties bean = applicationContext.getBean(ThreadPoolProperties.class);
         if (Objects.nonNull(bean)) {
-            if (bean.isWrapper()) {
+            //代理对象只代理方法，无属性，获取属性会为null
+            if (bean.isWrapper() && !(AopUtils.isAopProxy(bean))) {
                 Map<String, ThreadPoolExecutor> threadPools = applicationContext.getBeansOfType(ThreadPoolExecutor.class);
                 if (!CollectionUtils.isEmpty(threadPools)) {
                     threadPools.forEach((k, v) -> registerThreadPool(k, v));
