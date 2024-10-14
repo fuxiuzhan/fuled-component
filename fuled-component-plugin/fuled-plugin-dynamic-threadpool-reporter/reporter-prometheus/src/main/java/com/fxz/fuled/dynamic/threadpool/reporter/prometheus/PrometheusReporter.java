@@ -206,7 +206,7 @@ public class PrometheusReporter implements Reporter {
         return Tags.concat(Tags.empty(), APP_NAME, reporterDto.getAppName(), THREAD_POOL_NAME, reporterDto.getThreadPoolName(),
                 IPV4, buildIpString(reporterDto.getIps(), Boolean.TRUE), IPV6, buildIpString(reporterDto.getIps(), Boolean.FALSE),
                 THREAD_POOL_TYPE, reporterDto.getThreadPoolType(), QUEUE_TYPE, reporterDto.getQueueType(),
-                REJECT_TYPE, reporterDto.getRejectHandlerType(), COMPONENT_VERSION, reporterDto.getVersion());
+                REJECT_TYPE, reporterDto.getRejectHandlerType(), COMPONENT_VERSION, Objects.nonNull(reporterDto.getVersion()) ? reporterDto.getVersion() : "");
     }
 
     /**
