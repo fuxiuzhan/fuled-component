@@ -1,9 +1,11 @@
-package com.fxz.fuled.dynamic.kafka.n;
+package com.fxz.fuled.dynamic.kafka.config;
 
 import com.fxz.fuled.common.chain.Filter;
 import com.fxz.fuled.common.chain.FilterChainManger;
 import com.fxz.fuled.common.chain.FilterConfig;
 import com.fxz.fuled.common.chain.Invoker;
+import com.fxz.fuled.dynamic.kafka.manager.ConsumerManager;
+import com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.fxz.fuled.dynamic.kafka.config.KafkaClientConfig
+ com.fxz.fuled.dynamic.kafka.config.DynamicKafkaAutoConfig
