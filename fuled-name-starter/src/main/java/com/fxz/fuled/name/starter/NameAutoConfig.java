@@ -26,7 +26,9 @@ public class NameAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public NacosDiscoveryProperties nacosProperties() {
-        return new NacosDiscoveryProperties();
+        NacosDiscoveryProperties nacosDiscoveryProperties = new NacosDiscoveryProperties();
+        initEnv(nacosDiscoveryProperties);
+        return nacosDiscoveryProperties;
     }
 
     @Bean
