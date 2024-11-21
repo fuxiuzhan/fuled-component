@@ -1,16 +1,14 @@
-package com.fxz.fuled.dynamic.kafka.n;
+package com.fxz.fuled.dynamic.kafka.pojo;
 
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.fxz.fuled.dynamic.kafka.n.DynamicKafkaProperties.PREFIX;
+import static com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties.PREFIX;
 
 @ConfigurationProperties(prefix = PREFIX)
 @Configuration
@@ -25,13 +23,20 @@ public class DynamicKafkaProperties {
     @Data
     public static class SingleConfig {
         /**
-         * properties
+         * name
          */
         private String name;
-        private String[] topics;
-        private Integer concurrency = 1;
-        private KafkaProperties properties = new KafkaProperties();
-        private String kafkaListenerBeanName;
-    }
+        private String groupId;
+        public String[] topics;
+        private int concurrency;
+        /**
+         * props
+         */
+        private Map<String, Object> props;
+        /**
+         * listener bean
+         */
+        private String listenerBeanName;
 
+    }
 }
