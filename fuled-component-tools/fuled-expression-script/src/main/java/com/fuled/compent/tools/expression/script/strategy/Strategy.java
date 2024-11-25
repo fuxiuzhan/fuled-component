@@ -1,6 +1,7 @@
 package com.fuled.compent.tools.expression.script.strategy;
 
 import com.fuled.compent.tools.expression.script.rule.Rule;
+import com.fuled.compent.tools.expression.script.rule.RuleSet;
 import lombok.Data;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class Strategy {
      * 规则集
      */
 
-    private List<Rule> rules;
+    private List<RuleSet> ruleSets;
 
     /**
      * 规则集表达式
