@@ -2,6 +2,7 @@ package com.fuled.compent.tools.expression.script.feature;
 
 import com.fuled.compent.tools.expression.script.context.EngineContext;
 import com.fuled.compent.tools.expression.script.rule.Rule;
+import com.fuled.compent.tools.expression.script.rule.RuleSet;
 import com.fuled.compent.tools.expression.script.strategy.Strategy;
 import com.fuled.component.tools.dynamic.compile.loader.DynamicLoaderEngine;
 import org.springframework.expression.ExpressionParser;
@@ -9,10 +10,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -29,6 +27,7 @@ public class FeatureScript {
         EngineContext engineContext = new EngineContext();
         engineContext.setStrategyCode("strategyCode");
         System.out.println(execute(engineContext));
+        System.out.println(engineContext);
         /**Console output
          *
          * ruleEval-------------code->ruleCode1
@@ -84,7 +83,21 @@ public class FeatureScript {
         rule2.setRightValue("20");
         ruleCache.put(rule2.getRuleCode(), rule2);
         rules.add(rule2);
-        strategy.setRules(rules);
+        RuleSet ruleSet1 = new RuleSet();
+        ruleSet1.setRules(rules);
+        ruleSet1.setName("ruleSet1");
+        ruleSet1.setExpression("$1 || $2");
+        ruleSet1.setValue("ruleSet1Value");
+        ruleSet1.setRules(rules);
+
+        RuleSet ruleSet2 = new RuleSet();
+        ruleSet2.setRules(rules);
+        ruleSet2.setName("ruleSet2");
+        ruleSet2.setExpression("$1 && $2");
+        ruleSet2.setValue("ruleSet1Value");
+        ruleSet2.setRules(rules);
+        strategy.setRuleSets(Arrays.asList(ruleSet1, ruleSet2));
+
         strategyCache.put("strategyCode", strategy);
     }
 
@@ -126,7 +139,10 @@ public class FeatureScript {
     public static boolean execute(EngineContext engineContext) {
         Strategy strategy = strategyCache.get(engineContext.getStrategyCode());
         //1 && 2
-        String el = assembleEl(engineContext, strategy.getExpression(), strategy.getRules(), "rule");
+        String el = strategy.getExpression();
+        for (int i = strategy.getRuleSets().size(); i > 0; i--) {
+            el = el.replace("$" + i, assembleEl(engineContext, strategy.getExpression(), strategy.getRuleSets().get(i - 1).getRules(), "rule"));
+        }
         System.out.println(el);
         return Boolean.TRUE;
     }
@@ -143,7 +159,7 @@ public class FeatureScript {
         System.out.println("ruleEval-------------code->" + ruleCode);
         String o = fetchFormSource(engineContext, ruleCode);
         //compare utils
-
+        engineContext.getExtra().put("rule_" + ruleCode, Boolean.TRUE);
         //datasource
         return Boolean.TRUE;
     }
@@ -159,6 +175,7 @@ public class FeatureScript {
         System.out.println("dataSource--->" + dataSource);
         String s = evalJava(engineContext, dataSource, "return  context.getStrategyCode();");
         System.out.println("evalJava result->" + s);
+        engineContext.getExtra().put("source_" + dataSource, Boolean.TRUE);
         return "100";
     }
 
@@ -178,7 +195,9 @@ public class FeatureScript {
         try {
             Object o = aClass.newInstance();
             Method invoke = o.getClass().getDeclaredMethod("invoke", EngineContext.class);
-            return (String) invoke.invoke(o, engineContext);
+            Object invoke1 = invoke.invoke(o, engineContext);
+            engineContext.getExtra().put("evalJava_" + dataSource, invoke1);
+            return (String) invoke1;
         } catch (Exception e) {
             e.printStackTrace();
         }

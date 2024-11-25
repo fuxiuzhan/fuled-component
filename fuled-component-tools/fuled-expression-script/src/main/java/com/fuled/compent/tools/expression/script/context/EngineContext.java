@@ -1,10 +1,13 @@
 package com.fuled.compent.tools.expression.script.context;
 
 import com.fuled.compent.tools.expression.script.rule.Rule;
+import com.fuled.compent.tools.expression.script.rule.RuleSet;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public class EngineContext {
@@ -21,22 +24,22 @@ public class EngineContext {
     /**
      *
      */
-    private Map<String, Object> params;
+    private Map<String, Object> params = new ConcurrentHashMap<>();
 
     /**
      *
      */
-    private Map<String, Object> extra;
+    private Map<String, Object> extra = new ConcurrentHashMap<>();
 
     /**
      *
      */
-    private Map<String, Object> result;
+    private Map<String, Object> result = new ConcurrentHashMap<>();
 
     /**
      *
      */
-    private List<Rule> hitRules;
+    private List<RuleSet> hitRuleSets;
 
     /**
      *
