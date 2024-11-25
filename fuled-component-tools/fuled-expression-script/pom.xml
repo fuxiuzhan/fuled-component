@@ -25,6 +25,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-dynamic-compile</artifactId>
+            <version>1.0.0.WaterDrop</version>
+        </dependency>
     </dependencies>
 
     <build>

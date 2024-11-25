@@ -3,10 +3,12 @@ package com.fuled.compent.tools.expression.script.feature;
 import com.fuled.compent.tools.expression.script.context.EngineContext;
 import com.fuled.compent.tools.expression.script.rule.Rule;
 import com.fuled.compent.tools.expression.script.strategy.Strategy;
+import com.fuled.component.tools.dynamic.compile.loader.DynamicLoaderEngine;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +41,7 @@ public class FeatureScript {
     public static void init() {
         Strategy strategy = new Strategy();
         strategy.setScript("");
-        strategy.setExpression("$2 || ($1 && $2)");
+        strategy.setExpression("($1 && $2) || ($1 && $2)");
         strategy.setScriptType("java");
         List<Rule> rules = new ArrayList<>();
         Rule rule1 = new Rule();
@@ -143,8 +145,32 @@ public class FeatureScript {
     public static String fetchFormSource(EngineContext engineContext, String dataSource) {
         //get source from type and execute request
         System.out.println("dataSource--->" + dataSource);
+        String s = evalJava(engineContext, dataSource, "return  context.getStrategyCode();");
+        System.out.println("evalJava result->" + s);
         return "100";
     }
 
+
+    public static String evalJava(EngineContext engineContext, String dataSource, String script) {
+        String BASE_JAVA = "package com.fuled.compent.tools.expression.script.feature;" +
+                "import com.fuled.compent.tools.expression.script.context.EngineContext;" +
+                "public class %s {" +
+                "    public String invoke(EngineContext context) {" +
+                "        %s" +
+                "    }" +
+                "}";
+        String javaSource = String.format(BASE_JAVA, dataSource, script);
+        byte[] clazzBytes = DynamicLoaderEngine.compile(javaSource);
+        //分部署存储可直接存储class字节码，使用时直接执行，免去编译
+        Class<?> aClass = DynamicLoaderEngine.loadClass(clazzBytes);
+        try {
+            Object o = aClass.newInstance();
+            Method invoke = o.getClass().getDeclaredMethod("invoke", EngineContext.class);
+            return (String) invoke.invoke(o, engineContext);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
