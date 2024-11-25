@@ -30,15 +30,16 @@ public class FeatureScript {
         System.out.println(engineContext);
         /**Console output
          *
-         * ruleEval-------------code->ruleCode1
-         * dataSource--->ruleCode1
-         * evalJava result->strategyCode
-         * ruleEval-------------code->ruleCode2
-         * dataSource--->ruleCode2
-         * evalJava result->strategyCode
-         * value->true
-         * (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) || (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2))
-         * true
+         ruleEval-------------code->ruleCode1
+         dataSource--->ruleCode1
+         evalJava result->strategyCode
+         ruleEval-------------code->ruleCode2
+         dataSource--->ruleCode2
+         evalJava result->strategyCode
+         value->true
+         ((#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) || (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) && (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) || (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2))) || ((#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) || (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) && (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) || (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)))
+         true
+         EngineContext(strategyCode=strategyCode, requestId=null, params={}, extra={rule_ruleCode1=100, rule_ruleCode2=100, evalJava_ruleCode2=strategyCode, evalJava_ruleCode1=strategyCode, source_ruleCode2=true, source_ruleCode1=true}, result={}, hitRuleSets=null, success=false, hasError=false, errorMsg=null)
          */
     }
 
