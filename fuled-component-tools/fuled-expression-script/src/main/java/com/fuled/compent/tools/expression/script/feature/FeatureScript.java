@@ -115,18 +115,13 @@ public class FeatureScript {
         return null;
     }
 
-    private static String assembleEl(EngineContext engineContext, String script, List<Rule> rules, String type) {
-        StandardEvaluationContext evalContext = getEvalContext();
-        evalContext.setVariable("context", engineContext);
+    private static String assembleEl(StandardEvaluationContext evalContext, EngineContext engineContext, String script, List<Rule> rules, String type) {
         //if circuit broker enabled ,if not expression every single variable
         String el = script;
         for (int i = rules.size(); i > 0; i--) {
             evalContext.setVariable("ruleCode" + i, rules.get(i - 1).getRuleCode());
             el = el.replace("$" + i + "", "#ruleEval(#context,#ruleCode" + i + ")");
         }
-        ExpressionParser parser = new SpelExpressionParser();
-        Boolean value = parser.parseExpression(el).getValue(evalContext, Boolean.class);
-        System.out.println("value->" + value);
         return el;
     }
 
@@ -139,10 +134,15 @@ public class FeatureScript {
     public static boolean execute(EngineContext engineContext) {
         Strategy strategy = strategyCache.get(engineContext.getStrategyCode());
         //1 && 2
+        StandardEvaluationContext evalContext = getEvalContext();
+        evalContext.setVariable("context", engineContext);
         String el = strategy.getExpression();
         for (int i = strategy.getRuleSets().size(); i > 0; i--) {
-            el = el.replace("$" + i, assembleEl(engineContext, strategy.getExpression(), strategy.getRuleSets().get(i - 1).getRules(), "rule"));
+            el = el.replace("$" + i, assembleEl(evalContext, engineContext, strategy.getExpression(), strategy.getRuleSets().get(i - 1).getRules(), "rule"));
         }
+        ExpressionParser parser = new SpelExpressionParser();
+        Boolean value = parser.parseExpression(el).getValue(evalContext, Boolean.class);
+        System.out.println("value->" + value);
         System.out.println(el);
         return Boolean.TRUE;
     }
@@ -159,7 +159,7 @@ public class FeatureScript {
         System.out.println("ruleEval-------------code->" + ruleCode);
         String o = fetchFormSource(engineContext, ruleCode);
         //compare utils
-        engineContext.getExtra().put("rule_" + ruleCode, Boolean.TRUE);
+        engineContext.getExtra().put("rule_" + ruleCode, o);
         //datasource
         return Boolean.TRUE;
     }
@@ -194,6 +194,7 @@ public class FeatureScript {
         Class<?> aClass = DynamicLoaderEngine.loadClass(clazzBytes);
         try {
             Object o = aClass.newInstance();
+            //instance cache
             Method invoke = o.getClass().getDeclaredMethod("invoke", EngineContext.class);
             Object invoke1 = invoke.invoke(o, engineContext);
             engineContext.getExtra().put("evalJava_" + dataSource, invoke1);
