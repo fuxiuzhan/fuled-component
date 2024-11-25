@@ -29,6 +29,18 @@ public class FeatureScript {
         EngineContext engineContext = new EngineContext();
         engineContext.setStrategyCode("strategyCode");
         System.out.println(execute(engineContext));
+        /**Console output
+         *
+         * ruleEval-------------code->ruleCode1
+         * dataSource--->ruleCode1
+         * evalJava result->strategyCode
+         * ruleEval-------------code->ruleCode2
+         * dataSource--->ruleCode2
+         * evalJava result->strategyCode
+         * value->true
+         * (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2)) || (#ruleEval(#context,#ruleCode1) && #ruleEval(#context,#ruleCode2))
+         * true
+         */
     }
 
     private static Map<String, Strategy> strategyCache = new HashMap<>();
