@@ -56,8 +56,23 @@ public class DynamicLoaderEngine {
         return loadClass(classLoader, classBytes, out);
     }
 
+    /**
+     *
+     * @param code
+     * @return
+     */
     public static Class<?> loadClass(String code) {
-        DynamicClassLoader dynamicClassLoader = new DynamicClassLoader((URLClassLoader) Thread.currentThread().getContextClassLoader());
+        DynamicClassLoader dynamicClassLoader = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
         return loadClass(dynamicClassLoader, code, new PrintWriter(new ByteArrayOutputStream()), Arrays.asList());
+    }
+
+    /**
+     *
+     * @param bytes
+     * @return
+     */
+    public static Class<?> loadClass(byte[] bytes) {
+        DynamicClassLoader dynamicClassLoader = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+        return loadClass(dynamicClassLoader, bytes, new PrintWriter(new ByteArrayOutputStream()));
     }
 }
