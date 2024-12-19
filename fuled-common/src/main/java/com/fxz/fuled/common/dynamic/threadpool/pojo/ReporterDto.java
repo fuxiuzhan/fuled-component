@@ -45,7 +45,12 @@ public class ReporterDto {
     /**
      * 拒绝线程数
      */
-    private long rejectCnt;
+    private long rejectCount;
+
+    /**
+     * worker创建个数 如果突增，可能是线程异常过多导致，需关注
+     */
+    private long workerCreateCount;
     /**
      * 执行线程数
      */
