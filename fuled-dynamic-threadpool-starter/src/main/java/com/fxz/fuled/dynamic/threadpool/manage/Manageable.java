@@ -5,6 +5,7 @@ import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.utils.IPUtil;
 import com.fxz.fuled.dynamic.threadpool.ThreadPoolRegistry;
 import com.fxz.fuled.dynamic.threadpool.wrapper.RejectHandlerWrapper;
+import com.fxz.fuled.dynamic.threadpool.wrapper.ThreadFactoryWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -50,11 +51,15 @@ public abstract class Manageable implements Recordable {
         reporterDto.setQueueType(getNative(threadPoolExecutor).getClass().getName());
         reporterDto.setCurrentQueueSize(threadPoolExecutor.getQueue().size());
         reporterDto.setQueueMaxSize(threadPoolExecutor.getQueue().remainingCapacity() + threadPoolExecutor.getQueue().size());
-        reporterDto.setRejectCnt(0L);
+        reporterDto.setRejectCount(0L);
         reporterDto.setVersion(ThreadPoolRegistry.class.getPackage().getImplementationVersion());
         reporterDto.setLargestPoolSize(threadPoolExecutor.getLargestPoolSize());
         if (threadPoolExecutor.getRejectedExecutionHandler() instanceof RejectHandlerWrapper) {
-            reporterDto.setRejectCnt(((RejectHandlerWrapper) threadPoolExecutor.getRejectedExecutionHandler()).getCounter());
+            reporterDto.setRejectCount(((RejectHandlerWrapper) threadPoolExecutor.getRejectedExecutionHandler()).getCounter());
+        }
+        reporterDto.setWorkerCreateCount(0);
+        if (threadPoolExecutor.getThreadFactory() instanceof ThreadFactoryWrapper) {
+            reporterDto.setWorkerCreateCount(((ThreadFactoryWrapper) threadPoolExecutor.getThreadFactory()).getCounter());
         }
         reporterDto.setThreadPoolType(threadPoolExecutor.getClass().getName());
         reporterDto.setRejectHandlerType(threadPoolExecutor.getRejectedExecutionHandler().getClass().getName());

@@ -50,7 +50,9 @@ public class PrometheusReporter implements Reporter {
     private static final String CURRENT_CORE_SIZE = "current.core.size";
 
     private static final String LARGEST_CORE_SIZE = "largest.pool.size";
-    private static final String REJECT_CNT = "reject.count";
+    private static final String REJECT_COUNT = "reject.count";
+
+    private static final String WORKER_CREATE_COUNT = "worker.create.count";
     private static final String EXEC_COUNT = "exec.count";
     private static final String TASK_COUNT = "task.count";
     private static final String ACTIVE_COUNT = "active.count";
@@ -149,9 +151,14 @@ public class PrometheusReporter implements Reporter {
                 .register(meterRegistry);
 
 
-        Gauge.builder(GAUGE + "." + REJECT_CNT, reporterDto, ReporterDto::getRejectCnt)
+        Gauge.builder(GAUGE + "." + REJECT_COUNT, reporterDto, ReporterDto::getRejectCount)
                 .tags(buildTags(reporterDto))
                 .description("ThreadPoolRejectCount")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + WORKER_CREATE_COUNT, reporterDto, ReporterDto::getWorkerCreateCount)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolWorkerCreateCount")
                 .register(meterRegistry);
 
 

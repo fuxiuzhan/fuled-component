@@ -4,6 +4,7 @@ import com.fxz.fuled.dynamic.threadpool.RpcContext;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
 
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 通过包装threadFactory实现threadLocal
@@ -26,7 +27,12 @@ public class ThreadFactoryWrapper implements ThreadFactory {
     private ThreadFactory threadFactory;
     private ThreadExecuteHook threadExecuteHook;
 
+    private AtomicLong counter = new AtomicLong(0);
     private String threadPoolName;
+
+    public long getCounter() {
+        return counter.get();
+    }
 
     public ThreadFactoryWrapper(ThreadFactory threadFactory, ThreadExecuteHook threadExecuteHook, String threadPoolName) {
         this.threadFactory = threadFactory;
@@ -36,6 +42,7 @@ public class ThreadFactoryWrapper implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
+        counter.incrementAndGet();
         return threadFactory.newThread(new RunnableWrapper(r, RpcContext.get(), threadExecuteHook, threadPoolName, Boolean.TRUE));
     }
 }
