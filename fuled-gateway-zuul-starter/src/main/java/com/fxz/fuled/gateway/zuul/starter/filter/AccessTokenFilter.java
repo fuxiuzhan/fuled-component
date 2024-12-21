@@ -23,7 +23,7 @@ import java.util.Objects;
 public class AccessTokenFilter extends ZuulFilter {
 
     @Autowired
-    AuthService authService;
+    private AuthService authService;
 
     @Value("${fuled.zuul.filter.access.token.enabled:true}")
     private boolean enabled;
