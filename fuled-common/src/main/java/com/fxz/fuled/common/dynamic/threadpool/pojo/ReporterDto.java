@@ -43,7 +43,7 @@ public class ReporterDto {
      */
     private int currentPoolSize;
     /**
-     * 拒绝线程数
+     * 拒绝任务数
      */
     private long rejectCount;
 
@@ -52,12 +52,12 @@ public class ReporterDto {
      */
     private long workerCreateCount;
     /**
-     * 执行线程数
+     * 执行任务数
      */
     private long execCount;
 
     /**
-     * 执行任务数
+     * 任务数
      */
     private long taskCount;
 
