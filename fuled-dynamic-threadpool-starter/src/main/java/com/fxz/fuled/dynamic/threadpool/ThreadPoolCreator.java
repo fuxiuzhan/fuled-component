@@ -82,12 +82,7 @@ public class ThreadPoolCreator {
      * @return
      */
     public static ThreadPoolExecutor createThreadPoolExecutor(String name, int coreSize, int maxCoreSize, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) {
-        return createThreadPoolExecutor(name, coreSize, maxCoreSize, 0, TimeUnit.MINUTES, workQueue, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                return newThread(r);
-            }
-        }, handler);
+        return createThreadPoolExecutor(name, coreSize, maxCoreSize, 0, TimeUnit.MINUTES, workQueue, r -> new Thread(r), handler);
     }
 
     /**
