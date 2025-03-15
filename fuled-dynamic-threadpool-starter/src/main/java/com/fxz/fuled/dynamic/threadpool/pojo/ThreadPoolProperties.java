@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @ConfigurationProperties(prefix = ThreadPoolProperties.PREFIX)
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class ThreadPoolProperties {
     public static final String PREFIX = "fuled.dynamic.threadpool";
 
