@@ -1,10 +1,8 @@
 package com.fuled.compent.tools.expression.script.context;
 
-import com.fuled.compent.tools.expression.script.rule.Rule;
 import com.fuled.compent.tools.expression.script.rule.RuleSet;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

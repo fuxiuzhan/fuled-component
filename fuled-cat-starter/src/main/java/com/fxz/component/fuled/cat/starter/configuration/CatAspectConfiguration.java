@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +31,11 @@ public class CatAspectConfiguration {
         return advisor;
     }
 
-    @Bean({"catCustomAdvisorComponent"})
-    public CatCustomAdvisor catCustomAdvisorComponent() {
-        CatCustomAdvisor advisor = new CatCustomAdvisor(Component.class);
-        return advisor;
-    }
+//    @Bean({"catCustomAdvisorComponent"})
+//    public CatCustomAdvisor catCustomAdvisorComponent() {
+//        CatCustomAdvisor advisor = new CatCustomAdvisor(Component.class);
+//        return advisor;
+//    }
 
     @Bean({"catCustomAdvisorRepository"})
     public CatCustomAdvisor catCustomAdvisorRepository() {
@@ -56,4 +55,19 @@ public class CatAspectConfiguration {
         CatFeignAdvisor advisor = new CatFeignAdvisor(new AnnotationMatchingPointcut(FeignClient.class, true));
         return advisor;
     }
+
+//    @Bean
+//    public NameMatchMethodPointcutAdvisor advice() {
+//        NameMatchMethodPointcutAdvisor nameMatchMethodPointcutAdvisor = new NameMatchMethodPointcutAdvisor(new CatCustomMethodInterceptor(null));
+//        nameMatchMethodPointcutAdvisor.setMappedName("getConnection");
+//        nameMatchMethodPointcutAdvisor.setClassFilter(clazz -> {
+//            if (DataSource.class.isAssignableFrom(clazz)) {
+//                return Boolean.TRUE;
+//            }
+//            return Boolean.FALSE;
+//        });
+//        return nameMatchMethodPointcutAdvisor;
+//    }
+
+
 }

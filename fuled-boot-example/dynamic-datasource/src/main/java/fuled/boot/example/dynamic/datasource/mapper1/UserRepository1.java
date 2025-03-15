@@ -1,4 +1,4 @@
-package fuled.boot.example.dynamic.datasource.mapper;
+package fuled.boot.example.dynamic.datasource.mapper1;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author fxz
  */
 @DS("master")
-public interface UserRepository extends BaseMapper<UserInfo> {
+public interface UserRepository1 extends BaseMapper<UserInfo> {
 
     /**
      * 当entity只有构造方法创建时，会因为select的字段数量小于构造方法的参数数量而报错 indexOutRangeException
