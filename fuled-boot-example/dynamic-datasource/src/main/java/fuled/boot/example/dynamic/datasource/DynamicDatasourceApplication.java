@@ -1,6 +1,5 @@
 package fuled.boot.example.dynamic.datasource;
 
-import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration;
 import com.fxz.fuled.dynamic.datasource.starter.annotation.DynamicDsConfig;
 import com.fxz.fuled.service.annotation.EnableFuledBoot;
 import fuled.boot.example.dynamic.datasource.mapper2.UserRepository2;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.annotation.Import;
 
 import java.lang.reflect.Proxy;
 

@@ -18,7 +18,7 @@ public class ProxyUtils {
      */
     public static Set<String> findAllSuperClass(Class clazz) {
         Set<Class<?>> allInterfacesForClassAsSet = ClassUtils.getAllInterfacesForClassAsSet(clazz);
-        allInterfacesForClassAsSet.add(clazz.getSuperclass().getClass());
+        allInterfacesForClassAsSet.add(clazz);
         allInterfacesForClassAsSet.addAll(getAllSuperForClassAsSet(clazz));
         return allInterfacesForClassAsSet.stream().map(c -> c.getName()).collect(Collectors.toSet());
     }
