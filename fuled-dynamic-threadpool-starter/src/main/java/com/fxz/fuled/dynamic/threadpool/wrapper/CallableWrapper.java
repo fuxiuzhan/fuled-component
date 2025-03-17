@@ -3,6 +3,7 @@ package com.fxz.fuled.dynamic.threadpool.wrapper;
 import com.fxz.fuled.dynamic.threadpool.RpcContext;
 import com.fxz.fuled.dynamic.threadpool.manage.ThreadExecuteHook;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.concurrent.Callable;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.Callable;
  */
 public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
     private Callable callable;
+
     private Object meta;
 
     private ThreadExecuteHook threadExecuteHook;
@@ -46,8 +48,8 @@ public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
         try {
             executeTs = System.currentTimeMillis();
             queuedDuration = executeTs - bornTs;
-            RpcContext.set(meta);
             threadExecuteHook.beforeExecute(this);
+            RpcContext.set(meta);
             return (V) callable.call();
         } catch (Throwable t) {
             threadExecuteHook.onException(this, t);
@@ -79,5 +81,15 @@ public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
     @Override
     public long aliveDuration() {
         return aliveDuration;
+    }
+
+    @Override
+    public Object getMeta() {
+        return meta;
+    }
+
+    @Override
+    public void setMeta(Object meta) {
+        this.meta = meta;
     }
 }

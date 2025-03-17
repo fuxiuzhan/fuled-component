@@ -48,4 +48,16 @@ public interface TaskWrapper {
     default boolean isWorker() {
         return Boolean.FALSE;
     }
+
+    /**
+     * get Meta
+     *
+     * @return
+     */
+     Object getMeta();
+
+    /**
+     * setMeta change Meta
+     */
+     void setMeta(Object meta);
 }

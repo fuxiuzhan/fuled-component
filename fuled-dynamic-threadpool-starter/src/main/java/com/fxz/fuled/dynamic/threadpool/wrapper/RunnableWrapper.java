@@ -322,4 +322,14 @@ public class RunnableWrapper implements Runnable, TaskWrapper {
     public long executedDuration() {
         return executeDuration;
     }
+
+    @Override
+    public Object getMeta() {
+        return meta;
+    }
+
+    @Override
+    public void setMeta(Object meta) {
+        this.meta = meta;
+    }
 }
