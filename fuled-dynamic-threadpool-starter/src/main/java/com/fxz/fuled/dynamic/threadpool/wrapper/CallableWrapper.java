@@ -46,8 +46,8 @@ public class CallableWrapper<V> implements Callable<V>, TaskWrapper {
         try {
             executeTs = System.currentTimeMillis();
             queuedDuration = executeTs - bornTs;
-            threadExecuteHook.beforeExecute(this);
             RpcContext.set(meta);
+            threadExecuteHook.beforeExecute(this);
             return (V) callable.call();
         } catch (Throwable t) {
             threadExecuteHook.onException(this, t);
