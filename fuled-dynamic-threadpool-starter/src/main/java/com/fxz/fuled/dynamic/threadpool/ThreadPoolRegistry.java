@@ -157,28 +157,36 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
 
     private static void modifyFinal(Object object, String fieldName, Object newFieldValue) throws Exception {
         Field field = null;
-        if (object.getClass().equals(ThreadPoolExecutor.class)) {
-            field = object.getClass().getDeclaredField(fieldName);
-        } else if (object.getClass().equals(ScheduledThreadPoolExecutor.class)) {
-            //获取父类
-            field = object.getClass().getSuperclass().getDeclaredField(fieldName);
+        Class clazz = object.getClass();
+        while (ThreadPoolExecutor.class.isAssignableFrom(clazz) && field == null) {
+            if (clazz.equals(ThreadPoolExecutor.class)) {
+                field = clazz.getDeclaredField(fieldName);
+            } else if (clazz.equals(ScheduledThreadPoolExecutor.class)) {
+                //获取父类
+                field =clazz.getSuperclass().getDeclaredField(fieldName);
+            }
+            clazz = clazz.getSuperclass();
         }
         //高版本的jdk会限制修改final类型，优先使用unsafe进行修改
-        Unsafe unsafe = UnsafeUtil.getUnsafe();
-        if (Objects.nonNull(unsafe)) {
-            log.info("wrapper Queue using unsafe");
-            long offset = unsafe.objectFieldOffset(field);
-            unsafe.putObject(object, offset, newFieldValue);
-            return;
+        if (Objects.nonNull(field)) {
+            Unsafe unsafe = UnsafeUtil.getUnsafe();
+            if (Objects.nonNull(unsafe)) {
+                log.info("wrapper Queue using unsafe");
+                long offset = unsafe.objectFieldOffset(field);
+                unsafe.putObject(object, offset, newFieldValue);
+                return;
+            }
+            log.info("wrapper Queue using reflection");
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
+            field.set(object, newFieldValue);
+        } else {
+            throw new IllegalStateException(fieldName + " not found ！");
         }
-        log.info("wrapper Queue using reflection");
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        if (!field.isAccessible()) {
-            field.setAccessible(true);
-        }
-        field.set(object, newFieldValue);
     }
 
     private static void start() {
