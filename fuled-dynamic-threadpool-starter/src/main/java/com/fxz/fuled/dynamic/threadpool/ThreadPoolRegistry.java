@@ -156,6 +156,7 @@ public class ThreadPoolRegistry implements ApplicationContextAware, ApplicationR
     }
 
     private static void modifyFinal(Object object, String fieldName, Object newFieldValue) throws Exception {
+        //获取workQueue，此处可以直接使用ThreadPoolExecutor或者ScheduledThreadPoolExecutor类获取，原理提示作用
         Field field = null;
         Class clazz = object.getClass();
         while (ThreadPoolExecutor.class.isAssignableFrom(clazz) && field == null) {
