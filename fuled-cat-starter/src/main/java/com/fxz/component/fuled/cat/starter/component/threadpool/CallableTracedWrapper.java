@@ -24,6 +24,7 @@ public class CallableTracedWrapper implements Callable {
         this.callable = callable;
         this.threadPoolName = threadPoolName;
         Transaction t = Cat.newTransaction("CrossThreadPool", threadPoolName);
+        Cat.logEvent("CurrentThread", Thread.currentThread().getName());
         context = new CatPropertyContext();
         Cat.logRemoteCallClient(context, Cat.getManager().getDomain());
         t.setStatus(Transaction.SUCCESS);

@@ -16,6 +16,7 @@ public class RunnableTracedWrapper implements Runnable {
         this.runnable = runnable;
         this.threadPoolName = threadPoolName;
         Transaction t = Cat.newTransaction("CrossThreadPool", threadPoolName);
+        Cat.logEvent("CurrentThread", Thread.currentThread().getName());
         context = new CatPropertyContext();
         Cat.logRemoteCallClient(context, Cat.getManager().getDomain());
         t.setStatus(Transaction.SUCCESS);
