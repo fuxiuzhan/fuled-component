@@ -17,15 +17,15 @@ import java.util.Objects;
  */
 public class CatFeignInterceptor implements RequestInterceptor {
     private static final Logger log = LoggerFactory.getLogger(CatFeignInterceptor.class);
+
     @Override
     public void apply(RequestTemplate requestTemplate) {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(requestAttributes) && RequestAttributesUtil.isRequestActive(requestAttributes)) {
-            requestTemplate.header("_catRootMessageId", new String[]{CatUtils.getRootId(requestAttributes)});
-            requestTemplate.header("_catChildMessageId", new String[]{CatUtils.getChildId(requestAttributes)});
-            requestTemplate.header("_catParentMessageId", new String[]{CatUtils.getParentId(requestAttributes)});
-            requestTemplate.header("application.name", new String[]{Cat.getManager().getDomain()});
+            requestTemplate.header(Cat.Context.ROOT, CatUtils.getRootId(requestAttributes));
+            requestTemplate.header(Cat.Context.CHILD, CatUtils.getChildId(requestAttributes));
+            requestTemplate.header(Cat.Context.PARENT, CatUtils.getParentId(requestAttributes));
+            requestTemplate.header("application.name", Cat.getManager().getDomain());
         }
-
     }
 }

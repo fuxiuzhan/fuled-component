@@ -23,16 +23,16 @@ public class HttpCatCrossFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         String requestURI = request.getRequestURI();
-        String root = request.getHeader("_catRootMessageId");
-        String parent = request.getHeader("_catParentMessageId");
-        String child = request.getHeader("_catChildMessageId");
+        String root = request.getHeader(Cat.Context.ROOT);
+        String parent = request.getHeader(Cat.Context.PARENT);
+        String child = request.getHeader(Cat.Context.CHILD);
         if (!StringUtils.isEmpty(root) && !StringUtils.isEmpty(parent) && !StringUtils.isEmpty(child)) {
             Transaction t = Cat.newTransaction("ServiceProvider", requestURI);
             try {
                 Cat.Context context = new CatPropertyContext();
-                context.addProperty("_catRootMessageId", root);
-                context.addProperty("_catParentMessageId", parent);
-                context.addProperty("_catChildMessageId", child);
+                context.addProperty(Cat.Context.ROOT, root);
+                context.addProperty(Cat.Context.PARENT, parent);
+                context.addProperty(Cat.Context.CHILD, child);
                 Cat.logRemoteCallServer(context);
                 CatUtils.createProviderCross(request, t);
                 filterChain.doFilter(req, resp);
@@ -54,7 +54,7 @@ public class HttpCatCrossFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig arg0) throws ServletException {
+    public void init(FilterConfig arg0) {
     }
 
     @Override

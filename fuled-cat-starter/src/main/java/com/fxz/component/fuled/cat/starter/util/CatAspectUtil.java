@@ -39,10 +39,10 @@ public class CatAspectUtil {
             } else {
                 proceed = pjp.proceed();
             }
-            transaction.setStatus("0");
+            transaction.setStatus(Transaction.SUCCESS);
         } catch (Throwable e) {
             if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(e.getClass().getName())) {
-                transaction.setStatus("0");
+                transaction.setStatus(Transaction.SUCCESS);
             } else {
                 transaction.setStatus(e);
             }
@@ -60,10 +60,10 @@ public class CatAspectUtil {
         Object proceed = null;
         try {
             proceed = invocation.proceed();
-            transaction.setStatus("0");
+            transaction.setStatus(Transaction.SUCCESS);
         } catch (Throwable e) {
             if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(e.getClass().getName())) {
-                transaction.setStatus("0");
+                transaction.setStatus(Transaction.SUCCESS);
             } else {
                 transaction.setStatus(e);
             }
