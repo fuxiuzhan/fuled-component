@@ -9,7 +9,7 @@
     </parent>
     <groupId>fuled.boot.example</groupId>
     <artifactId>springcloud-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0.WaterDrop</version>
     <name>springcloud-app</name>
     <description>springcloud-app</description>
     <properties>
