@@ -34,7 +34,7 @@ public class CatFeignMethodInterceptor implements MethodInterceptor {
                 Object result;
                 try {
                     Object proceed = invocation.proceed();
-                    transaction.setStatus("0");
+                    transaction.setStatus(Transaction.SUCCESS);
                     result = proceed;
                 } catch (Throwable e) {
                     transaction.setStatus(e);

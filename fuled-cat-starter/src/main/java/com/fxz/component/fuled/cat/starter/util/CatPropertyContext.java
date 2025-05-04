@@ -12,9 +12,6 @@ import java.util.Map;
 public class CatPropertyContext implements Cat.Context {
     private Map<String, String> properties = new HashMap();
 
-    public CatPropertyContext() {
-    }
-
     @Override
     public void addProperty(String key, String value) {
         this.properties.put(key, value);
@@ -22,6 +19,6 @@ public class CatPropertyContext implements Cat.Context {
 
     @Override
     public String getProperty(String key) {
-        return (String) this.properties.get(key);
+        return this.properties.get(key);
     }
 }

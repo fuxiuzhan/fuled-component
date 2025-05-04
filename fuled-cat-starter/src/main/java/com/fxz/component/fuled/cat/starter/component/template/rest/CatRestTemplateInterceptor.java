@@ -30,16 +30,16 @@ public class CatRestTemplateInterceptor implements ClientHttpRequestInterceptor 
         HttpRequestCatWapper httpRequestCatWapper = new HttpRequestCatWapper(request);
         RequestAttributes requestAttributes = this.requestAttributesBuilder();
         if (Objects.nonNull(requestAttributes) && RequestAttributesUtil.isRequestActive(requestAttributes)) {
-            httpRequestCatWapper.addHeader("_catRootMessageId", CatUtils.getRootId(requestAttributes));
-            httpRequestCatWapper.addHeader("_catChildMessageId", CatUtils.getChildId(requestAttributes));
-            httpRequestCatWapper.addHeader("_catParentMessageId", CatUtils.getParentId(requestAttributes));
+            httpRequestCatWapper.addHeader(Cat.Context.ROOT, CatUtils.getRootId(requestAttributes));
+            httpRequestCatWapper.addHeader(Cat.Context.CHILD, CatUtils.getChildId(requestAttributes));
+            httpRequestCatWapper.addHeader(Cat.Context.PARENT, CatUtils.getParentId(requestAttributes));
             httpRequestCatWapper.addHeader("application.name", Cat.getManager().getDomain());
             request = httpRequestCatWapper;
         }
         ClientHttpResponse response = null;
         try {
             response = execution.execute(request, body);
-            transaction.setStatus("0");
+            transaction.setStatus(Transaction.SUCCESS);
         } catch (Throwable e) {
             transaction.setStatus(e);
             throw e;

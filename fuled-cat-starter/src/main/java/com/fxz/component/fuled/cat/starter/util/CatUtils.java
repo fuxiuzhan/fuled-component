@@ -22,9 +22,9 @@ public class CatUtils {
         Cat.logRemoteCallClient(context, Cat.getManager().getDomain());
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(requestAttributes) && RequestAttributesUtil.isRequestActive(requestAttributes)) {
-            requestAttributes.setAttribute("_catParentMessageId", context.getProperty("_catParentMessageId"), 0);
-            requestAttributes.setAttribute("_catRootMessageId", context.getProperty("_catRootMessageId"), 0);
-            requestAttributes.setAttribute("_catChildMessageId", context.getProperty("_catChildMessageId"), 0);
+            requestAttributes.setAttribute(Cat.Context.PARENT, context.getProperty(Cat.Context.PARENT), 0);
+            requestAttributes.setAttribute(Cat.Context.ROOT, context.getProperty(Cat.Context.ROOT), 0);
+            requestAttributes.setAttribute(Cat.Context.CHILD, context.getProperty(Cat.Context.CHILD), 0);
             requestAttributes.setAttribute("application.name", Cat.getManager().getDomain(), 0);
         }
 
@@ -73,7 +73,7 @@ public class CatUtils {
         if (!RequestAttributesUtil.isRequestActive(requestAttributes)) {
             return "";
         } else {
-            Object rootObject = requestAttributes.getAttribute("_catRootMessageId", 0);
+            Object rootObject = requestAttributes.getAttribute(Cat.Context.ROOT, 0);
             return Objects.isNull(rootObject) ? "" : rootObject.toString();
         }
     }
@@ -82,7 +82,7 @@ public class CatUtils {
         if (!RequestAttributesUtil.isRequestActive(requestAttributes)) {
             return "";
         } else {
-            Object childObject = requestAttributes.getAttribute("_catChildMessageId", 0);
+            Object childObject = requestAttributes.getAttribute(Cat.Context.CHILD, 0);
             return Objects.isNull(childObject) ? "" : childObject.toString();
         }
     }
@@ -91,7 +91,7 @@ public class CatUtils {
         if (!RequestAttributesUtil.isRequestActive(requestAttributes)) {
             return "";
         } else {
-            Object parentObject = requestAttributes.getAttribute("_catParentMessageId", 0);
+            Object parentObject = requestAttributes.getAttribute(Cat.Context.PARENT, 0);
             return Objects.isNull(parentObject) ? "" : parentObject.toString();
         }
     }
