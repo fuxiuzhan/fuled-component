@@ -9,7 +9,7 @@
     </parent>
     <groupId>fuled.boot.example</groupId>
     <artifactId>common-cache</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0.WaterDrop</version>
     <name>common-cache</name>
     <description>common-cache</description>
     <properties>

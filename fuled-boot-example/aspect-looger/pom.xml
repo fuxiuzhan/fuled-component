@@ -9,7 +9,7 @@
     </parent>
     <groupId>fuled.boot.example</groupId>
     <artifactId>aspect-looger</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0.WaterDrop</version>
     <name>aspect-looger</name>
     <description>aspect-looger</description>
     <properties>
