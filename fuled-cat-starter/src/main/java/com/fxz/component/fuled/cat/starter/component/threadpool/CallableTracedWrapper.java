@@ -4,6 +4,8 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageTree;
 import com.fxz.component.fuled.cat.starter.util.CatPropertyContext;
+import org.slf4j.MDC;
+import org.springframework.util.StringUtils;
 
 import java.util.concurrent.Callable;
 
@@ -41,12 +43,15 @@ public class CallableTracedWrapper implements Callable {
             String parentId = context.getProperty(Cat.Context.PARENT);
             if (parentId != null) {
                 tree.setParentMessageId(parentId);
+                MDC.put("X-CAT-PARENT-ID", parentId);
             }
             if (rootId != null) {
                 tree.setRootMessageId(rootId);
+                MDC.put("X-CAT-ROOT-ID", rootId);
             }
             if (childId != null) {
                 tree.setMessageId(childId);
+                MDC.put("X-CAT-ID", childId);
             }
             transaction = Cat.newTransaction("CallableExecute", threadPoolName);
             Cat.logEvent("CallableBeforeExecute", Thread.currentThread().getName());

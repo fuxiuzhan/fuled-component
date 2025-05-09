@@ -36,7 +36,7 @@ public class HttpCatCrossFilter implements Filter {
                 Cat.logRemoteCallServer(context);
                 CatUtils.createProviderCross(request, t);
                 filterChain.doFilter(req, resp);
-                t.setStatus("0");
+                t.setStatus(Transaction.SUCCESS);
             } catch (Exception e) {
                 log.warn("------ Get cat msgtree error : ", e);
                 Event event = Cat.newEvent("HTTP_REST_CAT_ERROR", requestURI);
