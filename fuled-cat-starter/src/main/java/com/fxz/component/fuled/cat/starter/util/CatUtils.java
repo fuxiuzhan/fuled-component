@@ -6,6 +6,7 @@ import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.internal.AbstractMessage;
 import com.dianping.cat.message.internal.NullMessage;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -19,6 +20,13 @@ public class CatUtils {
     public static void createMessageTree() {
         CatPropertyContext context = new CatPropertyContext();
         Cat.logRemoteCallClient(context, Cat.getManager().getDomain());
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (Objects.nonNull(requestAttributes) && RequestAttributesUtil.isRequestActive(requestAttributes)) {
+            requestAttributes.setAttribute(Cat.Context.PARENT, context.getProperty(Cat.Context.PARENT), 0);
+            requestAttributes.setAttribute(Cat.Context.ROOT, context.getProperty(Cat.Context.ROOT), 0);
+            requestAttributes.setAttribute(Cat.Context.CHILD, context.getProperty(Cat.Context.CHILD), 0);
+            requestAttributes.setAttribute("application.name", Cat.getManager().getDomain(), 0);
+        }
         CatTraceCarrier.Context contextCarrier = new CatTraceCarrier.Context();
         contextCarrier.setParentTrace(context.getProperty(Cat.Context.PARENT));
         contextCarrier.setRootTrace(context.getProperty(Cat.Context.ROOT));
