@@ -55,6 +55,10 @@ public class RunnableTracedWrapper implements Runnable {
             transaction.setStatus(e);
             transaction.complete();
             throw e;
+        } finally {
+            MDC.remove("X-CAT-PARENT-ID");
+            MDC.remove("X-CAT-ROOT-ID");
+            MDC.remove("X-CAT-ID");
         }
     }
 }
