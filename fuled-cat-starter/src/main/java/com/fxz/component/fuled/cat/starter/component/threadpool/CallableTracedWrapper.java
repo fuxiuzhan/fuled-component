@@ -5,7 +5,6 @@ import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.spi.MessageTree;
 import com.fxz.component.fuled.cat.starter.util.CatPropertyContext;
 import org.slf4j.MDC;
-import org.springframework.util.StringUtils;
 
 import java.util.concurrent.Callable;
 
@@ -65,6 +64,10 @@ public class CallableTracedWrapper implements Callable {
             transaction.setStatus(e);
             transaction.complete();
             throw e;
+        } finally {
+            MDC.remove("X-CAT-PARENT-ID");
+            MDC.remove("X-CAT-ROOT-ID");
+            MDC.remove("X-CAT-ID");
         }
     }
 }
