@@ -66,6 +66,11 @@ public class PrometheusReporter implements Reporter {
 
     private static final String ALIVE_DURATION = "alive.duration";
 
+    /**
+     *
+     */
+    private static final String KEEP_ALIVE_TTL = "keep.alive.seconds";
+
     private static final String COMPONENT_VERSION = "component.version";
     private Map<String, ReporterDto> reporterMap = new ConcurrentHashMap<>();
     private AtomicBoolean INIT = new AtomicBoolean(Boolean.FALSE);
@@ -150,7 +155,6 @@ public class PrometheusReporter implements Reporter {
                 .description("ThreadLargestPoolSize")
                 .register(meterRegistry);
 
-
         Gauge.builder(GAUGE + "." + REJECT_COUNT, reporterDto, ReporterDto::getRejectCount)
                 .tags(buildTags(reporterDto))
                 .description("ThreadPoolRejectCount")
@@ -160,7 +164,6 @@ public class PrometheusReporter implements Reporter {
                 .tags(buildTags(reporterDto))
                 .description("ThreadPoolWorkerCreateCount")
                 .register(meterRegistry);
-
 
         Gauge.builder(GAUGE + "." + EXEC_COUNT, reporterDto, ReporterDto::getExecCount)
                 .tags(buildTags(reporterDto))
@@ -200,6 +203,11 @@ public class PrometheusReporter implements Reporter {
         Gauge.builder(GAUGE + "." + MAX_CORE_SIZE, reporterDto, ReporterDto::getMaximumPoolSize)
                 .tags(buildTags(reporterDto))
                 .description("ThreadPoolMaxCoreSize")
+                .register(meterRegistry);
+
+        Gauge.builder(GAUGE + "." + KEEP_ALIVE_TTL, reporterDto, ReporterDto::getKeepAliveInSeconds)
+                .tags(buildTags(reporterDto))
+                .description("ThreadPoolKeepAliveTimeInSeconds")
                 .register(meterRegistry);
     }
 
