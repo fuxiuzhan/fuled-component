@@ -88,6 +88,11 @@ public class ReporterDto {
     private int largestPoolSize;
 
     /**
+     * ttl in second
+     */
+    private long keepAliveInSeconds;
+
+    /**
      *
      */
     private String version;

@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author fxz
@@ -53,6 +54,7 @@ public abstract class Manageable implements Recordable {
         reporterDto.setQueueMaxSize(threadPoolExecutor.getQueue().remainingCapacity() + threadPoolExecutor.getQueue().size());
         reporterDto.setRejectCount(0L);
         reporterDto.setVersion(ThreadPoolRegistry.class.getPackage().getImplementationVersion());
+        reporterDto.setKeepAliveInSeconds(threadPoolExecutor.getKeepAliveTime(TimeUnit.SECONDS));
         reporterDto.setLargestPoolSize(threadPoolExecutor.getLargestPoolSize());
         if (threadPoolExecutor.getRejectedExecutionHandler() instanceof RejectHandlerWrapper) {
             reporterDto.setRejectCount(((RejectHandlerWrapper) threadPoolExecutor.getRejectedExecutionHandler()).getCounter());
