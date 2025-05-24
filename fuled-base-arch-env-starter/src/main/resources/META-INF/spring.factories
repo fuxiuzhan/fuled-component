@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
  com.fxz.fuled.base.arch.env.config.BaseEnvAutoConfig
