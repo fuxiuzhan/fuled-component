@@ -8,20 +8,20 @@
         <version>1.0.0.WaterDrop</version>
     </parent>
     <groupId>com.fxz.component</groupId>
-    <artifactId>fuled-component-tools</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0.WaterDrop</version>
-    <name>fuled-component-tools</name>
-    <description>fuled-component-tools</description>
+    <artifactId>fuled-base-arch-env-starter</artifactId>
+    <version>1.1.0.WaterDrop</version>
+    <name>fuled-config-starter</name>
+    <description>fuled-base-arch-env-starter</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.fxz.component</groupId>
+            <artifactId>fuled-config-starter</artifactId>
+            <version>1.1.0.WaterDrop</version>
+        </dependency>
     </dependencies>
-    <modules>
-        <module>fuled-dynamic-compile</module>
-        <module>fuled-expression-script</module>
-    </modules>
     <build>
         <plugins>
             <plugin>
@@ -34,5 +34,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

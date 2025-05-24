@@ -57,7 +57,7 @@ public class SentinelPropertiesProcessor extends AutowiredAnnotationBeanPostProc
     private void wrapperSentinelProperties(SentinelProperties sentinelProperties) {
         if (Objects.nonNull(sentinelProperties)) {
             SentinelEnv env = SentinelEnv.getEnv();
-            if (Env.CUS.equals(env)) {
+            if (!Env.CUS.equals(env)) {
                 sentinelProperties.getTransport().setDashboard(env.getDashboard());
             }
         }
