@@ -1,6 +1,5 @@
 package com.fxz.fuled.dynamic.kafka.config;
 
-import com.fxz.fuled.common.chain.Filter;
 import com.fxz.fuled.common.chain.FilterChainManger;
 import com.fxz.fuled.common.chain.FilterConfig;
 import com.fxz.fuled.common.chain.Invoker;
@@ -20,31 +19,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 
-import java.util.List;
 import java.util.Objects;
 
 @EnableConfigurationProperties({DynamicKafkaProperties.class})
-@Import({FilterConfig.class, ConsumerManager.class})
+@Import({FilterConfig.class, ConsumerManager.class, FilterChainManger.class})
 public class DynamicKafkaAutoConfig implements ApplicationContextAware, SmartInitializingSingleton {
-
     public static final String RAW_FILTER_GROUP = "Dynamic_Kafka_Group";
     @Autowired
     private ConsumerManager consumerManager;
-
     @Autowired
-    private FilterConfig filterConfig;
-
+    private FilterChainManger filterChainManger;
     private ApplicationContext applicationContext;
     private Invoker<DynamicKafkaProperties, Void> invoker;
 
     @Bean(name = "dynamicKafkaInvoker")
     public Invoker<DynamicKafkaProperties, Void> buildInvoker() {
-        FilterChainManger filterChainManger = new FilterChainManger();
-        List<Filter> filtersByGroup = filterConfig.getFiltersByGroup(RAW_FILTER_GROUP);
-        invoker = filterChainManger.buildInvokerChain((Invoker<DynamicKafkaProperties, Void>) dynamicKafkaProperties -> {
+        invoker = filterChainManger.getInvoker(RAW_FILTER_GROUP, (Invoker<DynamicKafkaProperties, Void>) dynamicKafkaProperties -> {
             consumerManager.process(dynamicKafkaProperties);
             return null;
-        }, filtersByGroup);
+        });
         return invoker;
     }
 
