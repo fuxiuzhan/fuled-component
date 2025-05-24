@@ -48,8 +48,8 @@ public class NacosPropertySourceBuilder {
      * @param dataId Nacos dataId
      * @param group  Nacos group
      */
-    NacosPropertySource build(String dataId, String group, String fileExtension,
-                              boolean isRefreshable) {
+    public NacosPropertySource build(String dataId, String group, String fileExtension,
+                                     boolean isRefreshable) {
         List<PropertySource<?>> propertySources = loadNacosData(dataId, group,
                 fileExtension);
         NacosPropertySource nacosPropertySource = new NacosPropertySource(propertySources,
