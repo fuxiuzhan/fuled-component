@@ -1,7 +1,6 @@
 package com.fxz.fuled.name.starter.selector;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.fxz.fuled.common.chain.annotation.FilterProperty;
 import com.fxz.fuled.common.utils.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-@FilterProperty(filterGroup = InstanceSelector.INSTANCE_FILTER_GROUP, name = "InstanceSelectByTag", order = 0)
-public class InstanceSelectByTag implements InstanceSelector {
+public class InstanceSelectByTag extends AbsInstanceSelector {
 
     @Value("#{${fuled.discovery.insatnce.selector.tag:{}}}")
     private Map<String, Map<String, String>> metaTag = new HashMap<>();
@@ -36,5 +34,15 @@ public class InstanceSelectByTag implements InstanceSelector {
             }).collect(Collectors.toList());
         }
         return pair.getSecond();
+    }
+
+    @Override
+    public String name() {
+        return "InstanceSelectByTag";
+    }
+
+    @Override
+    public int order() {
+        return 0;
     }
 }
