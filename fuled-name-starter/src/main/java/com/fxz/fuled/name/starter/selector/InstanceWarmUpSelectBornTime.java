@@ -5,7 +5,7 @@ import com.fxz.fuled.common.utils.Pair;
 
 import java.util.List;
 
-public class InstanceWarmUpSelectBronTime extends AbsInstanceSelector {
+public class InstanceWarmUpSelectBornTime extends AbsInstanceSelector {
     @Override
     public List<Instance> select(Pair<String, List<Instance>> pair) {
         /**
