@@ -21,7 +21,7 @@ public class InstanceSelectByTag implements InstanceSelector {
 
     @Override
     public List<Instance> select(Pair<String, List<Instance>> pair) {
-        if (!CollectionUtils.isEmpty(metaTag) && !CollectionUtils.isEmpty(pair.getSecond()) && metaTag.containsKey(pair.getFirst())) {
+        if (!CollectionUtils.isEmpty(metaTag) && metaTag.containsKey(pair.getFirst()) && !CollectionUtils.isEmpty(pair.getSecond())) {
             /**
              * tag逐个匹配
              */
