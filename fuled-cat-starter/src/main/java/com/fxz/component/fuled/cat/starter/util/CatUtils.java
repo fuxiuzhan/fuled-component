@@ -5,6 +5,8 @@ import com.dianping.cat.message.Event;
 import com.dianping.cat.message.Transaction;
 import com.dianping.cat.message.internal.AbstractMessage;
 import com.dianping.cat.message.internal.NullMessage;
+import com.dianping.cat.message.spi.MessageTree;
+import org.slf4j.MDC;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -98,6 +100,52 @@ public class CatUtils {
         } else {
             Object parentObject = requestAttributes.getAttribute(Cat.Context.PARENT, 0);
             return Objects.isNull(parentObject) ? "" : parentObject.toString();
+        }
+    }
+
+    /**
+     * createSpan
+     *
+     * @param type            exp:CrossKafka
+     * @param transactionName topic
+     * @return
+     */
+    public static CatTraceCarrier.Context createSpan(String type, String transactionName) {
+        Transaction t = Cat.newTransaction(type, transactionName);
+        Cat.logEvent("CurrentThread", Thread.currentThread().getName());
+        CatPropertyContext context = new CatPropertyContext();
+        Cat.logRemoteCallClient(context, Cat.getManager().getDomain());
+        t.setStatus(Transaction.SUCCESS);
+        t.complete();
+        CatTraceCarrier.Context carrierContext = new CatTraceCarrier.Context();
+        carrierContext.setRootTrace(context.getProperty(Cat.Context.ROOT));
+        carrierContext.setParentTrace(context.getProperty(Cat.Context.PARENT));
+        carrierContext.setChildTrace(context.getProperty(Cat.Context.CHILD));
+        return carrierContext;
+    }
+
+    /**
+     * replace the trace of current thread
+     *
+     * @param context
+     */
+    public static void recoverySpan(CatTraceCarrier.Context context) {
+        Cat.getManager().setup();
+        MessageTree tree = Cat.getManager().getThreadLocalMessageTree();
+        String childId = context.getChildTrace();
+        String rootId = context.getRootTrace();
+        String parentId = context.getParentTrace();
+        if (parentId != null) {
+            tree.setParentMessageId(parentId);
+            MDC.put("X-CAT-PARENT-ID", parentId);
+        }
+        if (rootId != null) {
+            tree.setRootMessageId(rootId);
+            MDC.put("X-CAT-ROOT-ID", rootId);
+        }
+        if (childId != null) {
+            tree.setMessageId(childId);
+            MDC.put("X-CAT-ID", childId);
         }
     }
 }
