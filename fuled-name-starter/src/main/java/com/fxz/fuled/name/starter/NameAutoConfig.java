@@ -10,7 +10,7 @@ import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.common.version.ComponentVersion;
 import com.fxz.fuled.name.starter.router.InstanceRouterByWeight;
 import com.fxz.fuled.name.starter.selector.InstanceSelectByTag;
-import com.fxz.fuled.name.starter.selector.InstanceWarmUpSelectBronTime;
+import com.fxz.fuled.name.starter.selector.InstanceWarmUpSelectBornTime;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
 import org.springframework.context.annotation.Bean;
@@ -55,8 +55,8 @@ public class NameAutoConfig {
     }
 
     @Bean
-    public InstanceWarmUpSelectBronTime instanceWarmUpSelectBronTime() {
-        return new InstanceWarmUpSelectBronTime();
+    public InstanceWarmUpSelectBornTime instanceWarmUpSelectBronTime() {
+        return new InstanceWarmUpSelectBornTime();
     }
 
     public static void initEnv(NacosDiscoveryProperties discoveryProperties) {
