@@ -7,8 +7,13 @@ import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.fxz.fuled.common.chain.FilterChainManger;
+import com.fxz.fuled.common.chain.Invoker;
+import com.fxz.fuled.common.utils.Pair;
+import com.fxz.fuled.name.starter.selector.InstanceSelector;
 import org.springframework.cloud.client.ServiceInstance;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +28,20 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
 
     private NacosServiceManager nacosServiceManager;
 
-    public NacosServiceDiscoveryWrapper(NacosDiscoveryProperties discoveryProperties, NacosServiceManager nacosServiceManager) {
+    private FilterChainManger filterChainManger;
+
+    private Invoker<Pair<String, List<Instance>>, List<Instance>> invoker;
+
+    @PostConstruct
+    public void init() {
+        invoker = filterChainManger.getInvoker(InstanceSelector.INSTANCE_FILTER_GROUP, (Invoker<Pair<String, List<Instance>>, List<Instance>>) pair -> pair.getSecond());
+    }
+
+    public NacosServiceDiscoveryWrapper(FilterChainManger filterChainManger, NacosDiscoveryProperties discoveryProperties, NacosServiceManager nacosServiceManager) {
         super(discoveryProperties, nacosServiceManager);
         this.discoveryProperties = discoveryProperties;
         this.nacosServiceManager = nacosServiceManager;
+        this.filterChainManger = filterChainManger;
     }
 
     @Override
@@ -34,7 +49,7 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
         String group = discoveryProperties.getGroup();
         //增加扩展点routerFilter，可实现按权重，表达式，标签，负载等多种维度的隔离和自动负载机制
         List<Instance> instances = namingService().selectInstances(serviceId, group, Boolean.TRUE);
-        return hostToServiceInstanceList(instances, serviceId);
+        return hostToServiceInstanceList(invoker.invoke(Pair.with(serviceId, instances)), serviceId);
     }
 
     public static List<ServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {
