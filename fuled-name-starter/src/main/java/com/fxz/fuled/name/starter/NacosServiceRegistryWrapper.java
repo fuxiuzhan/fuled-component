@@ -117,7 +117,7 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
         meta.put("@appId", System.getProperties().get("@appId"));
         meta.put("java.runtime.version", System.getProperties().get("java.runtime.version"));
         meta.put("java.version", System.getProperties().get("java.version"));
-        meta.put("spring.application.name", System.getProperties().get("spring.application.name"));
+        meta.put("appName", System.getProperties().get("spring.application.name"));
         meta.put("java.vm.name", System.getProperties().get("java.vm.name"));
         meta.put("line.separator", System.getProperties().get("line.separator"));
         meta.put("user.timezone", System.getProperties().get("user.timezone"));
