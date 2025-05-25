@@ -24,7 +24,7 @@ public class InstanceSelectByTag extends AbsInstanceSelector {
              * tag逐个匹配
              */
             Map<String, String> singleAppMeta = metaTag.get(pair.getFirst());
-            return pair.getSecond().stream().filter(i -> {
+            List<Instance> collect = pair.getSecond().stream().filter(i -> {
                 for (Map.Entry<String, String> singleTag : singleAppMeta.entrySet()) {
                     if (!singleTag.getValue().equalsIgnoreCase(i.getMetadata().get(singleTag.getKey()))) {
                         return Boolean.FALSE;
@@ -32,6 +32,7 @@ public class InstanceSelectByTag extends AbsInstanceSelector {
                 }
                 return Boolean.TRUE;
             }).collect(Collectors.toList());
+            return CollectionUtils.isEmpty(collect) ? pair.getSecond() : collect;
         }
         return pair.getSecond();
     }
