@@ -49,7 +49,7 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
         String group = discoveryProperties.getGroup();
         //增加扩展点routerFilter，可实现按权重，表达式，标签，负载等多种维度的隔离和自动负载机制
         List<Instance> instances = namingService().selectInstances(serviceId, group, Boolean.TRUE);
-        return hostToServiceInstanceList(invoker.invoke(new Pair(serviceId, instances)), serviceId);
+        return hostToServiceInstanceList(invoker.invoke(Pair.with(serviceId, instances)), serviceId);
     }
 
     public static List<ServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {

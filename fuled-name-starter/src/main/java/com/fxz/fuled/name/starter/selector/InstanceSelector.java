@@ -20,6 +20,6 @@ public interface InstanceSelector extends Filter<Pair<String, List<Instance>>, L
 
     @Override
     default List<Instance> filter(Pair<String, List<Instance>> pair, Invoker<Pair<String, List<Instance>>, List<Instance>> invoker) {
-        return invoker.invoke(new Pair<>(pair.getFirst(), select(pair)));
+        return invoker.invoke(Pair.with(pair.getFirst(), select(pair)));
     }
 }
