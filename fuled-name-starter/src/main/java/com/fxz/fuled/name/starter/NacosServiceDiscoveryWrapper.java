@@ -32,13 +32,12 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
     @Override
     public List<ServiceInstance> getInstances(String serviceId) throws NacosException {
         String group = discoveryProperties.getGroup();
-        List<Instance> instances = namingService().selectInstances(serviceId, group,
-                true);
+        //增加扩展点routerFilter，可实现按权重，表达式，标签，负载等多种维度的隔离和自动负载机制
+        List<Instance> instances = namingService().selectInstances(serviceId, group, Boolean.TRUE);
         return hostToServiceInstanceList(instances, serviceId);
     }
 
-    public static List<ServiceInstance> hostToServiceInstanceList(
-            List<Instance> instances, String serviceId) {
+    public static List<ServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {
         List<ServiceInstance> result = new ArrayList<ServiceInstance>(instances.size());
         for (Instance instance : instances) {
             ServiceInstance serviceInstance = hostToServiceInstance(instance, serviceId);
@@ -49,8 +48,7 @@ public class NacosServiceDiscoveryWrapper extends NacosServiceDiscovery {
         return result;
     }
 
-    public static ServiceInstance hostToServiceInstance(Instance instance,
-                                                        String serviceId) {
+    public static ServiceInstance hostToServiceInstance(Instance instance, String serviceId) {
         if (instance == null || !instance.isEnabled() || !instance.isHealthy()) {
             return null;
         }
