@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +27,8 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
 
     @Autowired
     private NacosServiceManager nacosServiceManager;
+    @Autowired
+    ApplicationContext applicationContext;
     private final NacosDiscoveryProperties nacosDiscoveryProperties;
 
     private static final Logger log = LoggerFactory.getLogger(NacosServiceRegistry.class);
@@ -121,6 +124,6 @@ public class NacosServiceRegistryWrapper extends NacosServiceRegistry {
         meta.put("java.vm.name", System.getProperties().get("java.vm.name"));
         meta.put("line.separator", System.getProperties().get("line.separator"));
         meta.put("user.timezone", System.getProperties().get("user.timezone"));
-
+        meta.put("startTime", applicationContext.getStartupDate());
     }
 }
