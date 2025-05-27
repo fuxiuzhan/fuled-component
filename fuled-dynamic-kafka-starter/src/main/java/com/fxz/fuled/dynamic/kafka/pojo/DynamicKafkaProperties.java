@@ -23,9 +23,7 @@ public class DynamicKafkaProperties {
 
     @Data
     public static class SingleConfig {
-        /**
-         * name
-         */
+        private boolean enbaled = Boolean.TRUE;
         private List<String> bootstrapServers;
         private String name;
         private String groupId;
