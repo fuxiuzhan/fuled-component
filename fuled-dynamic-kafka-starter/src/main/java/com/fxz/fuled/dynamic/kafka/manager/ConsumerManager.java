@@ -41,29 +41,33 @@ public class ConsumerManager implements BeanFactoryAware {
         if (!CollectionUtils.isEmpty(dynamicKafkaProperties.getConfig())) {
             dynamicKafkaProperties.getConfig().forEach((k, v) -> {
                 try {
-                    log.info("addSourceNames: {}", v.getName());
-                    ContainerProperties containerProperties = new ContainerProperties(v.getTopics());
-                    containerProperties.setGroupId(v.getGroupId());
-                    ConsumerFactory consumerFactory = getConsumerFactory(v, dynamicKafkaProperties.getGlobalConfig());
-                    containerProperties.setMessageListener(beanFactory.getBean(v.getListenerBeanName()));
-                    String listenerContainerBeanName = String.format(beanNameFormat, v.getName());
-                    if (existsBean(listenerContainerBeanName)) {
-                        ConcurrentMessageListenerContainer messageListenerContainer = (ConcurrentMessageListenerContainer) beanFactory.getBean(listenerContainerBeanName);
-                        if (!messageListenerContainer.isRunning()) {
-                            messageListenerContainer.start();
+                    if (v.isEnbaled()) {
+                        log.info("consumer container starting......... {}", v.getName());
+                        ContainerProperties containerProperties = new ContainerProperties(v.getTopics());
+                        containerProperties.setGroupId(v.getGroupId());
+                        ConsumerFactory consumerFactory = getConsumerFactory(v, dynamicKafkaProperties.getGlobalConfig());
+                        containerProperties.setMessageListener(beanFactory.getBean(v.getListenerBeanName()));
+                        String listenerContainerBeanName = String.format(beanNameFormat, v.getName());
+                        if (existsBean(listenerContainerBeanName)) {
+                            ConcurrentMessageListenerContainer messageListenerContainer = (ConcurrentMessageListenerContainer) beanFactory.getBean(listenerContainerBeanName);
+                            if (!messageListenerContainer.isRunning()) {
+                                messageListenerContainer.start();
+                            }
+                        } else {
+                            registerAndStartContainer(consumerFactory, containerProperties, v);
                         }
+                        ConcurrentMessageListenerContainer container = (ConcurrentMessageListenerContainer) beanFactory.getBean(listenerContainerBeanName);
+                        liveRegistry.put(v.getName(), container);
+                        log.info("consumer container started name->{}", v.getName());
                     } else {
-                        registerAndStartContainer(consumerFactory, containerProperties, v);
+
                     }
-                    ConcurrentMessageListenerContainer container = (ConcurrentMessageListenerContainer) beanFactory.getBean(listenerContainerBeanName);
-                    liveRegistry.put(v.getName(), container);
-                    log.info("consumer container started name->{}", v.getName());
                 } catch (Exception e) {
-                    log.error("registerAndStartContainer error->{}", e);
+                    log.error("consumer container name ->{} error->{}", v.getName(), e);
                 }
             });
         }
-        List<String> liveConsumerNames = dynamicKafkaProperties.getConfig().values().stream().map(d -> d.getName()).distinct().collect(Collectors.toList());
+        List<String> liveConsumerNames = dynamicKafkaProperties.getConfig().values().stream().filter(k -> k.isEnbaled()).map(d -> d.getName()).distinct().collect(Collectors.toList());
         List<String> needDestroy = liveRegistry.keySet().stream().filter(e -> !liveConsumerNames.contains(e)).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(needDestroy)) {
             for (String s : needDestroy) {

@@ -25,11 +25,11 @@ public class DynamicKafka implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         new Thread(() -> {
             while (true) {
-//                kafkaTemplate.send(topic1, System.currentTimeMillis() + "");
-//                kafkaTemplate.send(topic2, System.currentTimeMillis() + "");
-//                log.info("send");
+                kafkaTemplate.send(topic1, System.currentTimeMillis() + "");
+                kafkaTemplate.send(topic2, System.currentTimeMillis() + "");
+                log.info("send");
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
