@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties.PREFIX;
@@ -18,13 +19,14 @@ public class DynamicKafkaProperties {
 
     private Map<String, SingleConfig> config = new HashMap<>();
 
-    private Map<String, Object> globalConfig = new HashMap<>();
+    private Map<String, String> globalConfig = new HashMap<>();
 
     @Data
     public static class SingleConfig {
         /**
          * name
          */
+        private List<String> bootstrapServers;
         private String name;
         private String groupId;
         public String[] topics;
@@ -32,7 +34,7 @@ public class DynamicKafkaProperties {
         /**
          * props
          */
-        private Map<String, Object> props;
+        private Map<String, String> props = new HashMap<>();
         /**
          * listener bean
          */
