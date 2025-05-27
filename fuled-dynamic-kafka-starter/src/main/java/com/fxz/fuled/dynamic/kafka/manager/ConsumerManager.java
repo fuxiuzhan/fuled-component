@@ -2,11 +2,15 @@ package com.fxz.fuled.dynamic.kafka.manager;
 
 import com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 public class ConsumerManager implements BeanFactoryAware {
     private DefaultListableBeanFactory beanFactory;
 
+    KafkaProperties.Consumer consumer = new KafkaProperties.Consumer();
     private final String beanNameFormat = "%sKafkaMessageListenerContainer";
 
     private final Map<String, ConcurrentMessageListenerContainer> liveRegistry = new ConcurrentHashMap<>();
@@ -39,7 +44,7 @@ public class ConsumerManager implements BeanFactoryAware {
                     log.info("addSourceNames: {}", v.getName());
                     ContainerProperties containerProperties = new ContainerProperties(v.getTopics());
                     containerProperties.setGroupId(v.getGroupId());
-                    ConsumerFactory consumerFactory = getConsumerFactory(v.getProps(), dynamicKafkaProperties.getGlobalConfig());
+                    ConsumerFactory consumerFactory = getConsumerFactory(v, dynamicKafkaProperties.getGlobalConfig());
                     containerProperties.setMessageListener(beanFactory.getBean(v.getListenerBeanName()));
                     String listenerContainerBeanName = String.format(beanNameFormat, v.getName());
                     if (existsBean(listenerContainerBeanName)) {
@@ -105,15 +110,18 @@ public class ConsumerManager implements BeanFactoryAware {
 
 
     /**
-     * @param props
+     * @param singleConfig
+     * @param globalConfig
      * @return
      */
-    private ConsumerFactory getConsumerFactory(Map<String, Object> props, Map<String, Object> globalConfig) {
+    private ConsumerFactory getConsumerFactory(DynamicKafkaProperties.SingleConfig singleConfig, Map<String, String> globalConfig) {
         Map<String, Object> totalProps = new HashMap<>();
+        totalProps.putAll(consumer.buildProperties());
         if (!CollectionUtils.isEmpty(globalConfig)) {
             totalProps.putAll(globalConfig);
         }
-        totalProps.putAll(props);
+        totalProps.putAll(singleConfig.getProps());
+        totalProps.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, singleConfig.getBootstrapServers());
         return new DefaultKafkaConsumerFactory<>(totalProps);
     }
 
