@@ -30,7 +30,7 @@ public class DynamicKafkaProperties {
         private String name;
         private String groupId;
         public String[] topics;
-        private int concurrency;
+        private int concurrency = 1;
         /**
          * props
          */
