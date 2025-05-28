@@ -3,8 +3,6 @@ package com.fxz.fuled.dynamic.kafka.manager;
 import com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -41,7 +39,7 @@ public class ConsumerManager implements BeanFactoryAware {
         if (!CollectionUtils.isEmpty(dynamicKafkaProperties.getConfig())) {
             dynamicKafkaProperties.getConfig().forEach((k, v) -> {
                 try {
-                    if (v.isEnbaled()) {
+                    if (v.isEnabled()) {
                         log.info("consumer container starting......... {}", v.getName());
                         ContainerProperties containerProperties = new ContainerProperties(v.getTopics());
                         containerProperties.setGroupId(v.getGroupId());
@@ -67,7 +65,7 @@ public class ConsumerManager implements BeanFactoryAware {
                 }
             });
         }
-        List<String> liveConsumerNames = dynamicKafkaProperties.getConfig().values().stream().filter(k -> k.isEnbaled()).map(d -> d.getName()).distinct().collect(Collectors.toList());
+        List<String> liveConsumerNames = dynamicKafkaProperties.getConfig().values().stream().filter(k -> k.isEnabled()).map(d -> d.getName()).distinct().collect(Collectors.toList());
         List<String> needDestroy = liveRegistry.keySet().stream().filter(e -> !liveConsumerNames.contains(e)).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(needDestroy)) {
             for (String s : needDestroy) {
