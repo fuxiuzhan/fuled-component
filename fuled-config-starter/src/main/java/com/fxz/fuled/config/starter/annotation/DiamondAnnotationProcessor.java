@@ -125,7 +125,6 @@ public class DiamondAnnotationProcessor extends DiamondProcessor implements Bean
 
 //        for (String namespace : namespaces) {
 //        final String resolvedNamespace = this.environment.resolveRequiredPlaceholders(ConfigUtil.APP_ID);
-        ConfigUtil.initialize();
         final String resolvedNamespace = ConfigUtil.getAppId();
         Config config = ConfigService.getConfig(resolvedNamespace);
         if (interestedKeys == null && interestedKeyPrefixes == null) {

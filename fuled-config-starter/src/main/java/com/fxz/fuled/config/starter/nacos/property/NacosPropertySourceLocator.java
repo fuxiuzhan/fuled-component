@@ -2,6 +2,7 @@ package com.fxz.fuled.config.starter.nacos.property;
 
 
 import com.alibaba.nacos.api.config.ConfigService;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.config.starter.nacos.NacosConfigManager;
 import com.fxz.fuled.config.starter.nacos.NacosConfigProperties;
 import com.fxz.fuled.config.starter.nacos.NacosDataParserHandler;
@@ -56,7 +57,9 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(Environment env) {
         nacosConfigProperties.setEnvironment(env);
-//        initEnv(env);
+        //rebind
+        ConfigUtil.environment = env;
+        nacosConfigProperties.setGroup(ConfigUtil.getAppId());
         ConfigService configService = nacosConfigManager.getConfigService();
         if (null == configService) {
             log.warn("no instance of config service found, can't load config from nacos");

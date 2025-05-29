@@ -24,7 +24,7 @@ import java.util.Objects;
 @EnableConfigurationProperties({DynamicKafkaProperties.class})
 @Import({FilterConfig.class, ConsumerManager.class, FilterChainManger.class})
 public class DynamicKafkaAutoConfig implements ApplicationContextAware, SmartInitializingSingleton {
-    public static final String RAW_FILTER_GROUP = "Dynamic_Kafka_Group";
+    public static final String DYNAMIC_KAFKA_FILTER_GROUP = "Dynamic_Kafka_Group";
     @Autowired
     private ConsumerManager consumerManager;
     @Autowired
@@ -34,7 +34,7 @@ public class DynamicKafkaAutoConfig implements ApplicationContextAware, SmartIni
 
     @Bean(name = "dynamicKafkaInvoker")
     public Invoker<DynamicKafkaProperties, Void> buildInvoker() {
-        invoker = filterChainManger.getInvoker(RAW_FILTER_GROUP, (Invoker<DynamicKafkaProperties, Void>) dynamicKafkaProperties -> {
+        invoker = filterChainManger.getInvoker(DYNAMIC_KAFKA_FILTER_GROUP, (Invoker<DynamicKafkaProperties, Void>) dynamicKafkaProperties -> {
             consumerManager.process(dynamicKafkaProperties);
             return null;
         });

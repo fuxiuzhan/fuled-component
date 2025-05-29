@@ -2,6 +2,7 @@ package com.fxz.fuled.sentinel.starter.config;
 
 import com.alibaba.cloud.sentinel.SentinelProperties;
 import com.fxz.fuled.common.Env;
+import com.fxz.fuled.common.version.ComponentVersion;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.properties.ConfigurationPropertiesBeans;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
@@ -28,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2、其实sentinel的properties在启动时创建完transport后即使在修改也不会生效，不过此处还是需要将properties进行注册
  */
 @ConditionalOnProperty(name = "spring.cloud.sentinel.enabled", matchIfMissing = true)
-@Component
 public class SentinelPropertiesProcessor extends AutowiredAnnotationBeanPostProcessor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
 
     private AtomicBoolean inited = new AtomicBoolean(Boolean.FALSE);
@@ -39,6 +39,11 @@ public class SentinelPropertiesProcessor extends AutowiredAnnotationBeanPostProc
 
     @Autowired(required = false)
     private ConfigurationPropertiesBeans configurationPropertiesBeans;
+
+    @Bean("sentinelVersion")
+    public ComponentVersion configVersion() {
+        return new ComponentVersion("fuled-sentinel-starter.version", "1.0.0.waterdrop", "fuled-sentinel-starter");
+    }
 
     @Override
     public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
@@ -55,11 +60,14 @@ public class SentinelPropertiesProcessor extends AutowiredAnnotationBeanPostProc
     }
 
     private void wrapperSentinelProperties(SentinelProperties sentinelProperties) {
+        /**
+         *  use less
+         */
         if (Objects.nonNull(sentinelProperties)) {
-            SentinelEnv env = SentinelEnv.getEnv();
-            if (!Env.CUS.equals(env)) {
-                sentinelProperties.getTransport().setDashboard(env.getDashboard());
-            }
+//            SentinelEnv env = SentinelEnv.getEnv();
+//            if (!Env.CUS.equals(env)) {
+//                sentinelProperties.getTransport().setDashboard(env.getDashboard());
+//            }
         }
     }
 
