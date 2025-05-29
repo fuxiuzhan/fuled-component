@@ -37,7 +37,8 @@ public class NacosConfigBootstrapConfiguration {
         if (!Env.CUS.equals(envLocal)) {
             nacosConfigProperties.setServerAddr(envLocal.getConfigServer());
             nacosConfigProperties.setNamespace(envLocal.name());
-            nacosConfigProperties.setGroup(ConfigUtil.getAppId());
+            //skip ,lazy set
+            //nacosConfigProperties.setGroup(ConfigUtil.getAppId());
         }
         return new NacosConfigManager(nacosConfigProperties);
     }
