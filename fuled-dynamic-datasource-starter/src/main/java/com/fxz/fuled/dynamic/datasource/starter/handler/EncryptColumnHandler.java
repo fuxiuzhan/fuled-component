@@ -1,7 +1,7 @@
 package com.fxz.fuled.dynamic.datasource.starter.handler;
 
 import com.fxz.fuled.common.converter.StringValueConveter;
-import com.fxz.fuled.common.utils.SpringApplicationUtil;
+import com.fxz.fuled.common.utils.ConfigUtil;
 import com.fxz.fuled.dynamic.datasource.starter.encrypt.EncryptColumn;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -74,7 +74,7 @@ public class EncryptColumnHandler extends BaseTypeHandler<EncryptColumn> {
      */
     private StringValueConveter getValueConverter() {
         if (Objects.isNull(valueConverter)) {
-            valueConverter = SpringApplicationUtil.applicationContext.getBean(StringValueConveter.class);
+            valueConverter = ConfigUtil.applicationContext.getBean(StringValueConveter.class);
         }
         if (Objects.isNull(valueConverter)) {
             valueConverter = new StringValueConveter() {

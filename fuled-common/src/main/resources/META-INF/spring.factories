@@ -1,2 +1,4 @@
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+ com.fxz.fuled.common.utils.ConfigUtil
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.fxz.fuled.common.utils.SpringApplicationUtil
+ com.fxz.fuled.common.utils.ConfigUtil

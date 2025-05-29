@@ -46,7 +46,6 @@ public class DefaultValueConverter implements ValueConverter {
 
     public static String getKey() {
         if (StringUtils.isEmpty(password)) {
-            ConfigUtil.initialize();
             String appId = ConfigUtil.getAppId();
             Env env = ConfigUtil.getEnv();
             return appId + "-" + env.name();

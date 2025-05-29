@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * 在有refreshEvent的情况下会重复初始化
  * 重写的目的是要控制nacos的连接信息
  */
+
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
 public class NacosConfigBootstrapConfiguration {
@@ -32,12 +33,12 @@ public class NacosConfigBootstrapConfiguration {
         /**
          * 改写naocs连接信息，其他信息不变
          */
-        ConfigUtil.initialize();
         Env envLocal = ConfigUtil.getEnv();
         if (!Env.CUS.equals(envLocal)) {
             nacosConfigProperties.setServerAddr(envLocal.getConfigServer());
             nacosConfigProperties.setNamespace(envLocal.name());
-            nacosConfigProperties.setGroup(ConfigUtil.getAppId());
+            //skip ,lazy set
+            //nacosConfigProperties.setGroup(ConfigUtil.getAppId());
         }
         return new NacosConfigManager(nacosConfigProperties);
     }

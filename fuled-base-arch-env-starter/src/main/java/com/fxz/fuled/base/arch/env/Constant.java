@@ -4,7 +4,7 @@ public class Constant {
     /**
      * group
      */
-    public static final String BASE_GROUP = "BASE_ARCH";
+    public static final String BASE_GROUP = "base_arch";
 
     /**
      * dataId
