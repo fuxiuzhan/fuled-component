@@ -3,6 +3,7 @@ package com.fxz.fuled.dynamic.kafka.config;
 import com.fxz.fuled.common.chain.FilterChainManger;
 import com.fxz.fuled.common.chain.FilterConfig;
 import com.fxz.fuled.common.chain.Invoker;
+import com.fxz.fuled.dynamic.kafka.filters.LoadConfigFromDBPropFilter;
 import com.fxz.fuled.dynamic.kafka.manager.ConsumerManager;
 import com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties;
 import org.springframework.beans.BeansException;
@@ -22,7 +23,7 @@ import org.springframework.context.event.EventListener;
 import java.util.Objects;
 
 @EnableConfigurationProperties({DynamicKafkaProperties.class})
-@Import({FilterConfig.class, ConsumerManager.class, FilterChainManger.class})
+@Import({FilterConfig.class, ConsumerManager.class, FilterChainManger.class, LoadConfigFromDBPropFilter.class})
 public class DynamicKafkaAutoConfig implements ApplicationContextAware, SmartInitializingSingleton {
     public static final String DYNAMIC_KAFKA_FILTER_GROUP = "Dynamic_Kafka_Group";
     @Autowired
