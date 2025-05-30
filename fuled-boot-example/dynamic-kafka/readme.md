@@ -1,3 +1,6 @@
+
+![](images/trace_cross_kafka.png)
+
 ```log
 2025-05-30 22:17:34.723 ||||fuled-example-dynamic-kafka[main] INFO  com.fxz.fuled.config.starter.nacos.property.NacosPropertySourceBuilder - get config from nacos server : dataId->fuled-example-dynamic-kafka,groupId->fuled-example-dynamic-kafka,result->null
 2025-05-30 22:17:34.725 ||||fuled-example-dynamic-kafka[main] WARN  com.fxz.fuled.config.starter.nacos.property.NacosPropertySourceBuilder - Ignore the empty nacos configuration and get it based on dataId[fuled-example-dynamic-kafka] & group[fuled-example-dynamic-kafka]
@@ -930,5 +933,3 @@ spring.cloud.sentinel.eager=true
 2025-05-30 22:18:17.318 ||||fuled-example-dynamic-kafka[SpringContextShutdownHook] INFO  com.alibaba.cloud.nacos.registry.NacosServiceRegistry - De-registration finished.
 
 ```
-
-![](images/trace_cross_kafka.png)
