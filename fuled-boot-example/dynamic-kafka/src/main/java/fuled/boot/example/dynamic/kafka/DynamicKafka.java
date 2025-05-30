@@ -29,7 +29,7 @@ public class DynamicKafka implements ApplicationRunner {
                 kafkaTemplate.send(topic2, System.currentTimeMillis() + "");
                 log.info("send");
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
