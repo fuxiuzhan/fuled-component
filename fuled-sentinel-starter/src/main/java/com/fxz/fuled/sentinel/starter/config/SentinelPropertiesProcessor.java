@@ -40,11 +40,6 @@ public class SentinelPropertiesProcessor extends AutowiredAnnotationBeanPostProc
     @Autowired(required = false)
     private ConfigurationPropertiesBeans configurationPropertiesBeans;
 
-    @Bean("sentinelVersion")
-    public ComponentVersion configVersion() {
-        return new ComponentVersion("fuled-sentinel-starter.version", "1.0.0.waterdrop", "fuled-sentinel-starter");
-    }
-
     @Override
     public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
         if (inited.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
