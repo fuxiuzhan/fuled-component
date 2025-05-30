@@ -28,6 +28,6 @@
         <module>springcloud-app</module>
         <module>env-encryptor</module>
         <module>dynamic-datasource</module>
-        <module>aspect-looger</module>
+        <module>aspect-logger</module>
     </modules>
 </project>

@@ -1,5 +1,6 @@
 package fuled.boot.example.dynamic.kafka;
 
+import com.fxz.component.fuled.cat.starter.annotation.EnableCatTracing;
 import com.fxz.fuled.service.annotation.EnableFuledBoot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @EnableFuledBoot
+@EnableCatTracing
 @Slf4j
 public class DynamicKafka implements ApplicationRunner {
 
@@ -29,7 +31,7 @@ public class DynamicKafka implements ApplicationRunner {
                 kafkaTemplate.send(topic2, System.currentTimeMillis() + "");
                 log.info("send");
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
