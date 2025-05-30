@@ -29,5 +29,6 @@
         <module>env-encryptor</module>
         <module>dynamic-datasource</module>
         <module>aspect-logger</module>
+        <module>dynamic-kafka</module>
     </modules>
 </project>

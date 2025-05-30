@@ -930,3 +930,5 @@ spring.cloud.sentinel.eager=true
 2025-05-30 22:18:17.318 ||||fuled-example-dynamic-kafka[SpringContextShutdownHook] INFO  com.alibaba.cloud.nacos.registry.NacosServiceRegistry - De-registration finished.
 
 ```
+
+![](images/trace_cross_kafka.png)

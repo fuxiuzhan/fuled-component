@@ -18,20 +18,19 @@
  */
 package com.dianping.cat.configuration;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.configuration.client.entity.ClientConfig;
+import com.dianping.cat.configuration.client.entity.Server;
+import com.dianping.cat.configuration.client.transform.DefaultSaxParser;
 import com.dianping.cat.log.CatLogger;
 import com.dianping.cat.util.Files;
 import com.dianping.cat.util.NetworkHelper;
 import com.dianping.cat.util.Splitters;
 import com.dianping.cat.util.StringUtils;
-import com.dianping.cat.Cat;
-import com.dianping.cat.configuration.client.entity.ClientConfig;
-import com.dianping.cat.configuration.client.entity.Server;
-import com.dianping.cat.configuration.client.transform.DefaultSaxParser;
 import com.fxz.fuled.common.utils.ConfigUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -39,7 +38,6 @@ import java.util.Properties;
 
 public class ApplicationEnvironment {
     private static final String HOST = "org.cat";
-    private static final String PROPERTIES_FILE = "/META-INF/app.properties";
     private static final String CACHE_FILE = "client_cache.xml";
     private static final String CLIENT_FILE = "client.xml";
     public static final String ENVIRONMENT;
