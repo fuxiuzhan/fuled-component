@@ -10,7 +10,7 @@
     <groupId>fuled.boot.example</groupId>
     <artifactId>aspect-logger</artifactId>
     <version>1.0.0.WaterDrop</version>
-    <name>aaspect-logger</name>
+    <name>aspect-logger</name>
     <description>aspect-logger</description>
     <properties>
         <java.version>21</java.version>
