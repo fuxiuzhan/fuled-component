@@ -33,7 +33,7 @@ public class DynamicKafkaProperties {
         /**
          * props
          */
-        private KafkaProperties.Consumer consumer = new KafkaProperties.Consumer();
+        private KafkaProperties.Consumer props = new KafkaProperties.Consumer();
         /**
          * listener bean
          */

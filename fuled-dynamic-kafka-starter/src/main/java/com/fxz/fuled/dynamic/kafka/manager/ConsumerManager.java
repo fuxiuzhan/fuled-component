@@ -119,7 +119,7 @@ public class ConsumerManager implements BeanFactoryAware {
         if (!CollectionUtils.isEmpty(globalConfig)) {
             totalProps.putAll(globalConfig);
         }
-        totalProps.putAll(singleConfig.getConsumer().buildProperties());
+        totalProps.putAll(singleConfig.getProps().buildProperties());
         totalProps.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, singleConfig.getBootstrapServers());
         return new DefaultKafkaConsumerFactory<>(totalProps);
     }
