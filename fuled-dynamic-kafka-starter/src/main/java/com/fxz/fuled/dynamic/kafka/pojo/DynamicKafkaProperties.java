@@ -2,6 +2,7 @@ package com.fxz.fuled.dynamic.kafka.pojo;
 
 
 import lombok.Data;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,7 +33,7 @@ public class DynamicKafkaProperties {
         /**
          * props
          */
-        private Map<String, String> props = new HashMap<>();
+        private KafkaProperties.Consumer consumer = new KafkaProperties.Consumer();
         /**
          * listener bean
          */
