@@ -8,7 +8,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 public class ConsumerManager implements BeanFactoryAware {
     private DefaultListableBeanFactory beanFactory;
 
-    KafkaProperties.Consumer consumer = new KafkaProperties.Consumer();
     private final String beanNameFormat = "%sKafkaMessageListenerContainer";
 
     private final Map<String, ConcurrentMessageListenerContainer> liveRegistry = new ConcurrentHashMap<>();
@@ -118,11 +116,10 @@ public class ConsumerManager implements BeanFactoryAware {
      */
     private ConsumerFactory getConsumerFactory(DynamicKafkaProperties.SingleConfig singleConfig, Map<String, String> globalConfig) {
         Map<String, Object> totalProps = new HashMap<>();
-        totalProps.putAll(consumer.buildProperties());
         if (!CollectionUtils.isEmpty(globalConfig)) {
             totalProps.putAll(globalConfig);
         }
-        totalProps.putAll(singleConfig.getProps());
+        totalProps.putAll(singleConfig.getProps().buildProperties());
         totalProps.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, singleConfig.getBootstrapServers());
         return new DefaultKafkaConsumerFactory<>(totalProps);
     }
