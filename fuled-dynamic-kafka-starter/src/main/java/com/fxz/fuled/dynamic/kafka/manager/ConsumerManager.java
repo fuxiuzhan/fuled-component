@@ -3,6 +3,7 @@ package com.fxz.fuled.dynamic.kafka.manager;
 import com.fxz.fuled.dynamic.kafka.pojo.DynamicKafkaProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -41,6 +42,9 @@ public class ConsumerManager implements BeanFactoryAware {
                         log.info("consumer container starting......... {}", v.getName());
                         ContainerProperties containerProperties = new ContainerProperties(v.getTopics());
                         containerProperties.setGroupId(v.getGroupId());
+                        if (Objects.nonNull(v.getContainerProps())) {
+                            BeanUtils.copyProperties(v.getContainerProps(), containerProperties, "topics", "groupId", "messageListener");
+                        }
                         ConsumerFactory consumerFactory = getConsumerFactory(v, dynamicKafkaProperties.getGlobalConfig());
                         containerProperties.setMessageListener(beanFactory.getBean(v.getListenerBeanName()));
                         String listenerContainerBeanName = String.format(beanNameFormat, v.getName());
