@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service(MessageListener.ListenerBeanName)
@@ -40,6 +41,9 @@ public class MessageListener implements BatchAcknowledgingMessageListener<String
                     }
                 }
             }
+        }
+        if (Objects.nonNull(acknowledgment)) {
+            acknowledgment.acknowledge();
         }
     }
 }
