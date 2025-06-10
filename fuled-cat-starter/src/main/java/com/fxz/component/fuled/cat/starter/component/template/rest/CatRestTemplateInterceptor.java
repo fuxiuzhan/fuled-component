@@ -9,7 +9,6 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,8 +23,8 @@ public class CatRestTemplateInterceptor implements ClientHttpRequestInterceptor 
         URI uri = request.getURI();
         Transaction transaction = Cat.newTransaction("RemoteCall", uri.getPath());
         CatUtils.createConsumerCross(transaction, uri.getHost(), uri.getHost(), String.valueOf(uri.getPort()));
+        CatUtils.createMessageTree();
         HttpRequestCatWrapper httpRequestCatWrapper = new HttpRequestCatWrapper(request);
-        requestAttributesBuilder();
         CatTraceCarrier.Context context = CatTraceCarrier.getContext();
         httpRequestCatWrapper.addHeader(Cat.Context.ROOT, context.getRootTrace());
         httpRequestCatWrapper.addHeader(Cat.Context.CHILD, context.getChildTrace());
@@ -43,15 +42,5 @@ public class CatRestTemplateInterceptor implements ClientHttpRequestInterceptor 
             transaction.complete();
         }
         return response;
-    }
-
-    private void requestAttributesBuilder() {
-        CatTraceCarrier.Context context = CatTraceCarrier.getContext();
-        String rootId = context.getRootTrace();
-        String childId = context.getChildTrace();
-        String parentId = context.getParentTrace();
-        if (StringUtils.isEmpty(rootId) && StringUtils.isEmpty(childId) && StringUtils.isEmpty(parentId)) {
-            CatUtils.createMessageTree();
-        }
     }
 }

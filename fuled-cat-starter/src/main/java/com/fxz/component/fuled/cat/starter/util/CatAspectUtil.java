@@ -9,21 +9,26 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author fuled
  */
 @Component
 public class CatAspectUtil {
-    private static List<String> exceptionIgnore;
+    private static List<String> exceptionClassIgnore;
+    private static List<String> exceptionMsgIgnore;
 
-    public CatAspectUtil() {
-    }
-
-    @Value("#{'${cat.aspect.exception.ignore:,}'.replaceAll('[ \\n\\t]', '').split(',', 0)}")
+    @Value("${cat.aspect.exception.class.ignore:}")
     public void setExceptionIgnore(List<String> value) {
-        exceptionIgnore = value;
+        exceptionClassIgnore = value;
     }
+
+    @Value("${cat.aspect.exception.msg.ignore:}")
+    public void setExceptionMsgIgnore(List<String> value) {
+        exceptionMsgIgnore = value;
+    }
+
 
     public static Object aspectLogic(ProceedingJoinPoint pjp, Object[] args, Class annotation) throws Throwable {
         String name = pjp.getSignature().getDeclaringType().getSimpleName() + "." + pjp.getSignature().getName();
@@ -32,7 +37,7 @@ public class CatAspectUtil {
     }
 
     public static Object aspectLogic(ProceedingJoinPoint pjp, Object[] args, Transaction transaction) throws Throwable {
-        Object proceed = null;
+        Object proceed;
         try {
             if (args != null && args.length != 0) {
                 proceed = pjp.proceed(args);
@@ -41,7 +46,7 @@ public class CatAspectUtil {
             }
             transaction.setStatus(Transaction.SUCCESS);
         } catch (Throwable e) {
-            if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(e.getClass().getName())) {
+            if (shouldSkip(e)) {
                 transaction.setStatus(Transaction.SUCCESS);
             } else {
                 transaction.setStatus(e);
@@ -57,12 +62,12 @@ public class CatAspectUtil {
         Method method = invocation.getMethod();
         Class clazz = method.getDeclaringClass();
         Transaction transaction = Cat.newTransaction(type, clazz.getSimpleName() + "." + method.getName());
-        Object proceed = null;
+        Object proceed;
         try {
             proceed = invocation.proceed();
             transaction.setStatus(Transaction.SUCCESS);
         } catch (Throwable e) {
-            if (exceptionIgnore != null && exceptionIgnore.size() > 0 && exceptionIgnore.contains(e.getClass().getName())) {
+            if (shouldSkip(e)) {
                 transaction.setStatus(Transaction.SUCCESS);
             } else {
                 transaction.setStatus(e);
@@ -72,5 +77,23 @@ public class CatAspectUtil {
             transaction.complete();
         }
         return proceed;
+    }
+
+    /**
+     * @param e
+     * @return
+     */
+    private static boolean shouldSkip(Throwable e) {
+        if (Objects.nonNull(exceptionClassIgnore) && exceptionClassIgnore.size() > 0 && exceptionClassIgnore.contains(e.getClass().getName())) {
+            return Boolean.TRUE;
+        }
+        if (Objects.nonNull(exceptionMsgIgnore) && exceptionMsgIgnore.size() > 0) {
+            for (String s : exceptionMsgIgnore) {
+                if (e.getMessage().contains(s)) {
+                    return Boolean.TRUE;
+                }
+            }
+        }
+        return Boolean.FALSE;
     }
 }
