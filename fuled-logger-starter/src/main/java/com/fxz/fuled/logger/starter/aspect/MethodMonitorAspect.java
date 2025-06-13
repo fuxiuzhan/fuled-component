@@ -14,7 +14,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
+
+import java.util.List;
 
 /**
  * @author fuxiuzhan
@@ -27,6 +30,9 @@ public class MethodMonitorAspect {
     @Value("${method.monitor.enabled:true}")
     private boolean monitorEnabled;
 
+    @Value("${method.monitor.ignores:}")
+    private List<String> ignores;
+
     @Bean("loggerVersion")
     public ComponentVersion configVersion() {
         return new ComponentVersion("fuled-logger.version", "1.0.0.waterdrop", "fuled-logger-component");
@@ -38,9 +44,10 @@ public class MethodMonitorAspect {
     }
 
     private Object process(ProceedingJoinPoint proceedingJoinPoint, boolean isAnno) throws Throwable {
-        if (monitorEnabled && isAnno) {
+        if (shouldHit(proceedingJoinPoint, isAnno)) {
             String className = proceedingJoinPoint.getSignature().getDeclaringTypeName();
             MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
+            String methodName = methodSignature.getName();
             boolean printParams = true;
             boolean printRtns = true;
             String[] tags = {};
@@ -50,9 +57,8 @@ public class MethodMonitorAspect {
                 printRtns = monitor.printResult();
                 tags = monitor.tags();
             }
-            String methodName = methodSignature.getName();
             String returnType = methodSignature.getReturnType().getTypeName();
-            Object result = null;
+            Object result;
             String resultJson = "unPrint";
             String params = "unPrint";
             String errorMsg = null;
@@ -85,5 +91,23 @@ public class MethodMonitorAspect {
         } else {
             return proceedingJoinPoint.proceed();
         }
+    }
+
+    /**
+     * @param proceedingJoinPoint
+     * @param isAnno
+     * @return
+     */
+    private boolean shouldHit(ProceedingJoinPoint proceedingJoinPoint, boolean isAnno) {
+        if (monitorEnabled && isAnno) {
+            String className = proceedingJoinPoint.getSignature().getDeclaringTypeName();
+            MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
+            String methodName = methodSignature.getName();
+            if (!CollectionUtils.isEmpty(ignores) && (ignores.contains(className) || ignores.contains(className + "." + methodName))) {
+                return Boolean.FALSE;
+            }
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 }
