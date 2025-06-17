@@ -377,15 +377,19 @@ threadPoolExecutor.execute(() -> execBiz(record));
 
 带着上述问题我们来看下源码相信就会有答案。
 
-首先上用法：
+**首先上用法：**
 ```java
- private static ThreadPoolExecutor getThreadPool(String poolName) {
+ private void init() {
         //创建线程池
         ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE_THREADS, CORE_THREADS * 2, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000), ThreadFactoryNamed.named(THREAD_POOL_PREFIX));
         executor.allowCoreThreadTimeOut(true);
         //注册线程池，只增加一行代码即可，当然也可以自动注册，需要把线程池注册到容器中，但是不建议。
-        //配置：fuled.dynamic.threadpool.config.poolName.coreSize=100
-        ThreadPoolRegistry.registerThreadPool(poolName, executor);
+        //配置：fuled.dynamic.threadpool.config.test.coreSize=100
+        //配置格式fuled.dynamic.threadpool.config.线程池名称.coreSize=新值
+        //在配置中心修改直接生效
+        //线程池的作用就是调度计算资源，线程池可以说是jvm内唯一的计算容器，所以除了核心线程数之外
+        //其他参数合理设置，切记尽量不要缓存
+        ThreadPoolRegistry.registerThreadPool("test", executor);
         return executor;
     }
 ```
