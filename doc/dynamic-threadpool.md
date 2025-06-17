@@ -300,10 +300,10 @@ threadPoolExecutor.execute(() -> execBiz(record));
 
 ## 4、ThreadLocal传递问题
 &emsp;&emsp;ThreadLocal传递问题面试高频问题，包括InheritableThreadLocal,ThreadLocal和阿里的TransmittableThreadLocal，
-另外还有ThreadLocal的内存泄漏问题，当然这不是本文的重点，本文的重点是ThreadLocal如何夸线程池传递，以及目前比较常用的解决方案。
+另外还有ThreadLocal的内存泄漏问题，当然这不是本文的重点，本文的重点是ThreadLocal如何跨线程池传递，以及目前比较常用的解决方案。
 
 &emsp;&emsp;目前主流的方式还是实现Runnable接口，通过构造方法获取父线程的ThreadLocal并保存下来，在run方法中set当前保存的内容。这是一种通用的方式，
-但是每次都要专门写个RunnableWrapper，未免有点麻烦，如果可以做成通用的组件就更好了，但势必要修改ThreadPoolExecutor，也就是搞个新类继承ThreadPoolExecutor，
+但是每次都要专门写个RunnableWrapper，未免有点麻烦，如果可以做成通用的组件就更好了，但势必要修改ThreadPoolExecutor，也就是搞个新类继承ThreadPoolExecutor（世面流行的动态线程池做法），
 使用上会改变程序员的使用习惯，反正让我new个奇奇怪怪不是jdk自带的线程池怎么都会感觉不舒服。
 
 ## 5、线程池动态调整原理
@@ -377,15 +377,22 @@ threadPoolExecutor.execute(() -> execBiz(record));
 
 带着上述问题我们来看下源码相信就会有答案。
 
-首先上用法：
+**首先上用法：**
 ```java
- private static ThreadPoolExecutor getThreadPool(String poolName) {
+
+```
+```java
+ private void init() {
         //创建线程池
         ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE_THREADS, CORE_THREADS * 2, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000), ThreadFactoryNamed.named(THREAD_POOL_PREFIX));
         executor.allowCoreThreadTimeOut(true);
         //注册线程池，只增加一行代码即可，当然也可以自动注册，需要把线程池注册到容器中，但是不建议。
-        //配置：fuled.dynamic.threadpool.config.poolName.coreSize=100
-        ThreadPoolRegistry.registerThreadPool(poolName, executor);
+        //配置：fuled.dynamic.threadpool.config.test.coreSize=100
+        //配置格式fuled.dynamic.threadpool.config.线程池名称.coreSize=新值
+        //在配置中心修改直接生效
+        //线程池的作用就是调度计算资源，线程池可以说是jvm内唯一的计算容器，所以除了核心线程数之外
+        //其他参数合理设置，切记尽量不要缓存
+        ThreadPoolRegistry.registerThreadPool("test", executor);
         return executor;
     }
 ```
