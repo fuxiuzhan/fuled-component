@@ -29,9 +29,9 @@ public class CatRestTemplateInterceptor implements ClientHttpRequestInterceptor 
         httpRequestCatWrapper.addHeader(Cat.Context.ROOT, context.getRootTrace());
         httpRequestCatWrapper.addHeader(Cat.Context.CHILD, context.getChildTrace());
         httpRequestCatWrapper.addHeader(Cat.Context.PARENT, context.getParentTrace());
-        httpRequestCatWrapper.addHeader("application.name", Cat.getManager().getDomain());
+        httpRequestCatWrapper.addHeader("appName", Cat.getManager().getDomain());
         request = httpRequestCatWrapper;
-        ClientHttpResponse response = null;
+        ClientHttpResponse response;
         try {
             response = execution.execute(request, body);
             transaction.setStatus(Transaction.SUCCESS);
