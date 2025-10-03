@@ -23,6 +23,9 @@ public final class ReflectionUtil {
         if (Objects.isNull(field)) {
             return;
         }
+        if (!field.isAccessible()) {
+            field.setAccessible(Boolean.TRUE);
+        }
         field.set(targetObj, targetVal);
     }
 

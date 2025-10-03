@@ -39,7 +39,6 @@ public class ConsumerManager implements BeanFactoryAware {
             dynamicKafkaProperties.getConfig().forEach((k, v) -> {
                 try {
                     if (v.isEnabled()) {
-                        log.info("consumer container starting......... {}", v.getName());
                         ContainerProperties containerProperties = new ContainerProperties(v.getTopics());
                         containerProperties.setGroupId(v.getGroupId());
                         if (Objects.nonNull(v.getContainerProps())) {
@@ -52,13 +51,14 @@ public class ConsumerManager implements BeanFactoryAware {
                             ConcurrentMessageListenerContainer messageListenerContainer = (ConcurrentMessageListenerContainer) beanFactory.getBean(listenerContainerBeanName);
                             if (!messageListenerContainer.isRunning()) {
                                 messageListenerContainer.start();
+                                log.info("consumer container started name->{}", v.getName());
                             }
                         } else {
                             registerAndStartContainer(consumerFactory, containerProperties, v);
+                            log.info("consumer container started name->{}", v.getName());
                         }
                         ConcurrentMessageListenerContainer container = (ConcurrentMessageListenerContainer) beanFactory.getBean(listenerContainerBeanName);
                         liveRegistry.put(v.getName(), container);
-                        log.info("consumer container started name->{}", v.getName());
                     } else {
 
                     }

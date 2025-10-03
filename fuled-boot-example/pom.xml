@@ -30,5 +30,6 @@
         <module>dynamic-datasource</module>
         <module>aspect-logger</module>
         <module>dynamic-kafka</module>
+        <module>dynamic-rocket</module>
     </modules>
 </project>

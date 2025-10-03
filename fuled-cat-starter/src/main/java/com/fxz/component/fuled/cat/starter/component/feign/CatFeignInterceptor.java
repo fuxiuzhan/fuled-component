@@ -26,13 +26,13 @@ public class CatFeignInterceptor implements RequestInterceptor {
             requestTemplate.header(Cat.Context.ROOT, CatUtils.getRootId(requestAttributes));
             requestTemplate.header(Cat.Context.CHILD, CatUtils.getChildId(requestAttributes));
             requestTemplate.header(Cat.Context.PARENT, CatUtils.getParentId(requestAttributes));
-            requestTemplate.header("application.name", Cat.getManager().getDomain());
+            requestTemplate.header("appName", Cat.getManager().getDomain());
         } else {
             CatTraceCarrier.Context context = CatTraceCarrier.getContext();
             requestTemplate.header(Cat.Context.ROOT, context.getRootTrace());
             requestTemplate.header(Cat.Context.CHILD, context.getChildTrace());
             requestTemplate.header(Cat.Context.PARENT, context.getParentTrace());
-            requestTemplate.header("application.name", Cat.getManager().getDomain());
+            requestTemplate.header("appName", Cat.getManager().getDomain());
         }
     }
 }
