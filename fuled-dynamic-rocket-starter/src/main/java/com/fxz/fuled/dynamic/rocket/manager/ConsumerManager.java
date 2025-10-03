@@ -52,7 +52,6 @@ public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
             dynamicKafkaProperties.getConfig().forEach((k, v) -> {
                 try {
                     if (v.isEnabled()) {
-                        log.info("consumer container starting......... {}", v.getName());
                         String listenerContainerBeanName = String.format(beanNameFormat, v.getName());
                         if (existsBean(listenerContainerBeanName)) {
                             DefaultRocketMQListenerContainer messageListenerContainer = (DefaultRocketMQListenerContainer) beanFactory.getBean(listenerContainerBeanName);
@@ -61,13 +60,14 @@ public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
                             }
                         } else {
                             registerAndStartContainer(listenerContainerBeanName, v);
+                            log.info("consumer container started name->{}", v.getName());
                         }
                         DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) beanFactory.getBean(listenerContainerBeanName);
                         if (!container.isRunning()) {
                             container.start();
+                            log.info("consumer container started name->{}", v.getName());
                         }
                         liveRegistry.put(v.getName(), container);
-                        log.info("consumer container started name->{}", v.getName());
                     }
                 } catch (Exception e) {
                     log.error("consumer container name ->{} error->{}", v.getName(), e);
