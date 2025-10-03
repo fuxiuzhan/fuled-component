@@ -6,6 +6,7 @@ import com.fxz.fuled.common.chain.Invoker;
 import com.fxz.fuled.dynamic.rocket.filters.LoadConfigFromDBPropFilter;
 import com.fxz.fuled.dynamic.rocket.manager.ConsumerManager;
 import com.fxz.fuled.dynamic.rocket.pojo.DynamicRocketProperties;
+import com.fxz.fuled.dynamic.rocket.processsor.DynamicAnnoBeanpostProcessor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import org.springframework.context.event.EventListener;
 import java.util.Objects;
 
 @EnableConfigurationProperties({DynamicRocketProperties.class})
-@Import({FilterConfig.class, ConsumerManager.class, FilterChainManger.class, LoadConfigFromDBPropFilter.class})
+@Import({DynamicAnnoBeanpostProcessor.class, FilterConfig.class, ConsumerManager.class, FilterChainManger.class, LoadConfigFromDBPropFilter.class})
 public class DynamicRocketAutoConfig implements ApplicationContextAware, SmartInitializingSingleton {
     public static final String DYNAMIC_ROCKET_FILTER_GROUP = "Dynamic_Rocket_Group";
     @Autowired

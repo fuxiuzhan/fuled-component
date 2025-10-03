@@ -31,8 +31,8 @@ public class DynamicRocket implements ApplicationRunner {
             while (true) {
                 try {
                     Thread.sleep(1000);
-                    rocketMQTemplate.send(topic1, MessageBuilder.withPayload(topic1 + ":" + System.currentTimeMillis()).build());
-                    rocketMQTemplate.send(topic2, MessageBuilder.withPayload(topic2 + ":" + System.currentTimeMillis()).build());
+//                    rocketMQTemplate.send(topic1, MessageBuilder.withPayload(topic1 + ":" + System.currentTimeMillis()).build());
+//                    rocketMQTemplate.send(topic2, MessageBuilder.withPayload(topic2 + ":" + System.currentTimeMillis()).build());
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
