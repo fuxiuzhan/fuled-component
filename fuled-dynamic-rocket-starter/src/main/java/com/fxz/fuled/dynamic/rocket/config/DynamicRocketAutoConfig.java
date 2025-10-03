@@ -46,11 +46,11 @@ public class DynamicRocketAutoConfig implements ApplicationContextAware, SmartIn
     @EventListener
     public void configChangeListener(ApplicationEvent event) {
         if (event instanceof EnvironmentChangeEvent) {
-            DynamicRocketProperties dynamicKafkaProperties = applicationContext.getBean(DynamicRocketProperties.class);
-            dynamicKafkaProperties.getConfig().clear();
-            Binder.get(applicationContext.getEnvironment()).bind(DynamicRocketProperties.PREFIX, Bindable.ofInstance(dynamicKafkaProperties));
+            DynamicRocketProperties dynamicRocketProperties = applicationContext.getBean(DynamicRocketProperties.class);
+            dynamicRocketProperties.getConfig().clear();
+            Binder.get(applicationContext.getEnvironment()).bind(DynamicRocketProperties.PREFIX, Bindable.ofInstance(dynamicRocketProperties));
             if (Objects.nonNull(invoker)) {
-                invoker.invoke(dynamicKafkaProperties);
+                invoker.invoke(dynamicRocketProperties);
             }
         }
     }
@@ -62,10 +62,10 @@ public class DynamicRocketAutoConfig implements ApplicationContextAware, SmartIn
 
     @Override
     public void afterSingletonsInstantiated() {
-        DynamicRocketProperties dynamicKafkaProperties = applicationContext.getBean(DynamicRocketProperties.class);
-        Binder.get(applicationContext.getEnvironment()).bind(DynamicRocketProperties.PREFIX, Bindable.ofInstance(dynamicKafkaProperties));
+        DynamicRocketProperties dynamicRocketProperties = applicationContext.getBean(DynamicRocketProperties.class);
+        Binder.get(applicationContext.getEnvironment()).bind(DynamicRocketProperties.PREFIX, Bindable.ofInstance(dynamicRocketProperties));
         if (Objects.nonNull(invoker)) {
-            invoker.invoke(dynamicKafkaProperties);
+            invoker.invoke(dynamicRocketProperties);
         }
     }
 }

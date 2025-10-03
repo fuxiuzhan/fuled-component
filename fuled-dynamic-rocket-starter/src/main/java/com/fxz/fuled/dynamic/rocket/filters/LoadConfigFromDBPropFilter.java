@@ -12,9 +12,9 @@ public class LoadConfigFromDBPropFilter implements Filter<DynamicRocketPropertie
     public static final String NAME = "LoadConfigFromDBPropFilter";
 
     @Override
-    public Void filter(DynamicRocketProperties dynamicKafkaProperties, Invoker<DynamicRocketProperties, Void> invoker) {
+    public Void filter(DynamicRocketProperties dynamicRocketProperties, Invoker<DynamicRocketProperties, Void> invoker) {
         //load config from db,cache etc...
         //decorate dynamicKafkaProperties
-        return invoker.invoke(dynamicKafkaProperties);
+        return invoker.invoke(dynamicRocketProperties);
     }
 }
