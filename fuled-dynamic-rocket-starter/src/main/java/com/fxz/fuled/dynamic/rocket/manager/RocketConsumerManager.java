@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
+public class RocketConsumerManager implements BeanFactoryAware, EnvironmentAware {
     private DefaultListableBeanFactory beanFactory;
     private Environment environment;
 
