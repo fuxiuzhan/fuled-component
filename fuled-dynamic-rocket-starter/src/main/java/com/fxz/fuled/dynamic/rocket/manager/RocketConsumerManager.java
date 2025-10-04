@@ -114,7 +114,7 @@ public class RocketConsumerManager implements BeanFactoryAware, EnvironmentAware
                 beanFactory.destroySingleton(listenerContainerBeanName);
                 beanFactory.removeBeanDefinition(listenerContainerBeanName);
             }
-            log.info("shutdownKafkaConsumer:{}", listenerContainerBeanName);
+            log.info("shutdownRocketConsumer:{}", listenerContainerBeanName);
         }
     }
 
