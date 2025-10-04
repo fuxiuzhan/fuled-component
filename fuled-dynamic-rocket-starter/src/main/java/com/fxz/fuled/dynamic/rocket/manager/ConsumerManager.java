@@ -47,9 +47,9 @@ public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
     /**
      * @param
      */
-    public synchronized void process(DynamicRocketProperties dynamicKafkaProperties) {
-        if (!CollectionUtils.isEmpty(dynamicKafkaProperties.getConfig())) {
-            dynamicKafkaProperties.getConfig().forEach((k, v) -> {
+    public synchronized void process(DynamicRocketProperties dynamicRocketProperties) {
+        if (!CollectionUtils.isEmpty(dynamicRocketProperties.getConfig())) {
+            dynamicRocketProperties.getConfig().forEach((k, v) -> {
                 try {
                     if (v.isEnabled()) {
                         String listenerContainerBeanName = String.format(beanNameFormat, v.getName());
@@ -60,7 +60,6 @@ public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
                             }
                         } else {
                             registerAndStartContainer(listenerContainerBeanName, v);
-                            log.info("consumer container started name->{}", v.getName());
                         }
                         DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) beanFactory.getBean(listenerContainerBeanName);
                         if (!container.isRunning()) {
@@ -74,7 +73,7 @@ public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
                 }
             });
         }
-        List<String> liveConsumerNames = dynamicKafkaProperties.getConfig().values().stream().filter(k -> k.isEnabled()).map(d -> d.getName()).distinct().collect(Collectors.toList());
+        List<String> liveConsumerNames = dynamicRocketProperties.getConfig().values().stream().filter(k -> k.isEnabled()).map(d -> d.getName()).distinct().collect(Collectors.toList());
         List<String> needDestroy = liveRegistry.keySet().stream().filter(e -> !liveConsumerNames.contains(e)).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(needDestroy)) {
             for (String s : needDestroy) {
