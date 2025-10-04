@@ -60,7 +60,6 @@ public class ConsumerManager implements BeanFactoryAware, EnvironmentAware {
                             }
                         } else {
                             registerAndStartContainer(listenerContainerBeanName, v);
-                            log.info("consumer container started name->{}", v.getName());
                         }
                         DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) beanFactory.getBean(listenerContainerBeanName);
                         if (!container.isRunning()) {
