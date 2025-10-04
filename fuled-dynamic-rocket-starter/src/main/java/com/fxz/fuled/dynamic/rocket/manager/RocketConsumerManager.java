@@ -139,11 +139,11 @@ public class RocketConsumerManager implements BeanFactoryAware, EnvironmentAware
         }
         beanDefinitionBuilder.addPropertyValue("consumerGroup", singleConfig.getConsumer().getConsumerGroup());
         beanDefinitionBuilder.addPropertyValue("tlsEnable", environment.resolvePlaceholders(singleConfig.getConsumer().getTlsEnable()));
-        Object lisetner = beanFactory.getBean(singleConfig.getListenerBeanName());
-        if (RocketMQListener.class.isAssignableFrom(lisetner.getClass())) {
-            beanDefinitionBuilder.addPropertyValue("rocketMQListener", (RocketMQListener) lisetner);
-        } else if (RocketMQReplyListener.class.isAssignableFrom(lisetner.getClass())) {
-            beanDefinitionBuilder.addPropertyValue("rocketMQReplyListener", (RocketMQReplyListener) lisetner);
+        Object listener = beanFactory.getBean(singleConfig.getListenerBeanName());
+        if (RocketMQListener.class.isAssignableFrom(listener.getClass())) {
+            beanDefinitionBuilder.addPropertyValue("rocketMQListener", (RocketMQListener) listener);
+        } else if (RocketMQReplyListener.class.isAssignableFrom(listener.getClass())) {
+            beanDefinitionBuilder.addPropertyValue("rocketMQReplyListener", (RocketMQReplyListener) listener);
         }
         beanDefinitionBuilder.addPropertyValue("messageConverter", rocketMQMessageConverter.getMessageConverter());
         beanDefinitionBuilder.addPropertyValue("name", String.format(beanNameFormat, singleConfig.getName()));
