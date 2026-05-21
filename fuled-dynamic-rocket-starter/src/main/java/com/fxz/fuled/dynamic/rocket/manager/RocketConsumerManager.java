@@ -247,7 +247,7 @@ public class RocketConsumerManager implements BeanFactoryAware, EnvironmentAware
 
             @Override
             public String nameServer() {
-                return singleConfig.getConsumer().getNameServer();
+                return singleConfig.getNameServer();
             }
 
             @Override
